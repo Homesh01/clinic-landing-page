@@ -2,11 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-	@apply bg-white dark:bg-gray-950;
+@layer base {
+	html {
+		@apply scroll-smooth antialiased;
+	}
 
-	@media (prefers-color-scheme: dark) {
-		color-scheme: dark;
+	body {
+		@apply bg-white font-sans text-ink text-[1.05rem] leading-relaxed;
+		background-image:
+			radial-gradient(ellipse 80% 50% at 100% -10%, rgba(31, 111, 106, 0.06), transparent 55%),
+			radial-gradient(ellipse 60% 40% at 0% 100%, rgba(21, 32, 43, 0.03), transparent 50%);
+		background-attachment: fixed;
+	}
+
+	::selection {
+		@apply bg-accent-soft text-ink;
+	}
+}
+
+@layer components {
+	.site-container {
+		@apply mx-auto w-full max-w-content px-5 sm:px-8;
+	}
+
+	.section-pad {
+		@apply py-20 sm:py-28;
+	}
+
+	.eyebrow {
+		@apply text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-accent;
+	}
+
+	.link-underline {
+		@apply relative inline-flex items-center gap-2 font-medium text-accent transition-colors hover:text-accent-deep;
+	}
+
+	.link-underline::after {
+		content: "";
+		@apply absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-100 bg-current transition-transform duration-300;
+	}
+
+	.link-underline:hover::after {
+		@apply scale-x-0;
+	}
+
+	.btn-primary {
+		@apply inline-flex items-center justify-center gap-2 rounded-sm bg-accent px-6 py-3 text-[0.95rem] font-semibold tracking-wide text-white transition duration-300 hover:bg-accent-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+	}
+
+	.btn-secondary {
+		@apply inline-flex items-center justify-center gap-2 rounded-sm border border-line bg-white px-6 py-3 text-[0.95rem] font-semibold tracking-wide text-ink transition duration-300 hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+	}
+
+	.prose-clinic p {
+		@apply mb-5 text-ink-soft last:mb-0;
+	}
+
+	.prose-clinic p + p {
+		@apply mt-0;
+	}
+
+	.divider-line {
+		@apply h-px w-full bg-line;
 	}
 }
