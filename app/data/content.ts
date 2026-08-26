@@ -169,3 +169,36 @@ export const booking = {
 		"Booking an appointment with Dr Sayal is simple — use the calendar below to view available slots and book a consultation online, or contact the secretary directly.",
 	note: "Online booking calendar placeholder — connect your preferred booking platform (e.g. Calendly, Cliniko, or HCA booking) when ready.",
 };
+
+export const faqs = [
+	{
+		question: "What conditions does Dr Sayal treat?",
+		answer:
+			"Dr Sayal specialises in thyroid cancer and radiotherapy for haematological malignancies, including lymphoma, leukaemia and myeloma. Care is delivered as part of a multidisciplinary team.",
+	},
+	{
+		question: "Do I need a referral to book a consultation?",
+		answer:
+			"A GP or specialist referral is often helpful, but second-opinion and private consultations can usually be arranged directly. The practice team can advise on what is needed before your appointment.",
+	},
+	{
+		question: "Where are clinics held?",
+		answer:
+			"Dr Sayal sees patients at UCLH (HCA Healthcare), The London Oncology Clinic (HCA Healthcare), and on Harley Street. Virtual consultations are also available where appropriate.",
+	},
+	{
+		question: "What happens at a first consultation?",
+		answer:
+			"Your first appointment typically includes a review of scans and pathology, discussion of diagnosis and options, and a clear written treatment plan so you know the recommended next steps.",
+	},
+	{
+		question: "Is private medical insurance accepted?",
+		answer:
+			"Yes. Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Fees and insurer details are confirmed before your first appointment.",
+	},
+	{
+		question: "Can I request a second opinion?",
+		answer:
+			"Yes. Second-opinion consultations provide an independent review of diagnosis and proposed treatment, which can help you feel confident about the pathway ahead.",
+	},
+] as const;

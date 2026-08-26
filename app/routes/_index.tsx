@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { conditions, services, site } from "~/data/content";
+import { conditions, faqs, services, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -133,7 +133,41 @@ export default function Index() {
 				</div>
 			</section>
 
-			<section className="section-pad">
+			<section className="section-pad border-t border-line">
+				<div className="site-container">
+					<div className="max-w-2xl">
+						<p className="eyebrow">FAQ</p>
+						<h2 className="mt-3 font-display text-display-md text-ink">
+							Common questions before your visit
+						</h2>
+						<p className="mt-4 text-lg text-ink-soft">
+							A short guide to referrals, clinics, consultations, and how care
+							is arranged.
+						</p>
+					</div>
+
+					<div className="mt-12 max-w-3xl divide-y divide-line border-y border-line">
+						{faqs.map((faq) => (
+							<details key={faq.question} className="group py-5">
+								<summary className="flex cursor-pointer list-none items-start justify-between gap-6 marker:content-none [&::-webkit-details-marker]:hidden">
+									<span className="font-display text-2xl text-ink">
+										{faq.question}
+									</span>
+									<span
+										aria-hidden="true"
+										className="mt-2 text-accent transition group-open:rotate-45"
+									>
+										+
+									</span>
+								</summary>
+								<p className="mt-4 max-w-2xl text-ink-soft">{faq.answer}</p>
+							</details>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<section className="section-pad !pt-0">
 				<div className="site-container overflow-hidden rounded-sm bg-ink px-8 py-14 text-white sm:px-12 sm:py-16">
 					<div className="max-w-2xl">
 						<p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/55">
