@@ -4,6 +4,9 @@ export const site = {
 	tagline:
 		"Personalised cancer care for thyroid malignancies and radiotherapy for haematological cancers — informed by clinical expertise and translational AI.",
 	gmc: "7140353",
+	gmcVerifyUrl:
+		"https://www.gmc-uk.org/concerns-information/gmc-online-doctor-search",
+	headshot: "/karen_sayal_image.jpeg",
 };
 
 export const nav = [
@@ -11,14 +14,15 @@ export const nav = [
 	{ to: "/conditions", label: "Conditions" },
 	{ to: "/consultations", label: "Consultations" },
 	{ to: "/conferences", label: "Conferences" },
-	{ to: "/book", label: "Book" },
+	{ to: "/insights", label: "Insights" },
+	{ to: "/#faq", label: "FAQ", hash: true },
 	{ to: "/contact", label: "Contact" },
 ] as const;
 
 export const credentials = [
 	{
-		abbr: "MA (Cantab)",
-		detail: "University of Cambridge",
+		abbr: "MB BChir (Cantab)",
+		detail: "Gonville and Caius College, University of Cambridge",
 	},
 	{
 		abbr: "MRCP",
@@ -36,25 +40,60 @@ export const credentials = [
 	{
 		abbr: "GMC",
 		detail: `Registration No. ${site.gmc}`,
+		verifyUrl: site.gmcVerifyUrl,
 	},
 ] as const;
 
 export const appointments = [
-	"Consultant Clinical Oncologist & Translational AI Innovation Lead — UCLH",
-	"Formerly: Senior Director, AI Industrialised Clinical Development — Recursion Pharmaceuticals",
-	"Formerly: Postdoctoral Fellow, AI Division — GSK Pharmaceuticals",
+	{
+		role: "Consultant Clinical Oncologist & Translational AI Innovation Lead — UCLH",
+		period: "current",
+	},
+	{
+		role: "Formerly: Senior Director, AI Industrialised Clinical Development — Recursion Pharmaceuticals",
+		period: "years to add",
+	},
+	{
+		role: "Formerly: Postdoctoral Fellow, AI Division — GSK Pharmaceuticals",
+		period: "years to add",
+	},
 ] as const;
 
 export const about = {
-	lead: "Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers.",
-	paragraphs: [
-		"She sees patients at UCLH (HCA Healthcare), The London Oncology Clinic (HCA Healthcare) and on Harley Street. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery and expanding the range of latest therapeutics available for patients.",
-		"Dr Sayal brings an unusually broad background to her clinical practice, combining rigorous medical training with senior industry experience applying artificial intelligence at the frontier of drug development. She read medicine at the University of Cambridge (MA Cantab) and trained as a physician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the Royal College of Radiologists (FRCR). She was the first NIHR-funded Academic Clinical Trainee in Clinical Oncology at the University of Oxford, and went on to complete a DPhil (Oxon) as a Cancer Research UK Clinical Research Training Fellow at the Oxford CRUK Cancer Centre — researching the tumour microenvironment in triple-negative breast cancer using spatial transcriptomics and single-cell sequencing, including a research collaboration with the Broad Institute of MIT and Harvard.",
-		"It was during her doctoral research that Dr Sayal taught herself linear algebra and statistical inference — the mathematical foundations of machine learning — a decision that shaped the next stage of her career. After her DPhil, she completed a postdoctoral fellowship in the AI division of GSK Pharmaceuticals, before being appointed Senior Director, AI Industrialised Clinical Development at Recursion Pharmaceuticals, a leading AI-driven drug discovery company, where she led work applying artificial intelligence to accelerate and de-risk clinical development at scale.",
-		"Dr Sayal now brings that experience directly into NHS and private cancer care, drawing on her dual expertise in oncology and AI to help design smarter, faster and more effective treatment pathways — while continuing to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy.",
+	heroTitle: "A clinician at the intersection of oncology and AI",
+	heroLede:
+		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. She combines specialist clinical training with a research and industry background in artificial intelligence — experience she draws on to help design treatment plans that are precise, well-informed, and built around each patient.",
+	sections: [
+		{
+			heading: "Where she practises",
+			paragraphs: [
+				"Dr Sayal sees patients at UCLH (HCA Healthcare), The London Oncology Clinic (HCA Healthcare), and on Harley Street. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
+			],
+		},
+		{
+			heading: "Clinical training & research",
+			paragraphs: [
+				"Dr Sayal read medicine at Gonville and Caius College, University of Cambridge (MB BChir Cantab) and trained as a clinician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the Royal College of Radiologists (FRCR). She was the first NIHR-funded Academic Clinical Trainee in Clinical Oncology at the University of Oxford, and went on to complete a DPhil (Oxon) as a Cancer Research UK Clinical Research Training Fellow at the Oxford CRUK Cancer Centre.",
+				"Her doctoral research examined the tumour microenvironment in triple-negative breast cancer using spatial transcriptomics and single-cell sequencing — techniques that map how individual cells within a tumour behave, and how they respond to treatment — including a research collaboration with the Broad Institute of MIT and Harvard.",
+			],
+		},
+		{
+			heading: "From research to industry AI",
+			paragraphs: [
+				"It was during her doctoral research that Dr Sayal taught herself linear algebra and statistical inference — the mathematical foundations of machine learning — a decision that shaped the next stage of her career. After her DPhil, she completed a postdoctoral fellowship in the AI division of GSK Pharmaceuticals, before being appointed Senior Director in AI Industrialised Clinical Development at Recursion Pharmaceuticals, a leading AI-driven drug discovery company, where she led work applying artificial intelligence to accelerate and de-risk clinical development at scale.",
+			],
+		},
+		{
+			heading: "Bringing it together",
+			paragraphs: [
+				"Dr Sayal brings that experience directly into the care of her own patients. Because she is personally involved in developing and testing new AI-driven technologies at UCLH, she can draw on first-hand knowledge of which emerging tools and treatments are genuinely ready to help — not simply what is already established practice — when she reviews a patient's scans, pathology and options. She continues to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy throughout, with every treatment plan still built around the individual in front of her.",
+			],
+		},
 	],
 	belief:
-		"Dr Sayal believes technology and clinical expertise should work together to give every patient a treatment plan that is accurate, timely, and genuinely personal to them.",
+		"Technology and clinical expertise should work together to give every patient a treatment plan that is accurate, timely, and genuinely personal to them.",
+	bottomCta:
+		"New patient reviews, second opinions, and ongoing monitoring appointments are available across UCLH, The London Oncology Clinic, and Harley Street.",
 };
 
 export const conditions = [
@@ -134,6 +173,28 @@ export const publications = [
 		detail: "Citation details to be confirmed.",
 	},
 ] as const;
+
+export const insights = {
+	intro:
+		"Selected commentary and posts from Dr Sayal on oncology, translational AI, and developments in cancer care.",
+	social: [
+		{
+			platform: "LinkedIn",
+			label: "Follow on LinkedIn",
+			url: "https://www.linkedin.com/",
+			description:
+				"Professional updates, conference reflections, and perspectives on oncology and AI in medicine.",
+		},
+		{
+			platform: "X",
+			label: "Follow on X",
+			url: "https://x.com/",
+			description:
+				"Shorter posts and links to talks, publications, and clinical innovation.",
+		},
+	],
+	note: "Profile URLs to be confirmed — replace the placeholder links when ready.",
+} as const;
 
 export const fees = {
 	intro:

@@ -60,15 +60,10 @@ export default {
 					from: { opacity: "0" },
 					to: { opacity: "1" },
 				},
-				"soft-pan": {
-					"0%": { transform: "scale(1.05) translate3d(0, 0, 0)" },
-					"100%": { transform: "scale(1.12) translate3d(-1.5%, -1%, 0)" },
-				},
 			},
 			animation: {
 				"fade-up": "fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
 				"fade-in": "fade-in 1.1s ease both",
-				"soft-pan": "soft-pan 28s ease-in-out alternate infinite",
 			},
 		},
 	},

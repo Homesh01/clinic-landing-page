@@ -25,12 +25,21 @@ export function Footer() {
 						<ul className="mt-4 space-y-2.5">
 							{nav.map((item) => (
 								<li key={item.to}>
-									<Link
-										to={item.to}
-										className="text-ink-soft transition-colors hover:text-accent"
-									>
-										{item.label}
-									</Link>
+									{"hash" in item && item.hash ? (
+										<a
+											href={item.to}
+											className="text-ink-soft transition-colors hover:text-accent"
+										>
+											{item.label}
+										</a>
+									) : (
+										<Link
+											to={item.to}
+											className="text-ink-soft transition-colors hover:text-accent"
+										>
+											{item.label}
+										</Link>
+									)}
 								</li>
 							))}
 						</ul>

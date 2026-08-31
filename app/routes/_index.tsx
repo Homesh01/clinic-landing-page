@@ -15,49 +15,49 @@ export const meta: MetaFunction = () => {
 export default function Index() {
 	return (
 		<>
-			<section className="relative isolate min-h-[min(92vh,52rem)] overflow-hidden">
-				<div className="absolute inset-0 -z-10">
-					<img
-						src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=2400&q=80"
-						alt=""
-						className="h-full w-full object-cover animate-soft-pan"
-					/>
-					<div className="absolute inset-0 bg-gradient-to-r from-white via-white/92 to-white/55" />
-					<div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-white/30" />
-				</div>
+			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad">
+				<div className="site-container">
+					<div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+						<div className="max-w-xl">
+							<p
+								className="font-display text-display-xl text-ink animate-fade-up"
+								style={{ animationDelay: "40ms" }}
+							>
+								{site.name}
+							</p>
+							<h1
+								className="mt-4 font-display text-display-md font-semibold text-ink animate-fade-up"
+								style={{ animationDelay: "100ms" }}
+							>
+								{site.title}
+							</h1>
+							<p
+								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
+								style={{ animationDelay: "160ms" }}
+							>
+								Specialist care in thyroid cancer and radiotherapy for
+								haematological malignancies — personalised, precise, and
+								grounded in both clinical practice and translational AI.
+							</p>
+							<div
+								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
+								style={{ animationDelay: "220ms" }}
+							>
+								<Link to="/book" className="btn-primary">
+									Book a consultation
+								</Link>
+								<Link to="/about" className="btn-secondary">
+									About Dr Sayal
+								</Link>
+							</div>
+						</div>
 
-				<div className="site-container flex min-h-[min(92vh,52rem)] flex-col justify-center py-20">
-					<div className="max-w-2xl">
-						<p
-							className="font-display text-display-xl text-ink animate-fade-up"
-							style={{ animationDelay: "40ms" }}
-						>
-							{site.name}
-						</p>
-						<h1
-							className="mt-5 max-w-xl font-display text-display-md font-medium text-ink-soft animate-fade-up"
-							style={{ animationDelay: "120ms" }}
-						>
-							Consultant Clinical Oncologist
-						</h1>
-						<p
-							className="mt-6 max-w-lg text-lg leading-relaxed text-ink-muted animate-fade-up"
-							style={{ animationDelay: "200ms" }}
-						>
-							Specialist care in thyroid cancer and radiotherapy for
-							haematological malignancies — personalised, precise, and
-							grounded in both clinical practice and translational AI.
-						</p>
-						<div
-							className="mt-10 flex flex-wrap gap-3 animate-fade-up"
-							style={{ animationDelay: "280ms" }}
-						>
-							<Link to="/book" className="btn-primary">
-								Book a consultation
-							</Link>
-							<Link to="/about" className="btn-secondary">
-								About Dr Sayal
-							</Link>
+						<div className="mx-auto w-full max-w-sm lg:max-w-none animate-fade-up" style={{ animationDelay: "180ms" }}>
+							<img
+								src={site.headshot}
+								alt={`Portrait of ${site.name}`}
+								className="headshot shadow-sm"
+							/>
 						</div>
 					</div>
 				</div>
@@ -133,7 +133,7 @@ export default function Index() {
 				</div>
 			</section>
 
-			<section className="section-pad border-t border-line">
+			<section id="faq" className="scroll-mt-28 section-pad border-t border-line">
 				<div className="site-container">
 					<div className="max-w-2xl">
 						<p className="eyebrow">FAQ</p>

@@ -2,6 +2,35 @@ import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { nav, site } from "~/data/content";
 
+function NavItem({
+	item,
+	onNavigate,
+}: {
+	item: (typeof nav)[number];
+	onNavigate: () => void;
+}) {
+	const className = ({ isActive }: { isActive: boolean }) =>
+		`text-[0.92rem] tracking-wide transition-colors ${
+			isActive
+				? "font-semibold text-accent"
+				: "text-ink-soft hover:text-accent"
+		}`;
+
+	if ("hash" in item && item.hash) {
+		return (
+			<a href={item.to} className={className({ isActive: false })} onClick={onNavigate}>
+				{item.label}
+			</a>
+		);
+	}
+
+	return (
+		<NavLink to={item.to} className={className} onClick={onNavigate}>
+			{item.label}
+		</NavLink>
+	);
+}
+
 export function Header() {
 	const [open, setOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
@@ -20,6 +49,8 @@ export function Header() {
 		};
 	}, [open]);
 
+	const close = () => setOpen(false);
+
 	return (
 		<header
 			className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
@@ -29,11 +60,7 @@ export function Header() {
 			}`}
 		>
 			<div className="site-container flex h-[4.25rem] items-center justify-between gap-6">
-				<NavLink
-					to="/"
-					className="group min-w-0"
-					onClick={() => setOpen(false)}
-				>
+				<NavLink to="/" className="group min-w-0" onClick={close}>
 					<span className="block font-display text-[1.55rem] leading-none tracking-tight text-ink transition-colors group-hover:text-accent">
 						{site.name}
 					</span>
@@ -44,19 +71,7 @@ export function Header() {
 
 				<nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
 					{nav.map((item) => (
-						<NavLink
-							key={item.to}
-							to={item.to}
-							className={({ isActive }) =>
-								`text-[0.92rem] tracking-wide transition-colors ${
-									isActive
-										? "font-semibold text-accent"
-										: "text-ink-soft hover:text-accent"
-								}`
-							}
-						>
-							{item.label}
-						</NavLink>
+						<NavItem key={item.to} item={item} onNavigate={close} />
 					))}
 					<NavLink to="/book" className="btn-primary !px-4 !py-2 text-sm">
 						Book appointment
@@ -102,27 +117,37 @@ export function Header() {
 					className="site-container flex flex-col gap-1 py-4"
 					aria-label="Mobile"
 				>
-					{nav.map((item) => (
-						<NavLink
-							key={item.to}
-							to={item.to}
-							onClick={() => setOpen(false)}
-							className={({ isActive }) =>
-								`rounded-sm px-3 py-3 text-base ${
-									isActive
-										? "bg-accent-soft font-semibold text-accent"
-										: "text-ink-soft"
-								}`
-							}
-						>
-							{item.label}
-						</NavLink>
-					))}
-					<NavLink
-						to="/book"
-						onClick={() => setOpen(false)}
-						className="btn-primary mt-2 justify-center"
-					>
+					{nav.map((item) => {
+						if ("hash" in item && item.hash) {
+							return (
+								<a
+									key={item.to}
+									href={item.to}
+									onClick={close}
+									className="rounded-sm px-3 py-3 text-base text-ink-soft"
+								>
+									{item.label}
+								</a>
+							);
+						}
+						return (
+							<NavLink
+								key={item.to}
+								to={item.to}
+								onClick={close}
+								className={({ isActive }) =>
+									`rounded-sm px-3 py-3 text-base ${
+										isActive
+											? "bg-accent-soft font-semibold text-accent"
+											: "text-ink-soft"
+									}`
+								}
+							>
+								{item.label}
+							</NavLink>
+						);
+					})}
+					<NavLink to="/book" onClick={close} className="btn-primary mt-2 justify-center">
 						Book appointment
 					</NavLink>
 				</nav>

@@ -1,6 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
-import { PageIntro } from "~/components/PageIntro";
 import {
 	about,
 	appointments,
@@ -13,7 +12,7 @@ export const meta: MetaFunction = () => {
 		{ title: `About | ${site.name}` },
 		{
 			name: "description",
-			content: about.lead,
+			content: about.heroLede,
 		},
 	];
 };
@@ -21,48 +20,122 @@ export const meta: MetaFunction = () => {
 export default function AboutPage() {
 	return (
 		<>
-			<PageIntro
-				eyebrow="About"
-				title="A clinician at the intersection of oncology and AI"
-				summary={about.lead}
-			/>
+			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad">
+				<div className="site-container">
+					<div className="grid items-start gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
+						<div>
+							<p className="eyebrow">About</p>
+							<h1 className="mt-3 max-w-2xl font-display text-display-lg text-ink">
+								{about.heroTitle}
+							</h1>
+							<p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft">
+								{about.heroLede}
+							</p>
+							<div className="mt-8 flex flex-wrap gap-3">
+								<Link to="/book" className="btn-primary">
+									Book a consultation
+								</Link>
+								<a href="#background" className="btn-secondary">
+									Read her full background ↓
+								</a>
+							</div>
+						</div>
+						<div className="mx-auto w-full max-w-xs lg:max-w-none">
+							<img
+								src={site.headshot}
+								alt={`Portrait of ${site.name}`}
+								className="headshot shadow-sm"
+							/>
+						</div>
+					</div>
+				</div>
+			</section>
 
-			<section className="section-pad">
-				<div className="site-container grid gap-14 lg:grid-cols-[1.35fr_0.85fr]">
-					<div className="prose-clinic max-w-prose">
-						{about.paragraphs.map((paragraph) => (
-							<p key={paragraph.slice(0, 48)}>{paragraph}</p>
+			<section id="background" className="scroll-mt-28 section-pad">
+				<div className="site-container grid gap-14 lg:grid-cols-[1.55fr_0.8fr]">
+					<div className="max-w-prose">
+						{about.sections.map((section) => (
+							<section key={section.heading} className="mb-10 last:mb-0">
+								<h2 className="font-display text-2xl font-semibold text-ink">
+									{section.heading}
+								</h2>
+								<div className="prose-clinic mt-4">
+									{section.paragraphs.map((paragraph) => (
+										<p key={paragraph.slice(0, 48)}>{paragraph}</p>
+									))}
+								</div>
+							</section>
 						))}
-						<blockquote className="mt-10 border-l-2 border-accent pl-5 font-display text-2xl italic leading-snug text-ink">
+
+						<blockquote className="mt-8 border-l-[3px] border-accent pl-6 font-display text-2xl italic leading-snug text-ink">
 							{about.belief}
 						</blockquote>
+
+						<div className="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-md bg-mist p-6 sm:p-7">
+							<p className="max-w-md text-[0.97rem] text-ink-soft">
+								<strong className="font-semibold text-ink">
+									Ready to arrange a consultation?
+								</strong>{" "}
+								{about.bottomCta}
+							</p>
+							<Link to="/book" className="btn-primary shrink-0">
+								Book a consultation
+							</Link>
+						</div>
 					</div>
 
-					<aside className="space-y-10 lg:pt-2">
+					<aside className="lg:sticky lg:top-28 lg:self-start">
 						<div>
 							<p className="eyebrow">Credentials</p>
-							<ul className="mt-5 space-y-5">
+							<ul className="mt-5">
 								{credentials.map((item) => (
-									<li key={item.abbr} className="border-b border-line pb-4">
+									<li
+										key={item.abbr}
+										className="border-b border-line py-4 first:border-t"
+									>
 										<p className="font-semibold text-ink">{item.abbr}</p>
-										<p className="mt-1 text-[0.95rem] text-ink-muted">
+										<p className="mt-1 text-[0.9rem] text-ink-muted">
 											{item.detail}
+											{"verifyUrl" in item && item.verifyUrl ? (
+												<>
+													{" — "}
+													<a
+														href={item.verifyUrl}
+														target="_blank"
+														rel="noreferrer"
+														className="text-accent transition-colors hover:text-accent-deep"
+													>
+														verify on the GMC register ↗
+													</a>
+												</>
+											) : null}
 										</p>
 									</li>
 								))}
 							</ul>
 						</div>
 
-						<div>
+						<div className="mt-10">
 							<p className="eyebrow">Appointments</p>
-							<ul className="mt-5 space-y-4 text-[0.95rem] text-ink-soft">
+							<ul className="mt-5 space-y-4">
 								{appointments.map((item) => (
-									<li key={item}>{item}</li>
+									<li key={item.role} className="text-[0.95rem] text-ink-soft">
+										{item.role}
+										{item.period === "current" ? (
+											<span className="ml-1 text-xs text-ink-muted">
+												(current)
+											</span>
+										) : (
+											<span className="ml-1 text-xs text-ink-muted">
+												[{item.period}]
+											</span>
+										)}
+									</li>
 								))}
 							</ul>
 						</div>
 
-						<Link to="/book" className="btn-primary">
+						<Link to="/book" className="btn-primary mt-8 w-full justify-center">
 							Book a consultation
 						</Link>
 					</aside>
