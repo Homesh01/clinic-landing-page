@@ -1,0 +1,74 @@
+Yes. I can take it one section at a time and make this practical for a UK consultant oncologist running an independent private practice.
+One correction to my earlier answer: we should not automatically assume Article 6(1)(b) for every piece of clinical processing. We should map each processing purpose separately and select the appropriate Article 6 basis. The ICO requires both an Article 6 lawful basis and an Article 9 condition for health data, determined and documented before processing. Information Commissioner's Office
+I suggest we build it in this order:
+1. Cloudflare domain
+   - Buy and configure the domain
+   - Registrar/security settings
+   - DNS
+   - DNSSEC
+   - Avoiding patient information in Cloudflare unnecessarily
+2. Google Workspace
+   - Which Workspace account/edition
+   - Domain verification
+   - Professional addresses such as admin@... and clinical@...
+   - Google data-processing terms
+   - Administrator account
+   - Email authentication: SPF, DKIM and DMARC
+   - Whether/how Google should process patient data
+3. UK GDPR / data-controller documentation
+   - Identify who the controller is
+   - ICO registration/data-protection fee
+   - Record of processing activities
+   - Data processors
+   - Data-sharing arrangements
+   - Retention policy
+   - Breach procedure
+   - Subject access requests
+   - International transfers
+4. Article 6 + Article 9 lawful-basis matrix
+   We'll document separately:
+   - providing oncology care;
+   - communicating with patients;
+   - receiving referrals;
+   - communicating with GPs/private hospitals;
+   - billing;
+   - legal/regulatory record keeping;
+   - emergencies;
+   - marketing, if any.
+   Health data requires both an Article 6 basis and an Article 9 condition. For provision of healthcare, Article 9(2)(h) together with the relevant UK-law condition in DPA 2018 Schedule 1 Part 1 is particularly important. Information Commissioner's Office
+5. Patient privacy notice
+   I'll draft a usable notice covering identity of the controller, information collected, purposes, lawful bases, health information, recipients/processors including relevant cloud providers, international transfers, retention, patient rights, ICO complaints and contact details.
+   These are among the transparency disclosures required by UK GDPR Articles 13/14. Information Commissioner's Office
+6. Patient email communication preferences
+   Separate from the GDPR lawful basis for medical processing. We'll create wording covering:
+   - patient's preferred email address;
+   - permission/preference for receiving clinical correspondence electronically;
+   - reports and letters;
+   - limitations/security risks of ordinary email;
+   - circumstances where email shouldn't be used;
+   - emergency instructions;
+   - changing communication preferences.
+7. Google Workspace security
+   We'll go through the Admin Console setting-by-setting, including:
+   - mandatory MFA;
+   - administrator-account separation;
+   - recovery security;
+   - device security;
+   - session controls;
+   - forwarding restrictions;
+   - third-party application/OAuth controls;
+   - Drive sharing;
+   - audit logs;
+   - SPF/DKIM/DMARC;
+   - account suspension/deletion;
+   - retention;
+   - backup/recovery considerations.
+8. DPIA
+   We'll produce a DPIA specifically for:
+   “Use of Google Workspace for private oncology patient communications and clinical information.”
+   It will cover data flows, necessity/proportionality, special-category data, processors, threats, accidental disclosure, account compromise, patient-side email risks, international transfers, likelihood/severity and mitigations. A DPIA is required where processing is likely to result in high risk; the ICO specifically highlights this obligation in its special-category-data guidance. Information Commissioner's Office
+9. Safe operating procedure for patient email
+   Finally, we'll create the actual SOP you follow every day:
+   Patient emails → identity/address verification → minimum necessary information → recipient verification → attachments/results → sending → documenting correspondence in clinical record → retention → handling replies → misdirected email/data breach procedure.
+This distinction is important: Google Workspace configuration is only one layer. GDPR compliance comes from the complete combination of lawful processing, documentation, contracts/processors, technical security and your clinical operating procedures.
+The ICO's current privacy-information guidance is also under review following the Data (Use and Access) Act 2025, so we'll use current UK requirements rather than relying on an old generic GDPR template.
