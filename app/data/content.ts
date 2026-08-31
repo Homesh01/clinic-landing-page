@@ -14,7 +14,7 @@ export const nav = [
 	{ to: "/conditions", label: "Conditions" },
 	{ to: "/consultations", label: "Consultations" },
 	{ to: "/conferences", label: "Conferences" },
-	{ to: "/insights", label: "Insights" },
+	{ to: "/blog", label: "Blog" },
 	{ to: "/#faq", label: "FAQ", hash: true },
 	{ to: "/contact", label: "Contact" },
 ] as const;
@@ -174,7 +174,7 @@ export const publications = [
 	},
 ] as const;
 
-export const insights = {
+export const blog = {
 	intro:
 		"Selected commentary and posts from Dr Sayal on oncology, translational AI, and developments in cancer care.",
 	social: [

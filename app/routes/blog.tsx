@@ -1,35 +1,35 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { PageIntro } from "~/components/PageIntro";
-import { insights, site } from "~/data/content";
+import { blog, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: `Insights | ${site.name}` },
+		{ title: `Blog | ${site.name}` },
 		{
 			name: "description",
-			content: insights.intro,
+			content: blog.intro,
 		},
 	];
 };
 
-export default function InsightsPage() {
+export default function BlogPage() {
 	return (
 		<>
 			<PageIntro
-				eyebrow="Insights"
+				eyebrow="Blog"
 				title="Commentary and professional updates"
-				summary={insights.intro}
+				summary={blog.intro}
 			/>
 
 			<section className="section-pad">
 				<div className="site-container max-w-3xl">
-					<p className="text-sm text-ink-muted">{insights.note}</p>
+					<p className="text-sm text-ink-muted">{blog.note}</p>
 
 					<ul className="mt-10 space-y-6">
-						{insights.social.map((item) => (
+						{blog.social.map((item) => (
 							<li
 								key={item.platform}
-								className="border border-line rounded-md bg-cream/50 p-6 sm:p-8"
+								className="rounded-md border border-line bg-cream/50 p-6 sm:p-8"
 							>
 								<p className="eyebrow">{item.platform}</p>
 								<h2 className="mt-3 font-display text-3xl text-ink">
