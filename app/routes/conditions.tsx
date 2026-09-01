@@ -157,7 +157,7 @@ export default function ConditionsPage() {
 							to="/book"
 							className="inline-flex shrink-0 items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-accent-deep transition hover:bg-accent-soft"
 						>
-							Book a consultation →
+							Book a consultation
 						</Link>
 					</div>
 				</div>

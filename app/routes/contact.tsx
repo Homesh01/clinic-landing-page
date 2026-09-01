@@ -58,11 +58,11 @@ export default function ContactPage() {
 								<p>{contact.phone}</p>
 							</div>
 							<Link to="/book" className="btn-primary mt-8">
-								Book online
+								Book a consultation
 							</Link>
 						</div>
 
-						<div className="border-t border-line pt-10">
+						<div id="fees" className="scroll-mt-28 border-t border-line pt-10">
 							<p className="eyebrow">Fees &amp; insurance</p>
 							<p className="mt-5 text-lg text-ink-soft">{fees.intro}</p>
 							<ul className="mt-6 space-y-3 text-ink-muted">

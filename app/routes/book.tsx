@@ -6,7 +6,7 @@ import { booking, contact, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: `Book an appointment | ${site.name}` },
+		{ title: `Book a consultation | ${site.name}` },
 		{
 			name: "description",
 			content: booking.intro,
@@ -49,7 +49,7 @@ export default function BookPage() {
 	return (
 		<>
 			<PageIntro
-				eyebrow="Book an appointment"
+				eyebrow="Book a consultation"
 				title="Choose a time that works for you"
 				summary={booking.intro}
 			/>
@@ -207,7 +207,7 @@ export default function BookPage() {
 										className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
 										disabled={!selectedDay || !selectedSlot}
 									>
-										Request appointment
+										Request a consultation
 										{selectedSlot ? ` · ${selectedSlot}` : ""}
 									</button>
 								</Form>

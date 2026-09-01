@@ -71,16 +71,13 @@ export default function AboutPage() {
 							{about.belief}
 						</blockquote>
 
-						<div className="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-md bg-mist p-6 sm:p-7">
-							<p className="max-w-md text-[0.97rem] text-ink-soft">
+						<div className="mt-12 rounded-md bg-mist p-6 sm:p-7">
+							<p className="max-w-prose text-[0.97rem] text-ink-soft">
 								<strong className="font-semibold text-ink">
 									Ready to arrange a consultation?
 								</strong>{" "}
 								{about.bottomCta}
 							</p>
-							<Link to="/book" className="btn-primary shrink-0">
-								Book a consultation
-							</Link>
 						</div>
 					</div>
 
@@ -131,10 +128,6 @@ export default function AboutPage() {
 								))}
 							</ul>
 						</div>
-
-						<Link to="/book" className="btn-primary mt-8 w-full justify-center">
-							Book a consultation
-						</Link>
 					</aside>
 				</div>
 			</section>

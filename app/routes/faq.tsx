@@ -1,74 +1,36 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
-import { consultationsPage, services, site } from "~/data/content";
+import { FaqAccordion } from "~/components/FaqAccordion";
+import { faqPage, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: `Consultations | ${site.name}` },
+		{ title: `FAQ | ${site.name}` },
 		{
 			name: "description",
-			content: consultationsPage.lede,
+			content: faqPage.lede,
 		},
 	];
 };
 
-export default function ConsultationsPage() {
+export default function FaqPage() {
 	return (
 		<>
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
-					<p className="eyebrow">Consultations &amp; services</p>
+					<p className="eyebrow">FAQ</p>
 					<h1 className="mt-3 max-w-3xl font-display text-display-lg text-ink">
-						{consultationsPage.title}
+						{faqPage.title}
 					</h1>
 					<p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
-						{consultationsPage.lede}
-					</p>
-					<p className="mt-4 max-w-2xl text-[0.97rem] italic text-accent">
-						{consultationsPage.reassure}
+						{faqPage.lede}
 					</p>
 				</div>
 			</section>
 
 			<section className="pb-6">
 				<div className="site-container">
-					<ol className="list-none m-0 p-0">
-						{services.map((service, index) => (
-							<li
-								key={service.title}
-								className="grid gap-5 border-t border-line py-9 sm:grid-cols-[70px_1fr] sm:gap-6"
-							>
-								<span className="font-display text-2xl text-accent/70 pt-1">
-									{String(index + 1).padStart(2, "0")}
-								</span>
-								<div>
-									<h2 className="font-display text-[1.65rem] text-ink">
-										{service.title}
-									</h2>
-									<p className="mt-3 max-w-xl text-[0.97rem] leading-relaxed text-ink-soft">
-										{service.description}
-									</p>
-									{"tags" in service && service.tags ? (
-										<div className="mt-1">
-											{service.tags.map((tag) => (
-												<span
-													key={tag.label}
-													className={
-														tag.variant === "green"
-															? "tag-green"
-															: "tag-teal"
-													}
-												>
-													{tag.label}
-												</span>
-											))}
-										</div>
-									) : null}
-								</div>
-							</li>
-						))}
-					</ol>
-					<div className="border-b border-line" />
+					<FaqAccordion groups={faqPage.groups} />
 				</div>
 			</section>
 
@@ -77,10 +39,10 @@ export default function ConsultationsPage() {
 					<div className="flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11">
 						<div className="max-w-xl">
 							<h2 className="font-display text-3xl text-white">
-								{consultationsPage.callout.title}
+								{faqPage.callout.title}
 							</h2>
 							<p className="mt-3 text-[0.97rem] text-white/75">
-								{consultationsPage.callout.body}
+								{faqPage.callout.body}
 							</p>
 						</div>
 						<div className="flex shrink-0 flex-wrap gap-3">

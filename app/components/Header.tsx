@@ -2,35 +2,6 @@ import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { nav, site } from "~/data/content";
 
-function NavItem({
-	item,
-	onNavigate,
-}: {
-	item: (typeof nav)[number];
-	onNavigate: () => void;
-}) {
-	const className = ({ isActive }: { isActive: boolean }) =>
-		`text-[0.92rem] tracking-wide transition-colors ${
-			isActive
-				? "font-semibold text-accent"
-				: "text-ink-soft hover:text-accent"
-		}`;
-
-	if ("hash" in item && item.hash) {
-		return (
-			<a href={item.to} className={className({ isActive: false })} onClick={onNavigate}>
-				{item.label}
-			</a>
-		);
-	}
-
-	return (
-		<NavLink to={item.to} className={className} onClick={onNavigate}>
-			{item.label}
-		</NavLink>
-	);
-}
-
 export function Header() {
 	const [open, setOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
@@ -50,6 +21,13 @@ export function Header() {
 	}, [open]);
 
 	const close = () => setOpen(false);
+
+	const linkClass = ({ isActive }: { isActive: boolean }) =>
+		`text-[0.92rem] tracking-wide transition-colors ${
+			isActive
+				? "font-semibold text-accent"
+				: "text-ink-soft hover:text-accent"
+		}`;
 
 	return (
 		<header
@@ -71,10 +49,17 @@ export function Header() {
 
 				<nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
 					{nav.map((item) => (
-						<NavItem key={item.to} item={item} onNavigate={close} />
+						<NavLink
+							key={item.to}
+							to={item.to}
+							className={linkClass}
+							onClick={close}
+						>
+							{item.label}
+						</NavLink>
 					))}
 					<NavLink to="/book" className="btn-primary !px-4 !py-2 text-sm">
-						Book appointment
+						Book a consultation
 					</NavLink>
 				</nav>
 
@@ -117,38 +102,28 @@ export function Header() {
 					className="site-container flex flex-col gap-1 py-4"
 					aria-label="Mobile"
 				>
-					{nav.map((item) => {
-						if ("hash" in item && item.hash) {
-							return (
-								<a
-									key={item.to}
-									href={item.to}
-									onClick={close}
-									className="rounded-sm px-3 py-3 text-base text-ink-soft"
-								>
-									{item.label}
-								</a>
-							);
-						}
-						return (
-							<NavLink
-								key={item.to}
-								to={item.to}
-								onClick={close}
-								className={({ isActive }) =>
-									`rounded-sm px-3 py-3 text-base ${
-										isActive
-											? "bg-accent-soft font-semibold text-accent"
-											: "text-ink-soft"
-									}`
-								}
-							>
-								{item.label}
-							</NavLink>
-						);
-					})}
-					<NavLink to="/book" onClick={close} className="btn-primary mt-2 justify-center">
-						Book appointment
+					{nav.map((item) => (
+						<NavLink
+							key={item.to}
+							to={item.to}
+							onClick={close}
+							className={({ isActive }) =>
+								`rounded-sm px-3 py-3 text-base ${
+									isActive
+										? "bg-accent-soft font-semibold text-accent"
+										: "text-ink-soft"
+								}`
+							}
+						>
+							{item.label}
+						</NavLink>
+					))}
+					<NavLink
+						to="/book"
+						onClick={close}
+						className="btn-primary mt-2 justify-center"
+					>
+						Book a consultation
 					</NavLink>
 				</nav>
 			</div>

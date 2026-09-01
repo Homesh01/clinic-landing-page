@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { conditions, faqs, services, site } from "~/data/content";
+import { conditions, faqPage, services, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -133,60 +133,47 @@ export default function Index() {
 				</div>
 			</section>
 
-			<section id="faq" className="scroll-mt-28 section-pad border-t border-line">
+			<section className="section-pad border-t border-line bg-cream/40">
 				<div className="site-container">
 					<div className="max-w-2xl">
 						<p className="eyebrow">FAQ</p>
 						<h2 className="mt-3 font-display text-display-md text-ink">
-							Common questions before your visit
+							{faqPage.title}
 						</h2>
 						<p className="mt-4 text-lg text-ink-soft">
-							A short guide to referrals, clinics, consultations, and how care
-							is arranged.
+							Common questions about referrals, appointments, treatments, and
+							clinic locations — with clear answers before you book.
 						</p>
-					</div>
-
-					<div className="mt-12 max-w-3xl divide-y divide-line border-y border-line">
-						{faqs.map((faq) => (
-							<details key={faq.question} className="group py-5">
-								<summary className="flex cursor-pointer list-none items-start justify-between gap-6 marker:content-none [&::-webkit-details-marker]:hidden">
-									<span className="font-display text-2xl text-ink">
-										{faq.question}
-									</span>
-									<span
-										aria-hidden="true"
-										className="mt-2 text-accent transition group-open:rotate-45"
-									>
-										+
-									</span>
-								</summary>
-								<p className="mt-4 max-w-2xl text-ink-soft">{faq.answer}</p>
-							</details>
-						))}
+						<Link to="/faq" className="link-underline mt-8">
+							View all FAQs
+							<span aria-hidden="true">→</span>
+						</Link>
 					</div>
 				</div>
 			</section>
 
-			<section className="section-pad !pt-0">
-				<div className="site-container overflow-hidden rounded-sm bg-ink px-8 py-14 text-white sm:px-12 sm:py-16">
-					<div className="max-w-2xl">
-						<p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/55">
-							Appointments
-						</p>
-						<h2 className="mt-4 font-display text-display-md text-white">
-							Book online, or speak with the practice team
-						</h2>
-						<p className="mt-4 text-lg text-white/75">
-							View available slots and request a consultation at a time that
-							suits you. Clinics at UCLH (HCA), The London Oncology Clinic,
-							and Harley Street.
-						</p>
-						<div className="mt-8 flex flex-wrap gap-3">
+			<section className="section-pad">
+				<div className="site-container">
+					<div className="flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11">
+						<div className="max-w-xl">
+							<p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/55">
+								Appointments
+							</p>
+							<h2 className="mt-3 font-display text-3xl text-white">
+								Book a consultation, or speak with the practice team
+							</h2>
+							<p className="mt-3 text-[0.97rem] text-white/75">
+								View available slots and request a consultation at a time that
+								suits you. Clinics at UCLH (HCA), The London Oncology Clinic,
+								and Harley Street.
+							</p>
+						</div>
+						<div className="flex shrink-0 flex-wrap gap-3">
 							<Link
 								to="/book"
-								className="inline-flex items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-ink transition hover:bg-cream"
+								className="inline-flex items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-accent-deep transition hover:bg-accent-soft"
 							>
-								Book now
+								Book a consultation
 							</Link>
 							<Link
 								to="/contact"

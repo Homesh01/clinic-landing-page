@@ -15,9 +15,6 @@ export function Footer() {
 							Specialist care in thyroid cancer and radiotherapy for
 							haematological malignancies, with clinics in central London.
 						</p>
-						<Link to="/book" className="btn-primary mt-8">
-							Book a consultation
-						</Link>
 					</div>
 
 					<div>
@@ -25,21 +22,12 @@ export function Footer() {
 						<ul className="mt-4 space-y-2.5">
 							{nav.map((item) => (
 								<li key={item.to}>
-									{"hash" in item && item.hash ? (
-										<a
-											href={item.to}
-											className="text-ink-soft transition-colors hover:text-accent"
-										>
-											{item.label}
-										</a>
-									) : (
-										<Link
-											to={item.to}
-											className="text-ink-soft transition-colors hover:text-accent"
-										>
-											{item.label}
-										</Link>
-									)}
+									<Link
+										to={item.to}
+										className="text-ink-soft transition-colors hover:text-accent"
+									>
+										{item.label}
+									</Link>
 								</li>
 							))}
 						</ul>

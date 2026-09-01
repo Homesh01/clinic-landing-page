@@ -9,12 +9,12 @@ export const site = {
 };
 
 export const nav = [
-	{ to: "/about", label: "About" },
+	{ to: "/", label: "Home" },
 	{ to: "/conditions", label: "Conditions" },
 	{ to: "/consultations", label: "Consultations" },
 	{ to: "/conferences", label: "Conferences" },
 	{ to: "/blog", label: "Blog" },
-	{ to: "/#faq", label: "FAQ", hash: true },
+	{ to: "/faq", label: "FAQ" },
 	{ to: "/contact", label: "Contact" },
 ] as const;
 
@@ -197,33 +197,143 @@ export const conditions = [
 	},
 ] as const;
 
+export const consultationsPage = {
+	title: "Care built around you",
+	lede:
+		"Every patient's path is different. Whatever stage you are at, whether a new diagnosis, a second opinion, or ongoing monitoring, each appointment is designed to give you clarity, a clear range of treatment options, and a written plan you can return to.",
+	reassure: "You will always understand what is being recommended, and why.",
+	callout: {
+		title: "Ready to take the next step?",
+		body:
+			"Book a consultation at a time that suits you, or speak with the practice team about fees, insurance, and what to expect before your first visit.",
+	},
+};
+
 export const services = [
 	{
 		title: "New Patient Consultation",
 		description:
-			"Review of scans and pathology, discussion of options, and a written treatment plan.",
+			"A thorough review of your scans and pathology, an unhurried discussion of the options available to you, and a written treatment plan you can take away and reflect on.",
 	},
 	{
 		title: "Second Opinion",
 		description:
-			"An independent review of diagnosis and proposed treatment.",
+			"An independent review of your diagnosis and proposed treatment, helpful when you would simply like reassurance, or want to understand all of your options before deciding how to proceed.",
 	},
 	{
-		title: "Radiotherapy Planning & Delivery",
+		title: "Personalised Treatment Planning",
 		description:
-			"For thyroid cancer and haematological malignancies.",
+			"Treatment is planned around your specific cancer, not a single fixed protocol applied to everyone. This may include diagnostics, radiotherapy, systemic (drug) therapy, or a combination of these. For example, thyroid cancer is often managed with systemic therapy as well as radiotherapy, depending on what is right for you.",
+		tags: [
+			{ label: "Diagnostics", variant: "green" as const },
+			{ label: "Radiotherapy", variant: "teal" as const },
+			{ label: "Systemic therapy", variant: "teal" as const },
+		],
 	},
 	{
 		title: "Ongoing Treatment & Monitoring",
 		description:
-			"Regular review appointments during and after treatment.",
+			"Regular review appointments during and after treatment, so you always know what to expect next and are never navigating your care alone.",
 	},
 	{
 		title: "Virtual Consultations",
 		description:
-			"Video appointments for patients unable to attend in person.",
+			"Video appointments for patients who prefer, or are unable, to attend in person, with the same care and attention, wherever you are joining from.",
 	},
 ] as const;
+
+export const faqPage = {
+	title: "Answers to help you feel prepared",
+	lede:
+		"Here are some common questions patients ask before their first appointment and during their care. If you cannot find what you are looking for, please contact the practice team directly.",
+	callout: {
+		title: "Still have a question?",
+		body:
+			"The practice team is happy to help before you book. Arrange a consultation online, or ask about fees, insurance, and what to expect at your first visit.",
+	},
+	groups: [
+		{
+			title: "Before your visit",
+			items: [
+				{
+					question: "Do I need a referral to book a consultation?",
+					answer:
+						"A referral from your general practitioner or another specialist is often helpful, but second opinion and private consultations can usually be arranged directly. The practice team can advise on what is needed before your appointment.",
+				},
+				{
+					question: "How soon can I be seen?",
+					answer:
+						"The practice team will always try to arrange your appointment as soon as possible, especially for a new diagnosis. Exact timing depends on your circumstances and clinic availability, so please contact the practice team directly to discuss this.",
+				},
+				{
+					question: "What should I bring to my first appointment?",
+					answer:
+						"Please bring any referral letters, scans, or pathology reports you have, a list of your current medications, and your insurer details if you are using private medical insurance. If you are unsure what is needed, the practice team can advise you in advance.",
+				},
+				{
+					question: "Is private medical insurance accepted?",
+					answer:
+						"Yes. Dr Sayal accepts patients funded through private medical insurance as well as those paying for their own care. Fees and insurer details are confirmed before your first appointment.",
+				},
+			],
+		},
+		{
+			title: "Your appointment",
+			items: [
+				{
+					question: "What happens at a first consultation?",
+					answer:
+						"Your first appointment typically includes a review of your scans and pathology, an unhurried discussion of your diagnosis and options, and a clear written treatment plan so you know the recommended next steps.",
+				},
+				{
+					question: "Can I bring a family member or friend with me?",
+					answer:
+						"Yes. Many patients find it helpful to have a family member, friend, or carer with them for support, and to help take in the information discussed during the appointment.",
+				},
+				{
+					question: "What treatments does Dr Sayal offer?",
+					answer:
+						"Treatment is planned around your specific cancer rather than a single approach used for everyone. Depending on what is right for you, this may include diagnostics, radiotherapy, systemic (drug) therapy, or a combination of these. For example, thyroid cancer is often managed with systemic therapy as well as radiotherapy.",
+					tags: [
+						{ label: "Diagnostics", variant: "green" as const },
+						{ label: "Radiotherapy", variant: "teal" as const },
+						{ label: "Systemic therapy", variant: "teal" as const },
+					],
+				},
+			],
+		},
+		{
+			title: "Conditions and ongoing care",
+			items: [
+				{
+					question: "What conditions does Dr Sayal treat?",
+					answer:
+						"Dr Sayal specialises in thyroid cancer and haematological malignancies, including lymphoma, leukaemia, and myeloma. Each patient is treated with the combination of diagnostics, radiotherapy, and systemic therapy best suited to them, as part of a multidisciplinary team.",
+				},
+				{
+					question: "Can I request a second opinion?",
+					answer:
+						"Yes. Second opinion consultations provide an independent review of your diagnosis and proposed treatment, which can help you feel confident about the pathway ahead.",
+				},
+				{
+					question: "Who can I contact if I have concerns during treatment?",
+					answer:
+						"The practice team is available to answer questions between appointments. If you have concerns about symptoms or side effects during treatment, please contact the practice directly so you can be advised or seen promptly.",
+				},
+			],
+		},
+		{
+			title: "Locations",
+			items: [
+				{
+					question: "Where are clinics held?",
+					answer:
+						"Dr Sayal sees patients at University College London Hospitals, The London Oncology Clinic, and on Harley Street, all part of HCA Healthcare. Virtual consultations are also available where appropriate.",
+				},
+			],
+		},
+	],
+} as const;
 
 export const conferences = [
 	{
@@ -314,36 +424,3 @@ export const booking = {
 		"Booking an appointment with Dr Sayal is simple — use the calendar below to view available slots and book a consultation online, or contact the secretary directly.",
 	note: "Online booking calendar placeholder — connect your preferred booking platform (e.g. Calendly, Cliniko, or HCA booking) when ready.",
 };
-
-export const faqs = [
-	{
-		question: "What conditions does Dr Sayal treat?",
-		answer:
-			"Dr Sayal specialises in thyroid cancer and radiotherapy for haematological malignancies, including lymphoma, leukaemia and myeloma. Care is delivered as part of a multidisciplinary team.",
-	},
-	{
-		question: "Do I need a referral to book a consultation?",
-		answer:
-			"A GP or specialist referral is often helpful, but second-opinion and private consultations can usually be arranged directly. The practice team can advise on what is needed before your appointment.",
-	},
-	{
-		question: "Where are clinics held?",
-		answer:
-			"Dr Sayal sees patients at UCLH (HCA Healthcare), The London Oncology Clinic (HCA Healthcare), and on Harley Street. Virtual consultations are also available where appropriate.",
-	},
-	{
-		question: "What happens at a first consultation?",
-		answer:
-			"Your first appointment typically includes a review of scans and pathology, discussion of diagnosis and options, and a clear written treatment plan so you know the recommended next steps.",
-	},
-	{
-		question: "Is private medical insurance accepted?",
-		answer:
-			"Yes. Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Fees and insurer details are confirmed before your first appointment.",
-	},
-	{
-		question: "Can I request a second opinion?",
-		answer:
-			"Yes. Second-opinion consultations provide an independent review of diagnosis and proposed treatment, which can help you feel confident about the pathway ahead.",
-	},
-] as const;
