@@ -44,7 +44,7 @@ export default function AboutPage() {
 							<img
 								src={site.headshot}
 								alt={`Portrait of ${site.name}`}
-								className="headshot shadow-sm"
+								className="headshot"
 							/>
 						</div>
 					</div>
@@ -95,20 +95,21 @@ export default function AboutPage() {
 									>
 										<p className="font-semibold text-ink">{item.abbr}</p>
 										<p className="mt-1 text-[0.9rem] text-ink-muted">
-											{item.detail}
-											{"verifyUrl" in item && item.verifyUrl ? (
+											{item.abbr === "GMC" ? (
 												<>
-													{" — "}
+													Registration No.{" "}
 													<a
-														href={item.verifyUrl}
+														href={site.gmcVerifyUrl}
 														target="_blank"
 														rel="noreferrer"
 														className="text-accent transition-colors hover:text-accent-deep"
 													>
-														verify on the GMC register ↗
+														{site.gmc}
 													</a>
 												</>
-											) : null}
+											) : (
+												item.detail
+											)}
 										</p>
 									</li>
 								))}
@@ -121,15 +122,11 @@ export default function AboutPage() {
 								{appointments.map((item) => (
 									<li key={item.role} className="text-[0.95rem] text-ink-soft">
 										{item.role}
-										{item.period === "current" ? (
+										{"current" in item && item.current ? (
 											<span className="ml-1 text-xs text-ink-muted">
 												(current)
 											</span>
-										) : (
-											<span className="ml-1 text-xs text-ink-muted">
-												[{item.period}]
-											</span>
-										)}
+										) : null}
 									</li>
 								))}
 							</ul>

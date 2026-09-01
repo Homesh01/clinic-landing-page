@@ -56,7 +56,7 @@ export default function Index() {
 							<img
 								src={site.headshot}
 								alt={`Portrait of ${site.name}`}
-								className="headshot shadow-sm"
+								className="headshot"
 							/>
 						</div>
 					</div>

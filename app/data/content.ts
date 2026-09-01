@@ -4,9 +4,8 @@ export const site = {
 	tagline:
 		"Personalised cancer care for thyroid malignancies and radiotherapy for haematological cancers — informed by clinical expertise and translational AI.",
 	gmc: "7140353",
-	gmcVerifyUrl:
-		"https://www.gmc-uk.org/concerns-information/gmc-online-doctor-search",
-	headshot: "/karen_sayal_image.jpeg",
+	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
+	headshot: "/karen_sayal_image-nobg.png",
 };
 
 export const nav = [
@@ -40,22 +39,19 @@ export const credentials = [
 	{
 		abbr: "GMC",
 		detail: `Registration No. ${site.gmc}`,
-		verifyUrl: site.gmcVerifyUrl,
 	},
 ] as const;
 
 export const appointments = [
 	{
 		role: "Consultant Clinical Oncologist & Translational AI Innovation Lead — UCLH",
-		period: "current",
+		current: true,
 	},
 	{
 		role: "Formerly: Senior Director, AI Industrialised Clinical Development — Recursion Pharmaceuticals",
-		period: "years to add",
 	},
 	{
 		role: "Formerly: Postdoctoral Fellow, AI Division — GSK Pharmaceuticals",
-		period: "years to add",
 	},
 ] as const;
 
@@ -96,20 +92,108 @@ export const about = {
 		"New patient reviews, second opinions, and ongoing monitoring appointments are available across UCLH, The London Oncology Clinic, and Harley Street.",
 };
 
+export const conditionsPage = {
+	title: "Understanding your diagnosis, and the care that follows",
+	lede:
+		"Clear, straightforward information about the conditions Dr Sayal treats: what they mean, how they are treated, and what you can expect at each step, from your first appointment onwards.",
+	quote:
+		"A cancer diagnosis brings a great deal of uncertainty. My aim is always to make sure you understand what is happening, what your options are, and why we are recommending a particular path, so that you feel informed and involved at every stage of your care.",
+	quoteAttr: "Dr Karen Sayal, Consultant Clinical Oncologist",
+	reassure: {
+		strong: "Not sure where your diagnosis fits?",
+		text: "You don't need to work it out alone. Get in touch and we will help you understand your options.",
+	},
+	trust: {
+		title: "Care that's coordinated around you, not around a department",
+		lede:
+			"Cancer care rarely involves just one specialist. Dr Sayal works as part of a multidisciplinary team (MDT) alongside surgeons, haematologists and specialist nurses, so your case is reviewed from every angle and everyone involved in your care works from the same plan.",
+		points: [
+			{
+				title: "One plan, not several opinions to reconcile",
+				description:
+					"Your specialists discuss your case together, so you're not left piecing together advice from different teams.",
+			},
+			{
+				title: "You're kept in the loop",
+				description:
+					"Decisions are explained to you in plain language, with time for your questions, not simply handed down.",
+			},
+			{
+				title: "Continuity throughout treatment",
+				description:
+					"The same team follows your case from diagnosis through to follow-up care.",
+			},
+		],
+	},
+	callout: {
+		title: "Recently diagnosed and not sure what happens next?",
+		body:
+			"You don't need a referral in hand to ask a question. Get in touch and we'll help you understand your options, at your own pace.",
+	},
+};
+
 export const conditions = [
 	{
 		slug: "thyroid-cancer",
+		icon: "thyroid" as const,
 		title: "Thyroid Cancer",
 		summary:
 			"Expert diagnosis, treatment planning and ongoing care for patients with thyroid cancer.",
 		body: "Dr Sayal provides expert diagnosis, treatment planning and ongoing care for patients with thyroid cancer, including differentiated (papillary and follicular), medullary and anaplastic subtypes. This includes staging, radioactive iodine therapy planning, external beam radiotherapy where indicated, and systemic treatment, delivered in close collaboration with endocrine surgeons and specialist nurses.",
+		plain:
+			"A cancer that develops in the thyroid gland at the front of your neck. Most thyroid cancers, particularly the papillary and follicular types, respond well to treatment, especially when caught and managed early.",
+		howWeHelp: [
+			"Diagnosis and staging across all thyroid cancer types, including papillary, follicular, medullary and anaplastic, so you understand exactly what you are facing.",
+			"Radioactive iodine therapy, a treatment specific to thyroid cancer, planned around your individual case.",
+			"External beam radiotherapy, where this is the right option for your situation.",
+			"Systemic (medication-based) treatment, when appropriate.",
+			"Joined-up care with your endocrine surgeon and specialist nurses, so nothing falls between the gaps.",
+		],
+		whatToExpect: [
+			{
+				title: "Your first consultation",
+				text: "we will talk through your diagnosis, scans and pathology results in plain language, and answer your questions.",
+			},
+			{
+				title: "A treatment plan built with you",
+				text: "agreed together, not simply decided for you.",
+			},
+			{
+				title: "Ongoing follow up",
+				text: "regular reviews and support during and after treatment.",
+			},
+		],
+		ctaLabel: "Talk to Dr Sayal about thyroid cancer",
 	},
 	{
 		slug: "haematological-cancers",
-		title: "Radiotherapy for Haematological Cancers",
+		icon: "blood" as const,
+		title: "Lymphoma, Leukaemia & Myeloma",
 		summary:
 			"Radiotherapy planning and delivery for lymphoma, leukaemia and myeloma.",
 		body: "Dr Sayal offers radiotherapy planning and delivery for patients with haematological malignancies, including lymphoma, leukaemia and myeloma, working alongside haematologists as part of a multidisciplinary team to integrate radiotherapy with systemic treatment.",
+		plain:
+			"If you have been diagnosed with a blood cancer such as lymphoma, leukaemia or myeloma, radiotherapy may form part of your treatment plan, often alongside chemotherapy or other treatment led by your haematologist.",
+		howWeHelp: [
+			"Planning and delivering radiotherapy tailored to your specific diagnosis and stage.",
+			"Working directly with your haematology team, so radiotherapy is integrated with your wider treatment rather than a separate, disconnected step.",
+			"Explaining clearly what your radiotherapy involves, how long it takes, and what to expect during and after.",
+		],
+		whatToExpect: [
+			{
+				title: "Referral from your haematologist",
+				text: "Dr Sayal joins your existing care team rather than starting from scratch.",
+			},
+			{
+				title: "A planning appointment",
+				text: "scans and measurements to target your treatment precisely.",
+			},
+			{
+				title: "Treatment sessions",
+				text: "typically short, outpatient appointments, with support throughout.",
+			},
+		],
+		ctaLabel: "Ask about radiotherapy for blood cancers",
 	},
 ] as const;
 

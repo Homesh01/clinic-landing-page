@@ -67,7 +67,35 @@
 	}
 
 	.headshot {
-		@apply aspect-[4/5] w-full rounded-md border border-line object-cover object-top;
+		@apply aspect-[4/5] w-full object-cover object-top;
+	}
+
+	.list-plain li {
+		@apply relative mb-2.5 pl-6 text-[0.97rem] text-ink-soft last:mb-0;
+	}
+
+	.list-plain li::before {
+		content: "";
+		@apply absolute left-0 top-[0.55rem] h-1.5 w-1.5 rounded-full bg-accent;
+	}
+
+	.list-steps {
+		counter-reset: step;
+		@apply list-none m-0 p-0;
+	}
+
+	.list-steps li {
+		counter-increment: step;
+		@apply relative mb-4 pl-10 text-[0.97rem] text-ink-soft last:mb-0;
+	}
+
+	.list-steps li::before {
+		content: counter(step);
+		@apply absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-white;
+	}
+
+	.btn-outline {
+		@apply inline-flex items-center justify-center gap-2 rounded-sm border border-accent px-5 py-2.5 text-[0.92rem] font-semibold text-accent transition hover:bg-accent-soft;
 	}
 
 	.divider-line {
