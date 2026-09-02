@@ -221,7 +221,7 @@ export default function BookPage() {
 							Contact the practice team
 						</h2>
 						<p className="mt-4 text-ink-soft">
-							If you would rather book by phone or email, the secretary can help
+							Contact the secretary by email and the practice team can help
 							arrange a suitable appointment.
 						</p>
 						<ul className="mt-6 space-y-3 text-ink-soft">
@@ -239,7 +239,9 @@ export default function BookPage() {
 									{contact.email}
 								</a>
 							</li>
-							<li>{contact.phone}</li>
+							<li className="text-sm italic text-ink-muted">
+								{contact.enquiriesNote}
+							</li>
 						</ul>
 						<Link to="/contact" className="link-underline mt-8">
 							View locations &amp; fees

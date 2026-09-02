@@ -50,10 +50,9 @@ export function Footer() {
 									{contact.email}
 								</a>
 							</li>
-							<li>{contact.phone}</li>
 						</ul>
 						<p className="mt-6 text-sm text-ink-muted">
-							{locations[0].name}
+							{locations[0].name} ({locations[0].group})
 						</p>
 					</div>
 				</div>

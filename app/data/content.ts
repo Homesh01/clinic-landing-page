@@ -335,38 +335,284 @@ export const faqPage = {
 	],
 } as const;
 
-export const conferences = [
+export const conferencesPage = {
+	title: "Selected talks and engagements",
+	sectionEyebrow: "Conferences & Presentations",
+} as const;
+
+export type ConferenceTiming = "upcoming" | "past" | "ongoing";
+
+export type ConferenceEntry = {
+	readonly year: number;
+	readonly timing: ConferenceTiming;
+	readonly date: string;
+	readonly location: string;
+	readonly tag?: string;
+	readonly title: string;
+	readonly description: readonly RichTextSegment[];
+};
+
+export type RichTextSegment = {
+	readonly text: string;
+	readonly emphasis?: boolean;
+};
+
+export const conferenceEntries: readonly ConferenceEntry[] = [
 	{
-		title: "Conference presentation — placeholder",
-		detail:
-			"Title, meeting name, location and date to be confirmed.",
+		year: 2027,
+		timing: "upcoming",
+		date: "17 to 21 Sep 2027",
+		location: "Barcelona, Spain",
+		tag: "Organising Committee",
+		title: "ESMO Congress 2027",
+		description: [
+			{
+				text:
+					"Serving on the organising committee for the ESMO Congress 2027, which will take place in Barcelona, Spain, from 17 to 21 September 2027.",
+			},
+		],
 	},
 	{
-		title: "Conference presentation — placeholder",
-		detail:
-			"Title, meeting name, location and date to be confirmed.",
+		year: 2027,
+		timing: "upcoming",
+		date: "17 to 22 Jan 2027",
+		location: "Zurich, Switzerland",
+		title: "Paul Scherrer Institute Winter School for Proton Therapy",
+		description: [
+			{
+				text:
+					"Will attend the PSI Winter School for Proton Therapy at the Paul Scherrer Institute in Zurich, Switzerland, from 17 to 22 January 2027, covering the clinical, physics and technological aspects of proton therapy.",
+			},
+		],
 	},
 	{
-		title: "Conference presentation — placeholder",
-		detail:
-			"Title, meeting name, location and date to be confirmed.",
+		year: 2026,
+		timing: "upcoming",
+		date: "16 to 18 Nov 2026",
+		location: "Berlin, Germany",
+		title: "ESMO AI & Digital Oncology Congress",
+		description: [
+			{
+				text:
+					"Will attend the ESMO AI and Digital Oncology Congress in Berlin, Germany, from 16 to 18 November 2026, focused on the clinical application of AI and digital tools across oncology.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "upcoming",
+		date: "9 to 10 Oct 2026",
+		location: "Riyadh, Saudi Arabia",
+		tag: "Invited talks",
+		title: "Society of Hematologic Oncology (SOHO)",
+		description: [
+			{ text: "Artificial Intelligence for Smarter Clinical Registries", emphasis: true },
+			{ text: " and " },
+			{
+				text: "AI-Driven Solutions for Maximizing Registry Outcomes.",
+				emphasis: true,
+			},
+			{
+				text:
+					" Will present two invited talks at the SOHO meeting in Riyadh, Saudi Arabia, from 9 to 10 October 2026.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "ongoing",
+		date: "Since Sep 2025",
+		location: "Kings Cross, London",
+		tag: "Ongoing",
+		title: "Clinical Advisor, Encode “AI for Science Fellowship” (Pillar VC)",
+		description: [
+			{
+				text:
+					"Has been serving as Clinical Advisor to the Encode “AI for Science Fellowship,” a programme run by Pillar VC and backed by ARIA and DSIT, pairing leading AI researchers with major scientific and medical challenges, based at Kings Cross, London, since September 2025.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "9 to 10 Jun 2026",
+		location: "Hilton Park Lane, London",
+		title: "13th Annual Outsourcing in Clinical Trials UK & Ireland",
+		description: [
+			{
+				text:
+					"Attended the 13th Annual Outsourcing in Clinical Trials UK and Ireland conference at the Hilton Park Lane, London, from 9 to 10 June 2026.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "8 Jun 2026",
+		location: "Olympia, London",
+		title: "London Tech Week",
+		description: [
+			{
+				text: "Attended London Tech Week at Olympia, London, on 8 June 2026.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "29 Apr 2026",
+		location: "Palace of Westminster, London",
+		title: "Unlocking the Future of UK Life Sciences",
+		description: [
+			{
+				text:
+					"Took part in the “Unlocking the Future of UK Life Sciences” parliamentary roundtable at the Palace of Westminster, London, on 29 April 2026, examining how the UK can accelerate the adoption of innovation, including AI and genomics, across the NHS.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "14 Apr 2026",
+		location: "Palace of Westminster, London",
+		title: "AI in Healthcare and Life Sciences Parliamentary Showcase",
+		description: [
+			{
+				text:
+					"Took part in the AI in Healthcare and Life Sciences Parliamentary Showcase at the Palace of Westminster, London, on 14 April 2026, an invitation only event bringing together parliamentarians, NHS leaders, policymakers and innovators to discuss the practical adoption of AI across the NHS and life sciences.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "24 Feb 2026",
+		location: "London",
+		title: "AI for Personalised Care & Clinical Trials Roundtable",
+		description: [
+			{
+				text:
+					"Took part in the AI for Personalised Care and Clinical Trials roundtable in London on 24 February 2026, hosted by Future.bio.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "28 to 29 Jan 2026",
+		location: "Olympia, London",
+		tag: "Invited talk",
+		title: "Festival of Genomics & Biodata",
+		description: [
+			{
+				text: "Use of Technology for Personalised Care and Clinical Trials.",
+				emphasis: true,
+			},
+			{
+				text:
+					" Gave an invited talk at the Festival of Genomics and Biodata, Olympia, London, from 28 to 29 January 2026.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "27 Jan 2026",
+		location: "London",
+		title: "PharmaAI Leaders Exchange",
+		description: [
+			{
+				text:
+					"Attended the PharmaAI Leaders Exchange in London on 27 January 2026, an invitation only event organised by Frontline Genomics in preparation for the Festival of Genomics.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "past",
+		date: "12 to 15 Jan 2026",
+		location: "San Francisco, USA",
+		title: "JP Morgan Healthcare Conference Week",
+		description: [
+			{
+				text:
+					"Engaged with global healthcare leaders and innovators in San Francisco during JP Morgan Healthcare Conference week, from 12 to 15 January 2026, taking part in the industry meetings and gatherings held throughout one of the most closely watched weeks in the global healthcare calendar.",
+			},
+		],
+	},
+	{
+		year: 2025,
+		timing: "past",
+		date: "17 Nov 2025",
+		location: "Somerset House, London",
+		title: "London Life Sciences Week: Opening Reception",
+		description: [
+			{
+				text:
+					"Attended the invitation only opening reception for London Life Sciences Week, hosted by the Mayor of London’s office, at Somerset House, London, on 17 November 2025.",
+			},
+		],
+	},
+	{
+		year: 2025,
+		timing: "past",
+		date: "7 Nov 2025",
+		location: "Royal College of Physicians, London",
+		title: "UK Lymphoma Research Group Annual Meeting",
+		description: [
+			{
+				text:
+					"Attended the UK Lymphoma Research Group annual meeting at the Royal College of Physicians, London, on 7 November 2025, a full day review of clinical trials in lymphoma.",
+			},
+		],
+	},
+	{
+		year: 2025,
+		timing: "past",
+		date: "7 to 8 Oct 2025",
+		location: "Teddington, UK",
+		tag: "Invited roundtable",
+		title: "Bushy House Scientific Meeting: Getting the Measure of AI",
+		description: [
+			{
+				text:
+					"Was an invited participant in an invitation only roundtable convened by the National Physical Laboratory (NPL) at Teddington, UK, from 7 to 8 October 2025, bringing together experts from across the UK to inform an official NPL report on establishing trust and confidence in AI systems.",
+			},
+		],
+	},
+	{
+		year: 2025,
+		timing: "past",
+		date: "30 Sep to 1 Oct 2025",
+		location: "Royal College of Physicians, London",
+		tag: "Invited talk",
+		title: "Economist Impact: AI in Health Summit",
+		description: [
+			{
+				text:
+					"Gave an invited talk on the use of AI for personalised care and clinical trials at the AI in Health Summit, part of Economist Impact’s Future of Health Europe, at the Royal College of Physicians, London, from 30 September to 1 October 2025.",
+			},
+		],
+	},
+	{
+		year: 2025,
+		timing: "past",
+		date: "May 2024 & 2025",
+		location: "Chicago, USA",
+		title: "American Society of Clinical Oncology (ASCO) Annual Meeting",
+		description: [
+			{
+				text: "Attended the ASCO Annual Meeting in Chicago, USA, in May 2024 and again in May 2025.",
+			},
+		],
 	},
 ] as const;
 
-export const publications = [
-	{
-		title: "Publication — placeholder",
-		detail: "Citation details to be confirmed.",
-	},
-	{
-		title: "Publication — placeholder",
-		detail: "Citation details to be confirmed.",
-	},
-	{
-		title: "Publication — placeholder",
-		detail: "Citation details to be confirmed.",
-	},
-] as const;
+export const conferenceYearLabels: Record<number, string> = {
+	2027: "Upcoming",
+	2026: "Upcoming & past",
+	2025: "Past",
+};
 
 export const blog = {
 	intro:
@@ -399,24 +645,41 @@ export const fees = {
 
 export const locations = [
 	{
-		name: "UCLH (HCA Healthcare)",
-		address: "Exact address to be confirmed.",
+		group: "HCA Healthcare",
+		name: "University College Hospital Private Care",
+		addressLines: [
+			"Grafton Way Building",
+			"1 Grafton Way",
+			"London WC1E 6AG",
+		],
 	},
 	{
-		name: "The London Oncology Clinic (LOC), HCA Healthcare",
-		address: "Exact address to be confirmed.",
+		group: "HCA Healthcare",
+		name: "Leaders in Oncology Care (LOC)",
+		addressLines: ["95–97 Harley Street", "London W1G 6AF"],
 	},
 	{
-		name: "Harley Street",
-		address: "Practice name and address to be confirmed.",
+		group: "HCA Healthcare",
+		name: "The Harley Street Clinic",
+		addressLines: ["35 Weymouth Street", "London W1G 8BJ"],
 	},
 ] as const;
+
+export const contactPage = {
+	callout: {
+		title: "Need to reach the practice team?",
+		body:
+			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, contact the secretary by email. Enquiries by email only.",
+		emailLabel: "Email the practice team",
+		bookLabel: "Book a consultation",
+	},
+} as const;
 
 export const contact = {
 	secretaryLabel: "Secretary / PA",
 	name: "Name to be confirmed",
 	email: "email@to-be-confirmed.example",
-	phone: "Phone to be confirmed",
+	enquiriesNote: "Enquiries by email only",
 };
 
 export const booking = {
