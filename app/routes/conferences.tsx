@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useMemo, useState } from "react";
+import { PageHero } from "~/components/PageHero";
 import { RichText } from "~/components/RichText";
 import {
 	type ConferenceEntry,
@@ -59,16 +60,12 @@ export default function ConferencesPage() {
 
 	return (
 		<>
-			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
-				<div className="site-container">
-					<p className="eyebrow">Conferences &amp; Publications</p>
-					<h1 className="mt-3 max-w-3xl font-display text-display-lg text-ink">
-						{conferencesPage.title}
-					</h1>
-				</div>
-			</section>
+			<PageHero
+				eyebrow="Conferences &amp; Publications"
+				title={conferencesPage.title}
+			/>
 
-			<section className="pb-6">
+			<section className="content-section">
 				<div className="site-container">
 					<div className="mt-4">
 						<p className="eyebrow">{conferencesPage.sectionEyebrow}</p>
@@ -79,10 +76,8 @@ export default function ConferencesPage() {
 							<button
 								key={item.id}
 								type="button"
-								className={`rounded-full border px-4 py-1.5 text-[0.82rem] font-semibold transition ${
-									filter === item.id
-										? "border-accent bg-accent-soft text-accent"
-										: "border-line bg-white text-ink-muted hover:border-accent/40"
+								className={`filter-pill ${
+									filter === item.id ? "filter-pill-active" : ""
 								}`}
 								onClick={() => setFilter(item.id)}
 							>

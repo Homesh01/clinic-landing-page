@@ -20,18 +20,29 @@ export const meta: MetaFunction = () => {
 export default function AboutPage() {
 	return (
 		<>
-			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad">
+			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
 					<div className="grid items-start gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
 						<div>
-							<p className="eyebrow">About</p>
-							<h1 className="mt-3 max-w-2xl font-display text-display-lg text-ink">
+							<p className="eyebrow animate-fade-up" style={{ animationDelay: "40ms" }}>
+								About
+							</p>
+							<h1
+								className="mt-3 max-w-2xl font-display text-display-lg text-ink animate-fade-up"
+								style={{ animationDelay: "100ms" }}
+							>
 								{about.heroTitle}
 							</h1>
-							<p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft">
+							<p
+								className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft animate-fade-up"
+								style={{ animationDelay: "160ms" }}
+							>
 								{about.heroLede}
 							</p>
-							<div className="mt-8 flex flex-wrap gap-3">
+							<div
+								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
+								style={{ animationDelay: "220ms" }}
+							>
 								<Link to="/book" className="btn-primary">
 									Book a consultation
 								</Link>
@@ -40,7 +51,10 @@ export default function AboutPage() {
 								</a>
 							</div>
 						</div>
-						<div className="mx-auto w-full max-w-xs lg:max-w-none">
+						<div
+							className="mx-auto w-full max-w-xs animate-fade-up lg:max-w-none"
+							style={{ animationDelay: "180ms" }}
+						>
 							<img
 								src={site.headshot}
 								alt={`Portrait of ${site.name}`}

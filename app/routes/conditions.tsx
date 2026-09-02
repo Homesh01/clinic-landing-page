@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
 import { BloodIcon, ThyroidIcon } from "~/components/ConditionIcons";
+import { CalloutBanner } from "~/components/CalloutBanner";
 import { conditions, conditionsPage, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
@@ -18,15 +19,26 @@ export default function ConditionsPage() {
 		<>
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
-					<p className="eyebrow">Conditions</p>
-					<h1 className="mt-3 max-w-3xl font-display text-display-lg text-ink">
+					<p className="eyebrow animate-fade-up" style={{ animationDelay: "40ms" }}>
+						Conditions
+					</p>
+					<h1
+						className="mt-3 max-w-3xl font-display text-display-lg text-ink animate-fade-up"
+						style={{ animationDelay: "100ms" }}
+					>
 						{conditionsPage.title}
 					</h1>
-					<p className="mt-5 max-w-2xl text-lg text-ink-soft">
+					<p
+						className="mt-5 max-w-2xl text-lg text-ink-soft animate-fade-up"
+						style={{ animationDelay: "160ms" }}
+					>
 						{conditionsPage.lede}
 					</p>
 
-					<blockquote className="mt-8 border-l-4 border-accent bg-white py-6 pl-7 pr-6">
+					<blockquote
+						className="mt-8 border-l-4 border-accent bg-white py-6 pl-7 pr-6 animate-fade-up"
+						style={{ animationDelay: "200ms" }}
+					>
 						<p className="font-display text-xl italic leading-relaxed text-ink-soft">
 							&ldquo;{conditionsPage.quote}&rdquo;
 						</p>
@@ -35,7 +47,10 @@ export default function ConditionsPage() {
 						</p>
 					</blockquote>
 
-					<div className="mt-8 flex flex-wrap items-center justify-between gap-5 rounded-md border border-line bg-white px-6 py-5 sm:px-7">
+					<div
+						className="mt-8 flex flex-wrap items-center justify-between gap-5 rounded-md border border-line bg-white px-6 py-5 sm:px-7 animate-fade-up"
+						style={{ animationDelay: "260ms" }}
+					>
 						<p className="text-[0.97rem] text-ink-soft">
 							<strong className="font-semibold text-ink">
 								{conditionsPage.reassure.strong}
@@ -142,26 +157,13 @@ export default function ConditionsPage() {
 				</div>
 			</section>
 
-			<section className="section-pad">
-				<div className="site-container">
-					<div className="flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11">
-						<div className="max-w-xl">
-							<h2 className="font-display text-3xl text-white">
-								{conditionsPage.callout.title}
-							</h2>
-							<p className="mt-3 text-[0.97rem] text-white/75">
-								{conditionsPage.callout.body}
-							</p>
-						</div>
-						<Link
-							to="/book"
-							className="inline-flex shrink-0 items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-accent-deep transition hover:bg-accent-soft"
-						>
-							Book a consultation
-						</Link>
-					</div>
-				</div>
-			</section>
+			<CalloutBanner
+				title={conditionsPage.callout.title}
+				body={conditionsPage.callout.body}
+				actions={[
+					{ label: "Book a consultation", to: "/book", variant: "primary" },
+				]}
+			/>
 		</>
 	);
 }

@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { PageIntro } from "~/components/PageIntro";
+import { PageHero } from "~/components/PageHero";
 import { blog, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
@@ -15,15 +15,15 @@ export const meta: MetaFunction = () => {
 export default function BlogPage() {
 	return (
 		<>
-			<PageIntro
+			<PageHero
 				eyebrow="Blog"
 				title="Commentary and professional updates"
 				summary={blog.intro}
 			/>
 
-			<section className="section-pad">
-				<div className="site-container max-w-3xl">
-					<p className="text-sm text-ink-muted">{blog.note}</p>
+			<section className="section-pad !pt-0">
+				<div className="site-container">
+					<p className="max-w-2xl text-sm text-ink-muted">{blog.note}</p>
 
 					<ul className="mt-10 space-y-6">
 						{blog.social.map((item) => (

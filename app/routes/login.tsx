@@ -63,7 +63,11 @@ export default function LoginPage() {
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-mist to-white px-5 py-16">
 			<div className="w-full max-w-md">
-				<p className="eyebrow">Private preview</p>
+				<p className="font-display text-2xl text-ink">{site.name}</p>
+				<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
+					{site.title}
+				</p>
+				<p className="eyebrow mt-8">Private preview</p>
 				<p className="mt-4 text-ink-soft">
 					This site is password protected while content is being finalised.
 					Enter the access password to continue.
@@ -81,7 +85,7 @@ export default function LoginPage() {
 							required
 							autoFocus
 							autoComplete="current-password"
-							className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+							className="input-field"
 						/>
 					</label>
 

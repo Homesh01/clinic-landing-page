@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Form, Link, useSearchParams } from "@remix-run/react";
 import { useMemo, useState } from "react";
-import { PageIntro } from "~/components/PageIntro";
+import { PageHero } from "~/components/PageHero";
 import { booking, contact, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
@@ -48,7 +48,7 @@ export default function BookPage() {
 
 	return (
 		<>
-			<PageIntro
+			<PageHero
 				eyebrow="Book a consultation"
 				title="Choose a time that works for you"
 				summary={booking.intro}
@@ -144,7 +144,7 @@ export default function BookPage() {
 											<input
 												required
 												name="name"
-												className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+												className="input-field"
 												placeholder="Your name"
 											/>
 										</label>
@@ -156,7 +156,7 @@ export default function BookPage() {
 												required
 												type="email"
 												name="email"
-												className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+												className="input-field"
 												placeholder="you@example.com"
 											/>
 										</label>
@@ -169,7 +169,7 @@ export default function BookPage() {
 										<input
 											required
 											name="phone"
-											className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+											className="input-field"
 											placeholder="Contact number"
 										/>
 									</label>
@@ -180,7 +180,7 @@ export default function BookPage() {
 										</span>
 										<select
 											name="type"
-											className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+											className="input-field"
 											defaultValue="New Patient Consultation"
 										>
 											<option>New Patient Consultation</option>
@@ -197,7 +197,7 @@ export default function BookPage() {
 										<textarea
 											name="notes"
 											rows={4}
-											className="w-full rounded-sm border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
+											className="input-field"
 											placeholder="Brief context for the appointment"
 										/>
 									</label>

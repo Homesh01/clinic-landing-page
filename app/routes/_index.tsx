@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { CalloutBanner } from "~/components/CalloutBanner";
 import { conditions, faqPage, services, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
@@ -15,7 +16,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
 	return (
 		<>
-			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad">
+			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
 					<div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
 						<div className="max-w-xl">
@@ -152,39 +153,19 @@ export default function Index() {
 				</div>
 			</section>
 
-			<section className="section-pad">
-				<div className="site-container">
-					<div className="flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11">
-						<div className="max-w-xl">
-							<p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/55">
-								Appointments
-							</p>
-							<h2 className="mt-3 font-display text-3xl text-white">
-								Book a consultation, or speak with the practice team
-							</h2>
-							<p className="mt-3 text-[0.97rem] text-white/75">
-								View available slots and request a consultation at a time that
-								suits you. Clinics at UCLH (HCA), The London Oncology Clinic,
-								and Harley Street.
-							</p>
-						</div>
-						<div className="flex shrink-0 flex-wrap gap-3">
-							<Link
-								to="/book"
-								className="inline-flex items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-accent-deep transition hover:bg-accent-soft"
-							>
-								Book a consultation
-							</Link>
-							<Link
-								to="/contact"
-								className="inline-flex items-center justify-center rounded-sm border border-white/25 px-6 py-3 text-[0.95rem] font-semibold text-white transition hover:border-white/60"
-							>
-								Contact &amp; locations
-							</Link>
-						</div>
-					</div>
-				</div>
-			</section>
+			<CalloutBanner
+				eyebrow="Appointments"
+				title="Book a consultation, or speak with the practice team"
+				body="View available slots and request a consultation at a time that suits you. Clinics at UCLH (HCA), The London Oncology Clinic, and Harley Street."
+				actions={[
+					{ label: "Book a consultation", to: "/book", variant: "primary" },
+					{
+						label: "Contact & locations",
+						to: "/contact",
+						variant: "outline",
+					},
+				]}
+			/>
 		</>
 	);
 }

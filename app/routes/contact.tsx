@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
+import { CalloutBanner } from "~/components/CalloutBanner";
+import { PageHero } from "~/components/PageHero";
 import { contact, contactPage, fees, locations, site } from "~/data/content";
 
 export const meta: MetaFunction = () => {
@@ -16,20 +17,13 @@ export const meta: MetaFunction = () => {
 export default function ContactPage() {
 	return (
 		<>
-			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
-				<div className="site-container">
-					<p className="eyebrow">Contact &amp; Locations</p>
-					<h1 className="mt-3 max-w-3xl font-display text-display-lg text-ink">
-						Reach the practice team
-					</h1>
-					<p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
-						Appointments are available across central London clinics. Fees and
-						insurer details can be confirmed before your first visit.
-					</p>
-				</div>
-			</section>
+			<PageHero
+				eyebrow="Contact &amp; Locations"
+				title="Reach the practice team"
+				summary="Appointments are available across central London clinics. Fees and insurer details can be confirmed before your first visit."
+			/>
 
-			<section className="section-pad">
+			<section className="section-pad !pt-0">
 				<div className="site-container grid gap-16 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
 					<div>
 						<p className="eyebrow">Locations</p>
@@ -74,9 +68,6 @@ export default function ContactPage() {
 							<p className="mt-2 text-[0.92rem] italic text-ink-muted">
 								{contact.enquiriesNote}
 							</p>
-							<Link to="/book" className="btn-primary mt-6">
-								Book a consultation
-							</Link>
 						</div>
 
 						<div
@@ -98,34 +89,23 @@ export default function ContactPage() {
 				</div>
 			</section>
 
-			<section className="section-pad !pt-0">
-				<div className="site-container">
-					<div className="flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11">
-						<div className="max-w-xl">
-							<h2 className="font-display text-3xl text-white">
-								{contactPage.callout.title}
-							</h2>
-							<p className="mt-3 text-[0.97rem] text-white/75">
-								{contactPage.callout.body}
-							</p>
-						</div>
-						<div className="flex shrink-0 flex-wrap gap-3">
-							<a
-								href={`mailto:${contact.email}`}
-								className="inline-flex items-center justify-center rounded-sm bg-white px-6 py-3 text-[0.95rem] font-semibold text-accent-deep transition hover:bg-accent-soft"
-							>
-								{contactPage.callout.emailLabel}
-							</a>
-							<Link
-								to="/book"
-								className="inline-flex items-center justify-center rounded-sm border border-white/25 px-6 py-3 text-[0.95rem] font-semibold text-white transition hover:border-white/60"
-							>
-								{contactPage.callout.bookLabel}
-							</Link>
-						</div>
-					</div>
-				</div>
-			</section>
+			<CalloutBanner
+				tightTop
+				title={contactPage.callout.title}
+				body={contactPage.callout.body}
+				actions={[
+					{
+						label: contactPage.callout.emailLabel,
+						href: `mailto:${contact.email}`,
+						variant: "primary",
+					},
+					{
+						label: contactPage.callout.bookLabel,
+						to: "/book",
+						variant: "outline",
+					},
+				]}
+			/>
 		</>
 	);
 }
