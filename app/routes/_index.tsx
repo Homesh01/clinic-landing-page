@@ -36,9 +36,10 @@ export default function Index() {
 								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
 								style={{ animationDelay: "160ms" }}
 							>
-								Specialist care in thyroid cancer and radiotherapy for
-								haematological malignancies — personalised, precise, and
-								grounded in both clinical practice and translational AI.
+								Specialist care in thyroid cancer and blood cancers such as
+								lymphoma, leukaemia and myeloma. Every treatment plan is
+								personal to you, combining hands-on clinical experience with the
+								latest advances in cancer research.
 							</p>
 							<div
 								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
@@ -156,7 +157,7 @@ export default function Index() {
 			<CalloutBanner
 				eyebrow="Appointments"
 				title="Book a consultation, or speak with the practice team"
-				body="View available slots and request a consultation at a time that suits you. Clinics at UCLH (HCA), The London Oncology Clinic, and Harley Street."
+				body="View available slots and request a consultation at a time that suits you. Clinics at University College Hospital Private Care (HCA), Leaders in Oncology Care (LOC), and The Harley Street Clinic."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
 					{

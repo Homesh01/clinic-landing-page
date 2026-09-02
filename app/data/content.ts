@@ -114,7 +114,7 @@ export const conditionsPage = {
 					"Your specialists discuss your case together, so you're not left piecing together advice from different teams.",
 			},
 			{
-				title: "You're kept in the loop",
+				title: "You are kept in the loop",
 				description:
 					"Decisions are explained to you in plain language, with time for your questions, not simply handed down.",
 			},
