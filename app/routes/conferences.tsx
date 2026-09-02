@@ -16,8 +16,7 @@ export const meta: MetaFunction = () => {
 		{ title: `Conferences & publications | ${site.name}` },
 		{
 			name: "description",
-			content:
-				"Selected conferences, presentations and talks by Dr Karen Sayal.",
+			content: conferencesPage.lede,
 		},
 	];
 };
@@ -63,6 +62,7 @@ export default function ConferencesPage() {
 			<PageHero
 				eyebrow="Conferences &amp; Publications"
 				title={conferencesPage.title}
+				summary={conferencesPage.lede}
 			/>
 
 			<section className="content-section">

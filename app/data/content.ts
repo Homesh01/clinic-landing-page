@@ -337,6 +337,8 @@ export const faqPage = {
 
 export const conferencesPage = {
 	title: "Selected talks and engagements",
+	lede:
+		"A record of invited talks, conference presentations, and advisory roles spanning clinical oncology, translational AI, and developments in cancer care.",
 	sectionEyebrow: "Conferences & Presentations",
 } as const;
 
