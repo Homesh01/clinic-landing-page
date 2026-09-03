@@ -616,26 +616,67 @@ export const conferenceYearLabels: Record<number, string> = {
 	2025: "Past",
 };
 
+export type BlogPost = {
+	/** ISO date (YYYY-MM-DD) — newest posts should be added at the top of the list */
+	readonly date: string;
+	/** Body paragraphs. */
+	readonly paragraphs: readonly string[];
+};
+
+/**
+ * Add new posts at the top of this list.
+ * date: YYYY-MM-DD
+ * paragraphs: one string per paragraph
+ */
+export const blogPosts: readonly BlogPost[] = [
+	{
+		date: "2026-09-01",
+		paragraphs: [
+			"The BioNTech/Roche decision to terminate their colorectal cancer vaccine trial last week is being framed simply as evidence that “colorectal cancer is a cold tumour.”",
+			"As an oncologist, I think the driving factors are more complicated.",
+			"Cancer vaccine trials sit along at least three independent axes:",
+			"1. Hot vs. cold tumour biology",
+			"2. Monotherapy vs. combination therapy",
+			"3. Metastatic vs. adjuvant setting",
+			"This trial tested a particularly challenging combination: a cold tumour, treated with vaccine monotherapy, in the adjuvant setting. Contrast that with Merck and Moderna’s positive melanoma results just over a week earlier: a hot tumour, with the vaccine given in combination with Keytruda.",
+			"This distinction is important. A negative result in colorectal cancer does not, by itself, tell us whether the limiting factor was tumour biology, the absence of checkpoint blockade, the clinical setting or some interaction between them.",
+			"mRNA cancer vaccines trials can be designed to disentangle these variables.",
+		],
+	},
+	{
+		date: "2026-08-24",
+		paragraphs: [
+			"Merck and Moderna’s recent positive Phase III readout marks an important step towards personalised cancer care. As a practising oncologist, it is encouraging to see this approach move closer to clinical practice.",
+			"Beyond a supportive regulatory environment, a key constraint is the infrastructure needed to deliver such treatments at scale. Manufacturing and distributing personalised vaccines for tens of thousands of patients will require a significant evolution of the healthcare ecosystem.",
+		],
+	},
+	{
+		date: "2026-08-12",
+		paragraphs: [
+			"Recently a fellow oncologist asked my advice about a patient with anaplastic thyroid cancer, a rare and highly aggressive form of cancer. They were exploring whether a personalised mRNA vaccine could be developed for their patient.",
+			"Only a handful of centres worldwide are currently capable of developing and administering such treatments. We need the clinical and manufacturing infrastructure, supported by appropriate ethical and regulatory frameworks, to ensure that patients with ultra-rare tumours have the opportunity to access them.",
+		],
+	},
+	{
+		date: "2026-07-13",
+		paragraphs: [
+			"The field has discussed personalised cancer care for decades.",
+			"I have been asking myself: when will this vision be actualised into routine clinical care. Personalised care is not the same as stratified care.",
+		],
+	},
+	{
+		date: "2026-07-06",
+		paragraphs: [
+			"I unapologetically have been posting a lot about anaplastic thyroid cancer recently. It is highly aggressive disease.",
+			"Because it is both rare and almost always fatal, drug development in this space is not considered commercially viable.",
+			"We therefore need new models of care for such patients.",
+		],
+	},
+];
+
 export const blog = {
 	intro:
 		"Selected commentary and posts from Dr Sayal on oncology, translational AI, and developments in cancer care.",
-	social: [
-		{
-			platform: "LinkedIn",
-			label: "Follow on LinkedIn",
-			url: "https://www.linkedin.com/",
-			description:
-				"Professional updates, conference reflections, and perspectives on oncology and AI in medicine.",
-		},
-		{
-			platform: "X",
-			label: "Follow on X",
-			url: "https://x.com/",
-			description:
-				"Shorter posts and links to talks, publications, and clinical innovation.",
-		},
-	],
-	note: "Profile URLs to be confirmed — replace the placeholder links when ready.",
 } as const;
 
 export const fees = {
