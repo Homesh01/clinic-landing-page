@@ -1,0 +1,10 @@
+# Shared site password for local development.
+# Leave blank or remove this line to disable protection locally.
+SITE_PASSWORD=preview
+
+# Google Calendar booking (OAuth refresh-token flow)
+GOOGLE_CLIENT_ID=........apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=........
+GOOGLE_REFRESH_TOKEN=........
+GOOGLE_CALENDAR_ID=........@group.calendar.google.com
+BOOKING_TIMEZONE=Europe/London

@@ -731,6 +731,6 @@ export const contact = {
 
 export const booking = {
 	intro:
-		"Booking an appointment with Dr Sayal is simple — use the calendar below to view available slots and book a consultation online, or contact the secretary directly.",
-	note: "Online booking calendar placeholder — connect your preferred booking platform (e.g. Calendly, Cliniko, or HCA booking) when ready.",
+		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
+	note: "Times shown are free on the practice calendar (Mon–Fri, 09:00–16:00, Europe/London). Selecting a slot reserves it immediately and emails you a confirmation.",
 };
