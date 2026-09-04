@@ -7,4 +7,7 @@ interface Env {
 	GOOGLE_REFRESH_TOKEN?: string;
 	GOOGLE_CALENDAR_ID?: string;
 	BOOKING_TIMEZONE?: string;
+	BOOKING_FROM_EMAIL?: string;
+	BOOKING_FROM_NAME?: string;
+	BOOKING_BCC_EMAIL?: string;
 }

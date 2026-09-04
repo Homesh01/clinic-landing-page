@@ -4,6 +4,9 @@ export type BookingConfig = {
 	refreshToken: string;
 	calendarId: string;
 	timeZone: string;
+	fromEmail?: string;
+	fromName?: string;
+	bccEmail?: string;
 };
 
 export type DaySlots = {
@@ -24,12 +27,24 @@ export function getBookingConfig(env: Env | undefined): BookingConfig | null {
 	const refreshToken = env?.GOOGLE_REFRESH_TOKEN?.trim();
 	const calendarId = env?.GOOGLE_CALENDAR_ID?.trim();
 	const timeZone = env?.BOOKING_TIMEZONE?.trim() || "Europe/London";
+	const fromEmail = env?.BOOKING_FROM_EMAIL?.trim() || undefined;
+	const fromName = env?.BOOKING_FROM_NAME?.trim() || undefined;
+	const bccEmail = env?.BOOKING_BCC_EMAIL?.trim() || undefined;
 
 	if (!clientId || !clientSecret || !refreshToken || !calendarId) {
 		return null;
 	}
 
-	return { clientId, clientSecret, refreshToken, calendarId, timeZone };
+	return {
+		clientId,
+		clientSecret,
+		refreshToken,
+		calendarId,
+		timeZone,
+		fromEmail,
+		fromName,
+		bccEmail,
+	};
 }
 
 export async function getAccessToken(config: BookingConfig): Promise<string> {
@@ -325,27 +340,21 @@ export async function createBookingEvent(
 	const accessToken = await getAccessToken(config);
 
 	const description = [
-		`Hello ${sanitizeCalendarLine(input.name)},`,
-		"",
-		"Your consultation with Dr Karen Sayal has been booked.",
-		"",
-		`Date: ${input.dateIso}`,
-		`Time: ${input.timeLabel} (${config.timeZone})`,
+		`Patient: ${sanitizeCalendarLine(input.name)}`,
+		`Email: ${sanitizeCalendarLine(input.email)}`,
+		`Phone: ${sanitizeCalendarLine(input.phone)}`,
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
-		`Phone on file: ${sanitizeCalendarLine(input.phone)}`,
 		input.notes?.trim()
 			? `Notes: ${sanitizeCalendarLine(input.notes.trim())}`
 			: null,
 		"",
-		"If you need to change or cancel this appointment, please contact the practice by email.",
-		"",
-		"Booked via the clinic website.",
+		"Booked via clinic website.",
 	]
-		.filter((line) => line !== null)
+		.filter(Boolean)
 		.join("\n");
 
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=all`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
 		{
 			method: "POST",
 			headers: {
@@ -363,10 +372,8 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				attendees: [{ email: input.email }],
 				guestsCanInviteOthers: false,
 				guestsCanModify: false,
-				guestsCanSeeOtherGuests: false,
 				transparency: "opaque",
 			}),
 		},

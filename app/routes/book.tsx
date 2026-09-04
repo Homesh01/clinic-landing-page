@@ -14,6 +14,7 @@ import {
 	getAvailableDays,
 	getBookingConfig,
 } from "~/utils/google-calendar.server";
+import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import {
 	CONSULTATION_TYPES,
 	type BookingFieldErrors,
@@ -116,11 +117,26 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	try {
 		await createBookingEvent(config, validated.data);
 
+		let emailSent = true;
+		let emailErrorMessage: string | null = null;
+		try {
+			await sendPatientBookingConfirmation(config, validated.data);
+		} catch (emailError) {
+			emailSent = false;
+			emailErrorMessage =
+				emailError instanceof Error
+					? emailError.message
+					: "Could not send confirmation email";
+			console.error("Booking confirmation email error:", emailError);
+		}
+
 		return json({
 			ok: true as const,
 			dateIso: validated.data.dateIso,
 			timeLabel: validated.data.timeLabel,
 			name: validated.data.name,
+			emailSent,
+			emailErrorMessage,
 		});
 	} catch (error) {
 		console.error("Booking create error:", error);
@@ -215,9 +231,11 @@ export default function BookPage() {
 									<strong className="font-semibold text-ink">
 										{actionData.timeLabel}
 									</strong>
-									. A confirmation email with the calendar invite has been
-									sent to the address you provided. The practice team may
-									follow up if anything further is needed.
+									.
+									{actionData.emailSent
+										? " A confirmation email has been sent to the address you provided."
+										: " We could not send the confirmation email automatically — please contact the practice if you need written confirmation."}{" "}
+									The practice team may follow up if anything further is needed.
 								</p>
 								<Link to="/book" className="link-underline mt-6">
 									Book another consultation
@@ -471,11 +489,7 @@ export default function BookPage() {
 												className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
 												disabled={!selectedDay || !selectedSlot || submitting}
 											>
-												{submitting
-													? "Booking…"
-													: selectedSlot
-														? `Book consultation · ${selectedSlot}`
-														: "Book consultation"}
+												{submitting ? "Booking…" : "Book consultation"}
 											</button>
 										</Form>
 									</>
