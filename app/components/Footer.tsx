@@ -1,11 +1,10 @@
-import { Link } from "@remix-run/react";
-import { contact, locations, nav, site } from "~/data/content";
+import { contact, locations, site } from "~/data/content";
 
 export function Footer() {
 	return (
 		<footer className="border-t border-line bg-cream">
 			<div className="site-container section-pad !py-16">
-				<div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+				<div className="grid gap-12 md:grid-cols-[1.4fr_1fr]">
 					<div>
 						<p className="font-display text-3xl text-ink">{site.name}</p>
 						<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
@@ -15,22 +14,6 @@ export function Footer() {
 							Specialist care in thyroid cancer and radiotherapy for
 							haematological malignancies, with clinics in central London.
 						</p>
-					</div>
-
-					<div>
-						<p className="eyebrow">Navigate</p>
-						<ul className="mt-4 space-y-2.5">
-							{nav.map((item) => (
-								<li key={item.to}>
-									<Link
-										to={item.to}
-										className="text-ink-soft transition-colors hover:text-accent"
-									>
-										{item.label}
-									</Link>
-								</li>
-							))}
-						</ul>
 					</div>
 
 					<div>
