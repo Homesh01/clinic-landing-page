@@ -2,6 +2,7 @@
 	"name": "clinic-landing-page",
 	"compatibility_date": "2025-10-08",
 	"main": "./server.ts",
+	"keep_vars": true,
 	"assets": {
 		"directory": "./build/client"
 	},
