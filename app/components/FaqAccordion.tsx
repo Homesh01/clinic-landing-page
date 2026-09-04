@@ -2,7 +2,7 @@ import { useState } from "react";
 
 type FaqTag = {
 	readonly label: string;
-	readonly variant: "green" | "teal";
+	readonly variant: "teal";
 };
 
 type FaqItem = {
@@ -79,12 +79,7 @@ function FaqAccordionItem({
 					{item.tags ? (
 						<div className="mt-1">
 							{item.tags.map((tag) => (
-								<span
-									key={tag.label}
-									className={
-										tag.variant === "green" ? "tag-green" : "tag-teal"
-									}
-								>
+								<span key={tag.label} className="tag-teal">
 									{tag.label}
 								</span>
 							))}

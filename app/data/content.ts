@@ -225,7 +225,7 @@ export const services = [
 		description:
 			"Treatment is planned around your specific cancer, not a single fixed protocol applied to everyone. This may include diagnostics, radiotherapy, systemic (drug) therapy, or a combination of these. For example, thyroid cancer is often managed with systemic therapy as well as radiotherapy, depending on what is right for you.",
 		tags: [
-			{ label: "Diagnostics", variant: "green" as const },
+			{ label: "Diagnostics", variant: "teal" as const },
 			{ label: "Radiotherapy", variant: "teal" as const },
 			{ label: "Systemic therapy", variant: "teal" as const },
 		],
@@ -295,7 +295,7 @@ export const faqPage = {
 					answer:
 						"Treatment is planned around your specific cancer rather than a single approach used for everyone. Depending on what is right for you, this may include diagnostics, radiotherapy, systemic (drug) therapy, or a combination of these. For example, thyroid cancer is often managed with systemic therapy as well as radiotherapy.",
 					tags: [
-						{ label: "Diagnostics", variant: "green" as const },
+						{ label: "Diagnostics", variant: "teal" as const },
 						{ label: "Radiotherapy", variant: "teal" as const },
 						{ label: "Systemic therapy", variant: "teal" as const },
 					],

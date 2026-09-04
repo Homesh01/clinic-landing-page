@@ -44,14 +44,7 @@ export default function ConsultationsPage() {
 									{"tags" in service && service.tags ? (
 										<div className="mt-1">
 											{service.tags.map((tag) => (
-												<span
-													key={tag.label}
-													className={
-														tag.variant === "green"
-															? "tag-green"
-															: "tag-teal"
-													}
-												>
+												<span key={tag.label} className="tag-teal">
 													{tag.label}
 												</span>
 											))}

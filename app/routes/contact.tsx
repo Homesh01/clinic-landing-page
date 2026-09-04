@@ -14,7 +14,33 @@ export const meta: MetaFunction = () => {
 	];
 };
 
+function LocationBlock({
+	location,
+}: {
+	location: (typeof locations)[number];
+}) {
+	return (
+		<>
+			<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
+				{location.group}
+			</p>
+			<h2 className="mt-2 font-display text-[1.45rem] leading-snug text-ink">
+				{location.name}
+			</h2>
+			<address className="mt-2.5 text-[0.97rem] not-italic leading-relaxed text-ink-soft">
+				{location.addressLines.map((line) => (
+					<span key={line} className="block">
+						{line}
+					</span>
+				))}
+			</address>
+		</>
+	);
+}
+
 export default function ContactPage() {
+	const [firstLocation, secondLocation, thirdLocation] = locations;
+
 	return (
 		<>
 			<PageHero
@@ -23,41 +49,34 @@ export default function ContactPage() {
 				summary="Appointments are available across central London clinics. Fees and insurer details can be confirmed before your first visit."
 			/>
 
-			<section className="section-pad !pt-0">
-				<div className="site-container grid gap-16 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
-					<div>
+			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">
+				<div className="site-container">
+					<div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16">
 						<p className="eyebrow">Locations</p>
-						<ul className="mt-2 list-none p-0">
-							{locations.map((location) => (
-								<li
-									key={location.name}
-									className="border-b border-line py-7 first:pt-0"
-								>
-									<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
-										{location.group}
-									</p>
-									<h2 className="mt-2 font-display text-[1.45rem] text-ink">
-										{location.name}
-									</h2>
-									<address className="mt-2.5 text-[0.97rem] not-italic leading-relaxed text-ink-soft">
-										{location.addressLines.map((line) => (
-											<span key={line} className="block">
-												{line}
-											</span>
-										))}
-									</address>
-								</li>
-							))}
-						</ul>
+						<p className="eyebrow hidden lg:block">
+							{contact.secretaryLabel}
+						</p>
 					</div>
 
-					<div>
-						<div>
-							<p className="eyebrow">{contact.secretaryLabel}</p>
-							<h2 className="mt-4 font-display text-[1.4rem] font-semibold text-ink">
+					{/*
+					  Shared grid so row heights match across columns:
+					  row 1 = first location | secretary
+					  row 2 = second location | fees  (dividers align)
+					  row 3 = third location
+					*/}
+					<div className="mt-5 grid grid-cols-1 lg:grid-cols-2 lg:items-stretch lg:gap-x-16">
+						<div className="order-1 border-t border-line py-7">
+							<LocationBlock location={firstLocation} />
+						</div>
+
+						<div className="order-4 border-t border-line py-7 lg:order-2">
+							<p className="eyebrow mb-4 lg:hidden">
+								{contact.secretaryLabel}
+							</p>
+							<h2 className="font-display text-[1.45rem] leading-snug text-ink">
 								{contact.name}
 							</h2>
-							<p className="mt-2 text-[0.97rem] text-ink-muted">
+							<p className="mt-2.5 text-[0.97rem] text-ink-soft">
 								<a
 									href={`mailto:${contact.email}`}
 									className="transition-colors hover:text-accent"
@@ -70,12 +89,18 @@ export default function ContactPage() {
 							</p>
 						</div>
 
+						<div className="order-2 border-t border-line py-7 lg:order-3">
+							<LocationBlock location={secondLocation} />
+						</div>
+
 						<div
 							id="fees"
-							className="scroll-mt-28 mt-10 border-t border-line pt-10"
+							className="order-5 scroll-mt-28 border-t border-line py-7 lg:order-4"
 						>
-							<p className="eyebrow">Fees &amp; insurance</p>
-							<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-soft">
+							<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
+								Fees &amp; insurance
+							</p>
+							<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">
 								{fees.intro}
 							</p>
 							<p className="mt-3 text-[0.97rem] text-ink-muted">
@@ -85,6 +110,12 @@ export default function ContactPage() {
 								{fees.selfPay}
 							</p>
 						</div>
+
+						{thirdLocation ? (
+							<div className="order-3 border-t border-line py-7 lg:order-5">
+								<LocationBlock location={thirdLocation} />
+							</div>
+						) : null}
 					</div>
 				</div>
 			</section>
