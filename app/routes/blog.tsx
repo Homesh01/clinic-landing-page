@@ -50,7 +50,7 @@ function BlogPostItem({ post }: { post: BlogPost }) {
 	const paragraphs = expanded || !expandable ? post.paragraphs : preview;
 
 	return (
-		<li className="grid gap-3 border-b border-line py-9 first:pt-2 last:border-b-0 sm:grid-cols-[160px_1fr] sm:gap-8">
+		<li className="grid gap-3 border-t border-line py-9 sm:grid-cols-[160px_1fr] sm:gap-8">
 			<p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-accent sm:pt-1">
 				{formatPostDate(post.date)}
 			</p>
