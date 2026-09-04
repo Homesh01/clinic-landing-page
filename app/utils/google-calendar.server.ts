@@ -109,6 +109,32 @@ export async function getAccessToken(config: BookingConfig): Promise<string> {
 	return data.access_token;
 }
 
+async function getAuthorizedGoogleEmail(
+	accessToken: string,
+): Promise<string | null> {
+	try {
+		const response = await fetch(
+			"https://www.googleapis.com/calendar/v3/calendars/primary",
+			{ headers: { Authorization: `Bearer ${accessToken}` } },
+		);
+		const data = (await response.json()) as { id?: string };
+		return data.id ?? null;
+	} catch {
+		return null;
+	}
+}
+
+async function calendarIdFingerprint(calendarId: string): Promise<string> {
+	const digest = await crypto.subtle.digest(
+		"SHA-256",
+		new TextEncoder().encode(calendarId),
+	);
+	return [...new Uint8Array(digest)]
+		.slice(0, 4)
+		.map((byte) => byte.toString(16).padStart(2, "0"))
+		.join("");
+}
+
 type BusyPeriod = { start: Date; end: Date };
 
 async function fetchBusyPeriods(
@@ -135,7 +161,7 @@ async function fetchBusyPeriods(
 	);
 
 	const data = (await response.json()) as {
-		error?: { message?: string };
+		error?: { message?: string; code?: number; status?: string };
 		calendars?: Record<
 			string,
 			{
@@ -145,16 +171,21 @@ async function fetchBusyPeriods(
 		>;
 	};
 
+	const authEmail = await getAuthorizedGoogleEmail(accessToken);
+	const fingerprint = await calendarIdFingerprint(config.calendarId);
+	const debug = `auth=${authEmail ?? "unknown"}; calendar=${describeCalendarId(config.calendarId)}; fp=${fingerprint}`;
+
 	if (!response.ok) {
 		throw new Error(
-			`${data.error?.message || "FreeBusy request failed"} — ${describeCalendarId(config.calendarId)}`,
+			`${data.error?.message || "FreeBusy request failed"} [${debug}]`,
 		);
 	}
 
 	const calendar = data.calendars?.[config.calendarId];
 	if (!calendar) {
+		const returnedKeys = Object.keys(data.calendars ?? {}).join(", ") || "none";
 		throw new Error(
-			`Google FreeBusy returned no data for this calendar — ${describeCalendarId(config.calendarId)}`,
+			`Google FreeBusy returned no data for this calendar (keys: ${returnedKeys}) [${debug}]`,
 		);
 	}
 	if (calendar.errors?.length) {
@@ -162,10 +193,10 @@ async function fetchBusyPeriods(
 			calendar.errors[0]?.message ||
 			calendar.errors[0]?.reason ||
 			"Calendar FreeBusy access denied";
-		throw new Error(`${detail} — ${describeCalendarId(config.calendarId)}`);
+		throw new Error(`${detail} [${debug}]`);
 	}
 
-	return (calendar?.busy ?? []).map((period) => ({
+	return (calendar.busy ?? []).map((period) => ({
 		start: new Date(period.start),
 		end: new Date(period.end),
 	}));
