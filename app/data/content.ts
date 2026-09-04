@@ -63,7 +63,7 @@ export const about = {
 		{
 			heading: "Where she practises",
 			paragraphs: [
-				"Dr Sayal sees patients at UCLH (HCA Healthcare), The London Oncology Clinic (HCA Healthcare), and on Harley Street. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
+				"Dr Sayal sees patients at University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic (all part of HCA Healthcare). She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
 			],
 		},
 		{
@@ -89,7 +89,7 @@ export const about = {
 	belief:
 		"Technology and clinical expertise should work together to give every patient a treatment plan that is accurate, timely, and genuinely personal to them.",
 	bottomCta:
-		"New patient reviews, second opinions, and ongoing monitoring appointments are available across UCLH, The London Oncology Clinic, and Harley Street.",
+		"New patient reviews, second opinions, and ongoing monitoring appointments are available across University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic.",
 };
 
 export const conditionsPage = {
@@ -716,7 +716,7 @@ export const contactPage = {
 	callout: {
 		title: "Need to reach the practice team?",
 		body:
-			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, contact the secretary by email. Enquiries by email only.",
+			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, email the practice team. Enquiries by email only.",
 		emailLabel: "Email the practice team",
 		bookLabel: "Book a consultation",
 	},

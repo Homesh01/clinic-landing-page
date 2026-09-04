@@ -2,6 +2,7 @@
 
 interface Env {
 	SITE_PASSWORD?: string;
+	SITE_COOKIE_SECRET?: string;
 	GOOGLE_CLIENT_ID?: string;
 	GOOGLE_CLIENT_SECRET?: string;
 	GOOGLE_REFRESH_TOKEN?: string;

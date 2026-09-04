@@ -49,6 +49,13 @@ export default async function handleRequest(
 	}
 
 	responseHeaders.set("Content-Type", "text/html");
+	responseHeaders.set("X-Content-Type-Options", "nosniff");
+	responseHeaders.set("X-Frame-Options", "SAMEORIGIN");
+	responseHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
+	responseHeaders.set(
+		"Permissions-Policy",
+		"camera=(), microphone=(), geolocation=()",
+	);
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatusCode,

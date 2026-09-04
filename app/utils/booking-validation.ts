@@ -45,7 +45,7 @@ const MAX_NOTES = 1000;
 function cleanText(value: string): string {
 	return value
 		.normalize("NFKC")
-		.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
+		.replace(/[\u0000-\u001F\u007F]/g, "")
 		.trim();
 }
 
@@ -61,7 +61,7 @@ export function validateBookingForm(input: {
 	phone: string;
 	type: string;
 	notes: string;
-	allowedTimesForDate?: readonly string[];
+	allowedTimesForDate: readonly string[];
 }):
 	| { ok: true; data: ValidatedBookingInput }
 	| { ok: false; errors: BookingFieldErrors; error: string } {
@@ -81,10 +81,7 @@ export function validateBookingForm(input: {
 
 	if (!TIME_RE.test(timeLabel)) {
 		errors.time = "Please choose a valid time.";
-	} else if (
-		input.allowedTimesForDate &&
-		!input.allowedTimesForDate.includes(timeLabel)
-	) {
+	} else if (!input.allowedTimesForDate.includes(timeLabel)) {
 		errors.time = "That time is no longer available. Please choose another.";
 	}
 

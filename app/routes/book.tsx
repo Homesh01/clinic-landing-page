@@ -3,7 +3,14 @@ import type {
 	LoaderFunctionArgs,
 	MetaFunction,
 } from "@remix-run/cloudflare";
-import { Form, Link, useActionData, useLoaderData, useNavigation, useRevalidator } from "@remix-run/react";
+import {
+	Form,
+	Link,
+	useActionData,
+	useLoaderData,
+	useNavigation,
+	useRevalidator,
+} from "@remix-run/react";
 import { json } from "@remix-run/cloudflare";
 import { useEffect, useMemo, useState } from "react";
 import { PageHero } from "~/components/PageHero";
@@ -20,6 +27,19 @@ import {
 	type BookingFieldErrors,
 	validateBookingForm,
 } from "~/utils/booking-validation";
+import { requireSiteAccess } from "~/utils/site-auth.server";
+
+function formatBookingDate(dateIso: string): string {
+	const [year, month, day] = dateIso.split("-").map(Number);
+	const date = new Date(Date.UTC(year, month - 1, day, 12));
+	return new Intl.DateTimeFormat("en-GB", {
+		weekday: "long",
+		day: "numeric",
+		month: "long",
+		year: "numeric",
+		timeZone: "Europe/London",
+	}).format(date);
+}
 
 export const meta: MetaFunction = () => {
 	return [
@@ -61,6 +81,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+	await requireSiteAccess(request, context.cloudflare.env);
+
 	const config = getBookingConfig(context.cloudflare.env);
 	if (!config) {
 		return json(
@@ -82,12 +104,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	const type = String(formData.get("type") ?? "");
 	const notes = String(formData.get("notes") ?? "");
 
-	let allowedTimesForDate: string[] | undefined;
+	let allowedTimesForDate: string[] = [];
 	try {
 		const days = await getAvailableDays(config);
-		allowedTimesForDate = days.find((day) => day.iso === dateIso.trim())?.times;
-	} catch {
-		allowedTimesForDate = undefined;
+		allowedTimesForDate =
+			days.find((day) => day.iso === dateIso.trim())?.times ?? [];
+	} catch (error) {
+		console.error("Booking availability check error:", error);
+		return json(
+			{
+				ok: false as const,
+				error:
+					"Could not verify availability right now. Please try again shortly.",
+				errors: {} as BookingFieldErrors,
+			},
+			{ status: 503 },
+		);
 	}
 
 	const validated = validateBookingForm({
@@ -216,7 +248,7 @@ export default function BookPage() {
 								<p className="mt-3 text-ink-soft">
 									Your consultation is booked for{" "}
 									<strong className="font-semibold text-ink">
-										{actionData.dateIso}
+										{formatBookingDate(actionData.dateIso)}
 									</strong>{" "}
 									at{" "}
 									<strong className="font-semibold text-ink">
@@ -476,7 +508,7 @@ export default function BookPage() {
 												className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
 												disabled={!selectedDay || !selectedSlot || submitting}
 											>
-												{submitting ? "Booking…" : "Book consultation"}
+												{submitting ? "Booking…" : "Book a consultation"}
 											</button>
 										</Form>
 									</>
@@ -491,15 +523,9 @@ export default function BookPage() {
 							Contact the practice team
 						</h2>
 						<p className="mt-4 text-ink-soft">
-							Contact the secretary by email and the practice team can help
-							arrange a suitable appointment.
+							For help arranging an appointment, email the practice team.
 						</p>
 						<ul className="mt-6 space-y-3 text-ink-soft">
-							<li>
-								<span className="block text-sm text-ink-muted">
-									{contact.secretaryLabel}
-								</span>
-							</li>
 							<li>
 								<a
 									href={`mailto:${contact.email}`}

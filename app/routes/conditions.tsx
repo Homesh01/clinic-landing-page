@@ -57,7 +57,7 @@ export default function ConditionsPage() {
 							</strong>{" "}
 							{conditionsPage.reassure.text}
 						</p>
-						<Link to="/contact" className="btn-outline shrink-0">
+						<Link to="/contact" className="btn-secondary shrink-0">
 							Ask a question →
 						</Link>
 					</div>

@@ -333,6 +333,12 @@ export async function isSlotAvailable(
 	const minute = Number(minuteText);
 	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
 
+	if (isWeekendInZone(dateIso, config.timeZone)) return false;
+	if (!slotStartsForDay().some((slot) => slot.label === timeLabel)) return false;
+	if (!listCandidateDays(config.timeZone, AVAILABILITY_WEEKDAYS).includes(dateIso)) {
+		return false;
+	}
+
 	const start = zonedDateTimeToUtc(dateIso, hour, minute, config.timeZone);
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
 	if (start.getTime() <= Date.now()) return false;

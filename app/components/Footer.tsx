@@ -23,14 +23,15 @@ export function Footer() {
 								<span className="block text-sm text-ink-muted">
 									{contact.secretaryLabel}
 								</span>
-							</li>
-							<li>
 								<a
 									href={`mailto:${contact.email}`}
 									className="transition-colors hover:text-accent"
 								>
 									{contact.email}
 								</a>
+							</li>
+							<li className="text-sm italic text-ink-muted">
+								{contact.enquiriesNote}
 							</li>
 						</ul>
 						<p className="mt-6 text-sm text-ink-muted">

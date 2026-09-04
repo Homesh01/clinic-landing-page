@@ -10,6 +10,7 @@ import {
 	createSiteAccessHeaders,
 	getSitePassword,
 	hasSiteAccess,
+	timingSafeEqual,
 } from "~/utils/site-auth.server";
 
 export const meta: MetaFunction = () => {
@@ -22,7 +23,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 		throw redirect("/");
 	}
 
-	if (await hasSiteAccess(request, password)) {
+	if (await hasSiteAccess(request, context.cloudflare.env, password)) {
 		const url = new URL(request.url);
 		const redirectTo = url.searchParams.get("redirectTo") || "/";
 		throw redirect(safeRedirectTo(redirectTo));
@@ -41,24 +42,45 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	const submitted = String(formData.get("password") ?? "");
 	const redirectTo = safeRedirectTo(String(formData.get("redirectTo") ?? "/"));
 
-	if (submitted !== password) {
-		return json({ error: "Incorrect password. Please try again." }, { status: 401 });
+	if (!timingSafeEqual(submitted, password)) {
+		return json(
+			{ error: "Incorrect password. Please try again." },
+			{ status: 401 },
+		);
 	}
 
 	return redirect(redirectTo, {
-		headers: await createSiteAccessHeaders(request, password),
+		headers: await createSiteAccessHeaders(
+			request,
+			context.cloudflare.env,
+			password,
+		),
 	});
 }
 
 function safeRedirectTo(value: string) {
-	if (!value.startsWith("/") || value.startsWith("//")) return "/";
-	return value;
+	if (
+		!value.startsWith("/") ||
+		value.startsWith("//") ||
+		value.includes("\\") ||
+		value.includes("@")
+	) {
+		return "/";
+	}
+
+	try {
+		const url = new URL(value, "https://example.invalid");
+		if (url.origin !== "https://example.invalid") return "/";
+		return `${url.pathname}${url.search}`;
+	} catch {
+		return "/";
+	}
 }
 
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>();
 	const [searchParams] = useSearchParams();
-	const redirectTo = searchParams.get("redirectTo") || "/";
+	const redirectTo = safeRedirectTo(searchParams.get("redirectTo") || "/");
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-mist to-white px-5 py-16">
