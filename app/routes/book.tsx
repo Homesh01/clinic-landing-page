@@ -11,6 +11,7 @@ import { booking, contact, site } from "~/data/content";
 import {
 	BookingConflictError,
 	createBookingEvent,
+	describeCalendarId,
 	getAvailableDays,
 	getBookingConfig,
 } from "~/utils/google-calendar.server";
@@ -39,8 +40,11 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: false as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error: null as string | null,
+			calendarHint: null as string | null,
 		});
 	}
+
+	const calendarHint = describeCalendarId(config.calendarId);
 
 	try {
 		const days = await getAvailableDays(config);
@@ -48,6 +52,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: true as const,
 			days,
 			error: null as string | null,
+			calendarHint,
 		});
 	} catch (error) {
 		console.error("Booking availability error:", error);
@@ -58,6 +63,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 				error instanceof Error
 					? error.message
 					: "Could not load availability from Google Calendar.",
+			calendarHint,
 		});
 	}
 }
@@ -161,7 +167,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function BookPage() {
-	const { configured, days, error: availabilityError } = useLoaderData<typeof loader>();
+	const { configured, days, error: availabilityError, calendarHint } =
+		useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const revalidator = useRevalidator();
@@ -258,12 +265,17 @@ export default function BookPage() {
 								<p className="text-sm text-ink-muted">{booking.note}</p>
 
 								{availabilityError ? (
-									<p
+									<div
 										className="mt-4 rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
 										role="alert"
 									>
-										{availabilityError}
-									</p>
+										<p>{availabilityError}</p>
+										{calendarHint ? (
+											<p className="mt-2 text-xs text-red-700/80">
+												Cloudflare calendar secret in use: {calendarHint}
+											</p>
+										) : null}
+									</div>
 								) : null}
 
 								{actionData && !actionData.ok ? (

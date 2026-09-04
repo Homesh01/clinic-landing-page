@@ -63,6 +63,23 @@ export function getBookingConfig(env: Env | undefined): BookingConfig | null {
 	};
 }
 
+export function describeCalendarId(calendarId: string): string {
+	return `${redactCalendarId(calendarId)} (len ${calendarId.length})`;
+}
+
+function assertUsableCalendarId(calendarId: string): void {
+	if (calendarId.includes("googleusercontent.com")) {
+		throw new Error(
+			`GOOGLE_CALENDAR_ID is set to an OAuth client ID, not a calendar ID. Use the Calendar ID from Google Calendar → Settings → Integrate calendar. Currently: ${describeCalendarId(calendarId)}`,
+		);
+	}
+	if (!calendarId.includes("@")) {
+		throw new Error(
+			`GOOGLE_CALENDAR_ID is missing @ and does not look like a calendar ID. Expected something like c_…@group.calendar.google.com. Currently: ${describeCalendarId(calendarId)}`,
+		);
+	}
+}
+
 export async function getAccessToken(config: BookingConfig): Promise<string> {
 	const response = await fetch("https://oauth2.googleapis.com/token", {
 		method: "POST",
@@ -121,21 +138,31 @@ async function fetchBusyPeriods(
 		error?: { message?: string };
 		calendars?: Record<
 			string,
-			{ errors?: { reason?: string }[]; busy?: { start: string; end: string }[] }
+			{
+				errors?: { reason?: string; message?: string }[];
+				busy?: { start: string; end: string }[];
+			}
 		>;
 	};
 
 	if (!response.ok) {
 		throw new Error(
-			`${data.error?.message || "FreeBusy request failed"} (calendar: ${redactCalendarId(config.calendarId)})`,
+			`${data.error?.message || "FreeBusy request failed"} — ${describeCalendarId(config.calendarId)}`,
 		);
 	}
 
 	const calendar = data.calendars?.[config.calendarId];
-	if (calendar?.errors?.length) {
+	if (!calendar) {
 		throw new Error(
-			`${calendar.errors[0]?.reason || "Calendar FreeBusy access denied"} (calendar: ${redactCalendarId(config.calendarId)})`,
+			`Google FreeBusy returned no data for this calendar — ${describeCalendarId(config.calendarId)}`,
 		);
+	}
+	if (calendar.errors?.length) {
+		const detail =
+			calendar.errors[0]?.message ||
+			calendar.errors[0]?.reason ||
+			"Calendar FreeBusy access denied";
+		throw new Error(`${detail} — ${describeCalendarId(config.calendarId)}`);
 	}
 
 	return (calendar?.busy ?? []).map((period) => ({
@@ -252,6 +279,7 @@ function slotStartsForDay(): { hour: number; minute: number; label: string }[] {
 export async function getAvailableDays(
 	config: BookingConfig,
 ): Promise<DaySlots[]> {
+	assertUsableCalendarId(config.calendarId);
 	const accessToken = await getAccessToken(config);
 	const dayIsos = listCandidateDays(config.timeZone, AVAILABILITY_WEEKDAYS);
 	if (dayIsos.length === 0) return [];
