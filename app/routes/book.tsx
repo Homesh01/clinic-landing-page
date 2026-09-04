@@ -11,7 +11,6 @@ import { booking, contact, site } from "~/data/content";
 import {
 	BookingConflictError,
 	createBookingEvent,
-	describeCalendarId,
 	getAvailableDays,
 	getBookingConfig,
 } from "~/utils/google-calendar.server";
@@ -40,11 +39,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: false as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error: null as string | null,
-			calendarHint: null as string | null,
 		});
 	}
-
-	const calendarHint = describeCalendarId(config.calendarId);
 
 	try {
 		const days = await getAvailableDays(config);
@@ -52,7 +48,6 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: true as const,
 			days,
 			error: null as string | null,
-			calendarHint,
 		});
 	} catch (error) {
 		console.error("Booking availability error:", error);
@@ -60,10 +55,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: true as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error:
-				error instanceof Error
-					? error.message
-					: "Could not load availability from Google Calendar.",
-			calendarHint,
+				"Could not load availability right now. Please try again shortly, or contact the practice team.",
 		});
 	}
 }
@@ -124,15 +116,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		await createBookingEvent(config, validated.data);
 
 		let emailSent = true;
-		let emailErrorMessage: string | null = null;
 		try {
 			await sendPatientBookingConfirmation(config, validated.data);
 		} catch (emailError) {
 			emailSent = false;
-			emailErrorMessage =
-				emailError instanceof Error
-					? emailError.message
-					: "Could not send confirmation email";
 			console.error("Booking confirmation email error:", emailError);
 		}
 
@@ -142,16 +129,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			timeLabel: validated.data.timeLabel,
 			name: validated.data.name,
 			emailSent,
-			emailErrorMessage,
 		});
 	} catch (error) {
 		console.error("Booking create error:", error);
 		const message =
 			error instanceof BookingConflictError
 				? error.message
-				: error instanceof Error
-					? error.message
-					: "Could not complete the booking. Please try again.";
+				: "Could not complete the booking. Please try again.";
 
 		return json(
 			{
@@ -167,7 +151,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function BookPage() {
-	const { configured, days, error: availabilityError, calendarHint } =
+	const { configured, days, error: availabilityError } =
 		useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
@@ -265,17 +249,12 @@ export default function BookPage() {
 								<p className="text-sm text-ink-muted">{booking.note}</p>
 
 								{availabilityError ? (
-									<div
+									<p
 										className="mt-4 rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
 										role="alert"
 									>
-										<p>{availabilityError}</p>
-										{calendarHint ? (
-											<p className="mt-2 text-xs text-red-700/80">
-												Cloudflare calendar secret in use: {calendarHint}
-											</p>
-										) : null}
-									</div>
+										{availabilityError}
+									</p>
 								) : null}
 
 								{actionData && !actionData.ok ? (

@@ -33,7 +33,7 @@ function cleanEnv(value: string | undefined): string | undefined {
 }
 
 function redactCalendarId(calendarId: string): string {
-	if (calendarId.length <= 12) return "(too short / invalid)";
+	if (calendarId.length <= 12) return "(invalid)";
 	return `${calendarId.slice(0, 6)}…${calendarId.slice(-28)}`;
 }
 
@@ -63,20 +63,13 @@ export function getBookingConfig(env: Env | undefined): BookingConfig | null {
 	};
 }
 
-export function describeCalendarId(calendarId: string): string {
-	return `${redactCalendarId(calendarId)} (len ${calendarId.length})`;
-}
-
 function assertUsableCalendarId(calendarId: string): void {
-	if (calendarId.includes("googleusercontent.com")) {
-		throw new Error(
-			`GOOGLE_CALENDAR_ID is set to an OAuth client ID, not a calendar ID. Use the Calendar ID from Google Calendar → Settings → Integrate calendar. Currently: ${describeCalendarId(calendarId)}`,
+	if (calendarId.includes("googleusercontent.com") || !calendarId.includes("@")) {
+		console.error(
+			"Invalid GOOGLE_CALENDAR_ID shape:",
+			redactCalendarId(calendarId),
 		);
-	}
-	if (!calendarId.includes("@")) {
-		throw new Error(
-			`GOOGLE_CALENDAR_ID is missing @ and does not look like a calendar ID. Expected something like c_…@group.calendar.google.com. Currently: ${describeCalendarId(calendarId)}`,
-		);
+		throw new Error("Booking calendar is misconfigured.");
 	}
 }
 
@@ -107,32 +100,6 @@ export async function getAccessToken(config: BookingConfig): Promise<string> {
 	}
 
 	return data.access_token;
-}
-
-async function getAuthorizedGoogleEmail(
-	accessToken: string,
-): Promise<string | null> {
-	try {
-		const response = await fetch(
-			"https://www.googleapis.com/calendar/v3/calendars/primary",
-			{ headers: { Authorization: `Bearer ${accessToken}` } },
-		);
-		const data = (await response.json()) as { id?: string };
-		return data.id ?? null;
-	} catch {
-		return null;
-	}
-}
-
-async function calendarIdFingerprint(calendarId: string): Promise<string> {
-	const digest = await crypto.subtle.digest(
-		"SHA-256",
-		new TextEncoder().encode(calendarId),
-	);
-	return [...new Uint8Array(digest)]
-		.slice(0, 4)
-		.map((byte) => byte.toString(16).padStart(2, "0"))
-		.join("");
 }
 
 type BusyPeriod = { start: Date; end: Date };
@@ -171,29 +138,26 @@ async function fetchBusyPeriods(
 		>;
 	};
 
-	const authEmail = await getAuthorizedGoogleEmail(accessToken);
-	const fingerprint = await calendarIdFingerprint(config.calendarId);
-	const debug = `auth=${authEmail ?? "unknown"}; calendar=${describeCalendarId(config.calendarId)}; fp=${fingerprint}`;
-
 	if (!response.ok) {
-		throw new Error(
-			`${data.error?.message || "FreeBusy request failed"} [${debug}]`,
-		);
+		console.error("FreeBusy request failed:", data.error, {
+			calendar: redactCalendarId(config.calendarId),
+		});
+		throw new Error("Could not check calendar availability.");
 	}
 
 	const calendar = data.calendars?.[config.calendarId];
 	if (!calendar) {
-		const returnedKeys = Object.keys(data.calendars ?? {}).join(", ") || "none";
-		throw new Error(
-			`Google FreeBusy returned no data for this calendar (keys: ${returnedKeys}) [${debug}]`,
-		);
+		console.error("FreeBusy missing calendar entry:", {
+			calendar: redactCalendarId(config.calendarId),
+			keys: Object.keys(data.calendars ?? {}),
+		});
+		throw new Error("Could not check calendar availability.");
 	}
 	if (calendar.errors?.length) {
-		const detail =
-			calendar.errors[0]?.message ||
-			calendar.errors[0]?.reason ||
-			"Calendar FreeBusy access denied";
-		throw new Error(`${detail} [${debug}]`);
+		console.error("FreeBusy calendar errors:", calendar.errors, {
+			calendar: redactCalendarId(config.calendarId),
+		});
+		throw new Error("Could not check calendar availability.");
 	}
 
 	return (calendar.busy ?? []).map((period) => ({
@@ -448,8 +412,13 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
+				// Patient is a guest so Google can email them if the event is
+				// cancelled/deleted from Calendar. sendUpdates=none avoids a
+				// Google invite on create (we send our own confirmation email).
+				attendees: [{ email: input.email, displayName: input.name }],
 				guestsCanInviteOthers: false,
 				guestsCanModify: false,
+				guestsCanSeeOtherGuests: false,
 				transparency: "opaque",
 			}),
 		},
