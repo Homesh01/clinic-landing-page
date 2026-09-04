@@ -73,10 +73,7 @@ export default function ContactPage() {
 							<p className="eyebrow mb-4 lg:hidden">
 								{contact.secretaryLabel}
 							</p>
-							<h2 className="font-display text-[1.45rem] leading-snug text-ink">
-								{contact.name}
-							</h2>
-							<p className="mt-2.5 text-[0.97rem] text-ink-soft">
+							<p className="text-[0.97rem] text-ink-soft">
 								<a
 									href={`mailto:${contact.email}`}
 									className="transition-colors hover:text-accent"

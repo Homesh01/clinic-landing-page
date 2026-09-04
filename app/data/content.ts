@@ -724,8 +724,7 @@ export const contactPage = {
 
 export const contact = {
 	secretaryLabel: "Secretary / PA",
-	name: "Name to be confirmed",
-	email: "email@to-be-confirmed.example",
+	email: "info@personalisedcancercare.com",
 	enquiriesNote: "Enquiries by email only",
 };
 

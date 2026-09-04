@@ -503,7 +503,6 @@ export default function BookPage() {
 								<span className="block text-sm text-ink-muted">
 									{contact.secretaryLabel}
 								</span>
-								{contact.name}
 							</li>
 							<li>
 								<a
