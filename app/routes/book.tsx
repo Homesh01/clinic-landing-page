@@ -228,10 +228,6 @@ export default function BookPage() {
 										: " We could not send the confirmation email automatically — please contact the practice if you need written confirmation."}{" "}
 									The practice team may follow up if anything further is needed.
 								</p>
-								<Link to="/book" className="link-underline mt-6">
-									Book another consultation
-									<span aria-hidden="true">→</span>
-								</Link>
 							</div>
 						) : !configured ? (
 							<div className="border border-line bg-cream/70 px-6 py-8">
