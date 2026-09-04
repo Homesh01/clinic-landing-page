@@ -104,7 +104,7 @@ export const conditionsPage = {
 		text: "You don't need to work it out alone. Get in touch and we will help you understand your options.",
 	},
 	trust: {
-		title: "Care that's coordinated around you, not around a department",
+		title: "Care that is coordinated around you, not around a department",
 		lede:
 			"Cancer care rarely involves just one specialist. Dr Sayal works as part of a multidisciplinary team (MDT) alongside surgeons, haematologists and specialist nurses, so your case is reviewed from every angle and everyone involved in your care works from the same plan.",
 		points: [
@@ -128,7 +128,7 @@ export const conditionsPage = {
 	callout: {
 		title: "Recently diagnosed and not sure what happens next?",
 		body:
-			"You don't need a referral in hand to ask a question. Get in touch and we'll help you understand your options, at your own pace.",
+			"You do not need a referral in hand to ask a question. Get in touch and we'll help you understand your options, at your own pace.",
 	},
 };
 
@@ -328,7 +328,12 @@ export const faqPage = {
 				{
 					question: "Where are clinics held?",
 					answer:
-						"Dr Sayal sees patients at University College London Hospitals, The London Oncology Clinic, and on Harley Street, all part of HCA Healthcare. Virtual consultations are also available where appropriate.",
+						"Dr Sayal sees patients at University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. Virtual consultations are also available where appropriate.",
+				},
+				{
+					question: "Are remote consultations offered?",
+					answer:
+						"Yes, remote consultations are available. Video appointments can be arranged where clinically appropriate, offering a convenient option for follow-ups or initial discussions when attending in person is not possible.",
 				},
 			],
 		},
@@ -365,7 +370,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 		timing: "upcoming",
 		date: "17 to 21 Sep 2027",
 		location: "Barcelona, Spain",
-		tag: "Organising Committee",
+		tag: "Organising committee",
 		title: "ESMO Congress 2027",
 		description: [
 			{
@@ -397,6 +402,20 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			{
 				text:
 					"Will attend the ESMO AI and Digital Oncology Congress in Berlin, Germany, from 16 to 18 November 2026, focused on the clinical application of AI and digital tools across oncology.",
+			},
+		],
+	},
+	{
+		year: 2026,
+		timing: "upcoming",
+		date: "24 Oct 2026",
+		location: "Madrid, Spain",
+		tag: "Invited panel",
+		title: "Women in Cancer, ESMO Congress 2026",
+		description: [
+			{
+				text:
+					"Will take part in an invited panel discussion on the responsible use of AI in medicine, in conversation with the Chief Data Officer of MD Anderson Cancer Center, at the Women in Cancer event during the ESMO Congress 2026 in Madrid, Spain, on 24 October 2026.",
 			},
 		],
 	},
@@ -655,21 +674,6 @@ export const blogPosts: readonly BlogPost[] = [
 		paragraphs: [
 			"Recently a fellow oncologist asked my advice about a patient with anaplastic thyroid cancer, a rare and highly aggressive form of cancer. They were exploring whether a personalised mRNA vaccine could be developed for their patient.",
 			"Only a handful of centres worldwide are currently capable of developing and administering such treatments. We need the clinical and manufacturing infrastructure, supported by appropriate ethical and regulatory frameworks, to ensure that patients with ultra-rare tumours have the opportunity to access them.",
-		],
-	},
-	{
-		date: "2026-07-13",
-		paragraphs: [
-			"The field has discussed personalised cancer care for decades.",
-			"I have been asking myself: when will this vision be actualised into routine clinical care. Personalised care is not the same as stratified care.",
-		],
-	},
-	{
-		date: "2026-07-06",
-		paragraphs: [
-			"I unapologetically have been posting a lot about anaplastic thyroid cancer recently. It is highly aggressive disease.",
-			"Because it is both rare and almost always fatal, drug development in this space is not considered commercially viable.",
-			"We therefore need new models of care for such patients.",
 		],
 	},
 ];
