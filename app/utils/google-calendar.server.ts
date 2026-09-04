@@ -21,15 +21,31 @@ const CLINIC_CLOSE = { hour: 16, minute: 0 };
 const SLOT_MINUTES = 60;
 const AVAILABILITY_WEEKDAYS = 14;
 
+/** Trim and strip wrapping quotes / zero-width chars from dashboard secrets. */
+function cleanEnv(value: string | undefined): string | undefined {
+	if (!value) return undefined;
+	const cleaned = value
+		.trim()
+		.replace(/^[\u200B-\u200D\uFEFF]+|[\u200B-\u200D\uFEFF]+$/g, "")
+		.replace(/^["']|["']$/g, "")
+		.trim();
+	return cleaned || undefined;
+}
+
+function redactCalendarId(calendarId: string): string {
+	if (calendarId.length <= 12) return "(too short / invalid)";
+	return `${calendarId.slice(0, 6)}…${calendarId.slice(-28)}`;
+}
+
 export function getBookingConfig(env: Env | undefined): BookingConfig | null {
-	const clientId = env?.GOOGLE_CLIENT_ID?.trim();
-	const clientSecret = env?.GOOGLE_CLIENT_SECRET?.trim();
-	const refreshToken = env?.GOOGLE_REFRESH_TOKEN?.trim();
-	const calendarId = env?.GOOGLE_CALENDAR_ID?.trim();
-	const timeZone = env?.BOOKING_TIMEZONE?.trim() || "Europe/London";
-	const fromEmail = env?.BOOKING_FROM_EMAIL?.trim() || undefined;
-	const fromName = env?.BOOKING_FROM_NAME?.trim() || undefined;
-	const bccEmail = env?.BOOKING_BCC_EMAIL?.trim() || undefined;
+	const clientId = cleanEnv(env?.GOOGLE_CLIENT_ID);
+	const clientSecret = cleanEnv(env?.GOOGLE_CLIENT_SECRET);
+	const refreshToken = cleanEnv(env?.GOOGLE_REFRESH_TOKEN);
+	const calendarId = cleanEnv(env?.GOOGLE_CALENDAR_ID);
+	const timeZone = cleanEnv(env?.BOOKING_TIMEZONE) || "Europe/London";
+	const fromEmail = cleanEnv(env?.BOOKING_FROM_EMAIL);
+	const fromName = cleanEnv(env?.BOOKING_FROM_NAME);
+	const bccEmail = cleanEnv(env?.BOOKING_BCC_EMAIL);
 
 	if (!clientId || !clientSecret || !refreshToken || !calendarId) {
 		return null;
@@ -110,14 +126,15 @@ async function fetchBusyPeriods(
 	};
 
 	if (!response.ok) {
-		throw new Error(data.error?.message || "FreeBusy request failed");
+		throw new Error(
+			`${data.error?.message || "FreeBusy request failed"} (calendar: ${redactCalendarId(config.calendarId)})`,
+		);
 	}
 
 	const calendar = data.calendars?.[config.calendarId];
 	if (calendar?.errors?.length) {
 		throw new Error(
-			calendar.errors[0]?.reason ||
-				"Calendar FreeBusy access denied — check calendar ID and OAuth scopes",
+			`${calendar.errors[0]?.reason || "Calendar FreeBusy access denied"} (calendar: ${redactCalendarId(config.calendarId)})`,
 		);
 	}
 
