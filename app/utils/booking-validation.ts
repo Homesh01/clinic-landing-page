@@ -9,6 +9,9 @@ export type ConsultationType = (typeof CONSULTATION_TYPES)[number];
 
 export { CONSULTATION_TYPES };
 
+export const PAYMENT_METHODS = ["self-pay", "insurance"] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
 export type BookingFieldErrors = {
 	date?: string;
 	time?: string;
@@ -16,6 +19,9 @@ export type BookingFieldErrors = {
 	email?: string;
 	phone?: string;
 	type?: string;
+	paymentMethod?: string;
+	insurer?: string;
+	membershipNumber?: string;
 	notes?: string;
 };
 
@@ -26,6 +32,9 @@ export type ValidatedBookingInput = {
 	email: string;
 	phone: string;
 	type: ConsultationType;
+	paymentMethod: PaymentMethod;
+	insurer?: string;
+	membershipNumber?: string;
 	notes?: string;
 };
 
@@ -41,6 +50,8 @@ const MAX_NAME = 80;
 const MAX_EMAIL = 120;
 const MAX_PHONE = 30;
 const MAX_NOTES = 1000;
+const MAX_INSURER = 80;
+const MAX_MEMBERSHIP = 60;
 
 function cleanText(value: string): string {
 	return value
@@ -53,6 +64,10 @@ function isAllowedConsultationType(value: string): value is ConsultationType {
 	return (CONSULTATION_TYPES as readonly string[]).includes(value);
 }
 
+function isAllowedPaymentMethod(value: string): value is PaymentMethod {
+	return (PAYMENT_METHODS as readonly string[]).includes(value);
+}
+
 export function validateBookingForm(input: {
 	dateIso: string;
 	timeLabel: string;
@@ -60,6 +75,9 @@ export function validateBookingForm(input: {
 	email: string;
 	phone: string;
 	type: string;
+	paymentMethod: string;
+	insurer: string;
+	membershipNumber: string;
 	notes: string;
 	allowedTimesForDate: readonly string[];
 }):
@@ -73,6 +91,9 @@ export function validateBookingForm(input: {
 	const email = cleanText(input.email).toLowerCase();
 	const phone = cleanText(input.phone);
 	const type = cleanText(input.type);
+	const paymentMethod = cleanText(input.paymentMethod);
+	const insurer = cleanText(input.insurer);
+	const membershipNumber = cleanText(input.membershipNumber);
 	const notes = cleanText(input.notes);
 
 	if (!DATE_RE.test(dateIso)) {
@@ -115,6 +136,25 @@ export function validateBookingForm(input: {
 		errors.type = "Please choose a consultation type.";
 	}
 
+	if (!paymentMethod || !isAllowedPaymentMethod(paymentMethod)) {
+		errors.paymentMethod = "Please choose how you will pay.";
+	}
+
+	if (paymentMethod === "insurance") {
+		if (!insurer) {
+			errors.insurer = "Please enter your insurer name.";
+		} else if (insurer.length > MAX_INSURER) {
+			errors.insurer = "Insurer name must be 80 characters or fewer.";
+		}
+
+		if (!membershipNumber) {
+			errors.membershipNumber = "Please enter your membership or policy number.";
+		} else if (membershipNumber.length > MAX_MEMBERSHIP) {
+			errors.membershipNumber =
+				"Membership number must be 60 characters or fewer.";
+		}
+	}
+
 	if (notes.length > MAX_NOTES) {
 		errors.notes = "Notes must be 1000 characters or fewer.";
 	}
@@ -136,6 +176,10 @@ export function validateBookingForm(input: {
 			email,
 			phone,
 			type: type as ConsultationType,
+			paymentMethod: paymentMethod as PaymentMethod,
+			insurer: paymentMethod === "insurance" ? insurer : undefined,
+			membershipNumber:
+				paymentMethod === "insurance" ? membershipNumber : undefined,
 			notes: notes || undefined,
 		},
 	};

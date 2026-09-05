@@ -112,6 +112,7 @@ function bookingToMetadata(
 		email: input.email.slice(0, 500),
 		phone: input.phone.slice(0, 500),
 		type: input.type.slice(0, 500),
+		paymentMethod: "self-pay",
 		notes: (input.notes ?? "").slice(0, 500),
 	};
 }
@@ -132,6 +133,7 @@ function metadataToBooking(
 		email: metadata.email,
 		phone: metadata.phone,
 		type: metadata.type as ValidatedBookingInput["type"],
+		paymentMethod: "self-pay",
 		notes: metadata.notes?.trim() ? metadata.notes.trim() : undefined,
 	};
 }
@@ -285,7 +287,10 @@ export async function fulfillPaidCheckoutSession(input: {
 
 		let emailSent = true;
 		try {
-			await sendPatientBookingConfirmation(calendarConfig, booking);
+			await sendPatientBookingConfirmation(calendarConfig, {
+				...booking,
+				paymentMethod: "self-pay",
+			});
 		} catch (emailError) {
 			emailSent = false;
 			console.error("Post-payment confirmation email error:", emailError);

@@ -46,7 +46,7 @@ export default function ContactPage() {
 			<PageHero
 				eyebrow="Contact &amp; Locations"
 				title="Reach the practice team"
-				summary="Appointments are available across central London clinics. Fees and insurer details can be confirmed before your first visit."
+				summary="Appointments are available across central London clinics. Self-pay fees are listed below; insurance cover can be confirmed with the practice team before your first visit."
 			/>
 
 			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">
@@ -100,11 +100,21 @@ export default function ContactPage() {
 							<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">
 								{fees.intro}
 							</p>
-							<p className="mt-3 text-[0.97rem] text-ink-muted">
+							<ul className="mt-4 space-y-2 text-[0.97rem] text-ink">
+								{fees.selfPay.map((item) => (
+									<li
+										key={item.label}
+										className="flex items-baseline justify-between gap-4"
+									>
+										<span className="text-ink-soft">{item.label}</span>
+										<span className="shrink-0 font-medium tabular-nums">
+											{item.amount}
+										</span>
+									</li>
+								))}
+							</ul>
+							<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-muted">
 								{fees.insurers}
-							</p>
-							<p className="mt-2 text-[0.97rem] text-ink-muted">
-								{fees.selfPay}
 							</p>
 						</div>
 

@@ -10,6 +10,8 @@ export type BookingEmailInput = {
 	phone: string;
 	type: string;
 	notes?: string;
+	paymentMethod?: "self-pay" | "insurance";
+	insurer?: string;
 };
 
 function toBase64Url(value: string): string {
@@ -99,6 +101,14 @@ export async function sendPatientBookingConfirmation(
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
 	const fromName = config.fromName || `${site.name} bookings`;
 
+	const isInsurance = input.paymentMethod === "insurance";
+	const paymentLines = isInsurance
+		? [
+				`Payment: Private medical insurance${input.insurer ? ` (${input.insurer})` : ""}`,
+				"The practice team will bill your insurer. Please ensure any required pre-authorisation is in place before your appointment.",
+			]
+		: ["Payment: Self-pay (received)."];
+
 	const subject = `${site.name}: consultation confirmed`;
 	const text = [
 		`Dear ${input.name},`,
@@ -108,6 +118,7 @@ export async function sendPatientBookingConfirmation(
 		`Date: ${when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Type: ${input.type}`,
+		...paymentLines,
 		"",
 		"This appointment has been added to your calendar. If you use Google Calendar, you should see it there shortly.",
 		"",

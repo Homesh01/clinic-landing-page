@@ -685,9 +685,13 @@ export const blog = {
 
 export const fees = {
 	intro:
-		"Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Fees are discussed and confirmed prior to your first appointment.",
-	insurers: "Insurers accepted — to be confirmed.",
-	selfPay: "Self-pay indicative fee — to be confirmed.",
+		"Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Self-pay consultation fees are payable when you book online.",
+	insurers:
+		"If you are using private medical insurance, please email the practice team to confirm cover and any pre-authorisation requirements before your appointment.",
+	selfPay: [
+		{ label: "New Patient Consultation", amount: "£350" },
+		{ label: "Other consultation types", amount: "£250" },
+	],
 };
 
 export const locations = [
@@ -731,7 +735,7 @@ export const contact = {
 export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
-	note: "Times shown are free on the practice calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. After you submit, you will pay securely via Stripe. The appointment is confirmed once payment succeeds.",
+	note: "Times shown are free on the practice calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. Choose self-pay to pay securely online when you book, or private insurance so the practice can bill your insurer.",
 	fees: {
 		newPatient: "£350",
 		standard: "£250",
