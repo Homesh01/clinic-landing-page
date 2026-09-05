@@ -40,15 +40,20 @@ export default function AboutPage() {
 								{about.heroLede}
 							</p>
 							<div
-								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
+								className="mt-8 animate-fade-up"
 								style={{ animationDelay: "220ms" }}
 							>
-								<Link to="/book" className="btn-primary">
-									Book a consultation
-								</Link>
-								<a href="#background" className="btn-secondary">
+								<button
+									type="button"
+									className="btn-secondary"
+									onClick={() => {
+										document
+											.getElementById("background")
+											?.scrollIntoView({ behavior: "smooth", block: "start" });
+									}}
+								>
 									Read her full background ↓
-								</a>
+								</button>
 							</div>
 						</div>
 						<div

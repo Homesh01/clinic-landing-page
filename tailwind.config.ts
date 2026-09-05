@@ -48,7 +48,7 @@ export default {
 				],
 			},
 			maxWidth: {
-				content: "70rem",
+				content: "80rem",
 				prose: "42rem",
 			},
 			keyframes: {
