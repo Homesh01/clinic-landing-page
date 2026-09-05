@@ -1,4 +1,3 @@
-import type { BookingConfig } from "~/utils/google-calendar.server";
 import {
 	BookingConflictError,
 	createBookingEvent,
@@ -16,6 +15,20 @@ export type StripeConfig = {
 
 const NEW_PATIENT_AMOUNT_PENCE = 350_00;
 const STANDARD_AMOUNT_PENCE = 250_00;
+
+/** Google Calendar event ids may only use [a-v0-9]. */
+export async function calendarEventIdForStripeSession(
+	sessionId: string,
+): Promise<string> {
+	const digest = await crypto.subtle.digest(
+		"SHA-256",
+		new TextEncoder().encode(sessionId),
+	);
+	const hex = [...new Uint8Array(digest)]
+		.map((byte) => byte.toString(16).padStart(2, "0"))
+		.join("");
+	return `bk${hex}`;
+}
 
 export function getStripeConfig(env: Env | undefined): StripeConfig | null {
 	const secretKey = env?.STRIPE_SECRET_KEY?.trim()
@@ -256,16 +269,19 @@ export async function fulfillPaidCheckoutSession(input: {
 	}
 
 	try {
+		const eventId = await calendarEventIdForStripeSession(session.id);
 		const created = await createBookingEvent(calendarConfig, {
 			...booking,
-			notes: [
-				booking.notes,
-				`Stripe session: ${session.id}`,
-			]
+			eventId,
+			notes: [booking.notes, `Stripe session: ${session.id}`]
 				.filter(Boolean)
 				.join("\n"),
 		});
 		await markSessionFulfilled(input.stripe, session.id, created.eventId);
+
+		if (created.alreadyExisted) {
+			return successFromBooking(booking, true, true);
+		}
 
 		let emailSent = true;
 		try {

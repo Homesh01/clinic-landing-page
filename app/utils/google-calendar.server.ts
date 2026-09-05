@@ -357,6 +357,8 @@ export type CreateBookingInput = {
 	phone: string;
 	type: string;
 	notes?: string;
+	/** Deterministic Google event id ([a-v0-9]+) to prevent duplicate inserts. */
+	eventId?: string;
 };
 
 function sanitizeCalendarLine(value: string): string {
@@ -366,7 +368,30 @@ function sanitizeCalendarLine(value: string): string {
 export async function createBookingEvent(
 	config: BookingConfig,
 	input: CreateBookingInput,
-): Promise<{ eventId: string; htmlLink?: string }> {
+): Promise<{ eventId: string; htmlLink?: string; alreadyExisted?: boolean }> {
+	const accessToken = await getAccessToken(config);
+
+	if (input.eventId) {
+		const existing = await fetch(
+			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}`,
+			{ headers: { Authorization: `Bearer ${accessToken}` } },
+		);
+		if (existing.ok) {
+			const data = (await existing.json()) as {
+				id?: string;
+				htmlLink?: string;
+				status?: string;
+			};
+			if (data.id && data.status !== "cancelled") {
+				return {
+					eventId: data.id,
+					htmlLink: data.htmlLink,
+					alreadyExisted: true,
+				};
+			}
+		}
+	}
+
 	const available = await isSlotAvailable(
 		config,
 		input.dateIso,
@@ -384,7 +409,6 @@ export async function createBookingEvent(
 		config.timeZone,
 	);
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
-	const accessToken = await getAccessToken(config);
 
 	const description = [
 		`Patient: ${sanitizeCalendarLine(input.name)}`,
@@ -409,6 +433,7 @@ export async function createBookingEvent(
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				...(input.eventId ? { id: input.eventId } : {}),
 				summary: `Consultation — ${input.type}`,
 				description,
 				start: {
@@ -419,9 +444,6 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				// Patient is a guest so Google can email them if the event is
-				// cancelled/deleted from Calendar. sendUpdates=none avoids a
-				// Google invite on create (we send our own confirmation email).
 				attendees: [{ email: input.email, displayName: input.name }],
 				guestsCanInviteOthers: false,
 				guestsCanModify: false,
@@ -434,14 +456,21 @@ export async function createBookingEvent(
 	const data = (await response.json()) as {
 		id?: string;
 		htmlLink?: string;
-		error?: { message?: string };
+		error?: { message?: string; code?: number; errors?: { reason?: string }[] };
 	};
+
+	if (response.status === 409 || data.error?.errors?.[0]?.reason === "duplicate") {
+		if (input.eventId) {
+			return { eventId: input.eventId, alreadyExisted: true };
+		}
+		throw new BookingConflictError();
+	}
 
 	if (!response.ok || !data.id) {
 		throw new Error(data.error?.message || "Could not create calendar event");
 	}
 
-	return { eventId: data.id, htmlLink: data.htmlLink };
+	return { eventId: data.id, htmlLink: data.htmlLink, alreadyExisted: false };
 }
 
 export class BookingConflictError extends Error {
