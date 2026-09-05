@@ -121,7 +121,6 @@ export default function ConditionsPage() {
 
 								<Link to="/book" className="link-underline">
 									{condition.ctaLabel}
-									<span aria-hidden="true">→</span>
 								</Link>
 							</div>
 						</article>

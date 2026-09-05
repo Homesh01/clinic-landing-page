@@ -99,7 +99,6 @@ export default function AboutPage() {
 							</p>
 							<Link to="/book" className="btn-primary mt-5">
 								Book a consultation
-								<span aria-hidden="true">→</span>
 							</Link>
 						</div>
 					</div>

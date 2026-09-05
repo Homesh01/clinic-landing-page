@@ -24,7 +24,7 @@ BOOKING_FROM_EMAIL=bookings@personalisedcancercare.com
 BOOKING_FROM_NAME=Personalised Cancer Care Bookings
 
 # Stripe Checkout (test keys start with sk_test_ / whsec_)
-# New Patient Consultation = £350; other types = £250
+# New Patient / Second Opinion / Virtual = £350; Follow-up / Monitoring = £250
 STRIPE_SECRET_KEY=sk_test_........
 # Local: stripe listen --forward-to localhost:5173/api/stripe-webhook
 # STRIPE_WEBHOOK_SECRET=whsec_........
