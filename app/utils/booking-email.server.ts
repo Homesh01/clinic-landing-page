@@ -105,7 +105,7 @@ export async function sendPatientBookingConfirmation(
 	const paymentLines = isInsurance
 		? [
 				`Payment: Private medical insurance${input.insurer ? ` (${input.insurer})` : ""}`,
-				"The practice team will bill your insurer. Please ensure any required pre-authorisation is in place before your appointment.",
+				"Payment: Private medical insurance. The clinic will bill your insurer.",
 			]
 		: ["Payment: Self-pay (received)."];
 

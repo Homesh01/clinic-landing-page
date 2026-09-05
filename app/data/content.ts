@@ -205,7 +205,7 @@ export const consultationsPage = {
 	callout: {
 		title: "Ready to take the next step?",
 		body:
-			"Book a consultation at a time that suits you, or speak with the practice team about fees, insurance, and what to expect before your first visit.",
+			"Book a consultation at a time that suits you, or speak with the clinic team about fees, insurance, and what to expect before your first visit.",
 	},
 };
 
@@ -245,11 +245,11 @@ export const services = [
 export const faqPage = {
 	title: "Answers to help you feel prepared",
 	lede:
-		"Here are some common questions patients ask before their first appointment and during their care. If you cannot find what you are looking for, please contact the practice team directly.",
+		"Here are some common questions patients ask before their first appointment and during their care. If you cannot find what you are looking for, please contact the clinic team directly.",
 	callout: {
 		title: "Still have a question?",
 		body:
-			"The practice team is happy to help before you book. Arrange a consultation online, or ask about fees, insurance, and what to expect at your first visit.",
+			"The clinic team is happy to help before you book. Arrange a consultation online, or ask about fees, insurance, and what to expect at your first visit.",
 	},
 	groups: [
 		{
@@ -258,22 +258,22 @@ export const faqPage = {
 				{
 					question: "Do I need a referral to book a consultation?",
 					answer:
-						"A referral from your general practitioner or another specialist is often helpful, but second opinion and private consultations can usually be arranged directly. The practice team can advise on what is needed before your appointment.",
+						"A referral from your general practitioner or another specialist is often helpful, but second opinion and private consultations can usually be arranged directly. The clinic team can advise on what is needed before your appointment.",
 				},
 				{
 					question: "How soon can I be seen?",
 					answer:
-						"The practice team will always try to arrange your appointment as soon as possible, especially for a new diagnosis. Exact timing depends on your circumstances and clinic availability, so please contact the practice team directly to discuss this.",
+						"The clinic team will always try to arrange your appointment as soon as possible, especially for a new diagnosis. Exact timing depends on your circumstances and clinic availability, so please contact the clinic team directly to discuss this.",
 				},
 				{
 					question: "What should I bring to my first appointment?",
 					answer:
-						"Please bring any referral letters, scans, or pathology reports you have, a list of your current medications, and your insurer details if you are using private medical insurance. If you are unsure what is needed, the practice team can advise you in advance.",
+						"Please bring any referral letters, scans, or pathology reports you have, a list of your current medications, and your insurer details if you are using private medical insurance. If you are unsure what is needed, the clinic team can advise you in advance.",
 				},
 				{
 					question: "Is private medical insurance accepted?",
 					answer:
-						"Yes. Dr Sayal accepts patients funded through private medical insurance as well as those paying for their own care. Fees and insurer details are confirmed before your first appointment.",
+						"Yes. Dr Sayal accepts patients funded through private medical insurance as well as those paying for their own care. Where you use insurance, the clinic bills your insurer. Self-pay fees are confirmed when you book.",
 				},
 			],
 		},
@@ -318,7 +318,7 @@ export const faqPage = {
 				{
 					question: "Who can I contact if I have concerns during treatment?",
 					answer:
-						"The practice team is available to answer questions between appointments. If you have concerns about symptoms or side effects during treatment, please contact the practice directly so you can be advised or seen promptly.",
+						"The clinic team is available to answer questions between appointments. If you have concerns about symptoms or side effects during treatment, please contact the clinic directly so you can be advised or seen promptly.",
 				},
 			],
 		},
@@ -687,7 +687,7 @@ export const fees = {
 	intro:
 		"Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Self-pay consultation fees are payable when you book online.",
 	insurers:
-		"If you are using private medical insurance, please email the practice team to confirm cover and any pre-authorisation requirements before your appointment.",
+		"If you are using private medical insurance, the clinic bills your insurer. Email the clinic team if you need help with pre-authorisation.",
 	selfPay: [
 		{ label: "New Patient Consultation", amount: "£350" },
 		{ label: "Other consultation types", amount: "£250" },
@@ -718,10 +718,10 @@ export const locations = [
 
 export const contactPage = {
 	callout: {
-		title: "Need to reach the practice team?",
+		title: "Need to reach the clinic team?",
 		body:
-			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, email the practice team. Enquiries by email only.",
-		emailLabel: "Email the practice team",
+			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, email the clinic team. Enquiries by email only.",
+		emailLabel: "Email the clinic team",
 		bookLabel: "Book a consultation",
 	},
 } as const;
@@ -735,7 +735,7 @@ export const contact = {
 export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
-	note: "Times shown are free on the practice calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. Choose self-pay to pay securely online when you book, or private insurance so the practice can bill your insurer.",
+	note: "Times shown are free on the clinic calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. Choose self-pay to pay securely online when you book, or private insurance — the clinic bills your insurer.",
 	fees: {
 		newPatient: "£350",
 		standard: "£250",

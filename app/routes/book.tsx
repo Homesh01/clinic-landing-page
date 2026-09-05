@@ -60,7 +60,7 @@ function calendarNotesForBooking(input: {
 }): string {
 	const lines: string[] = [];
 	if (input.paymentMethod === "insurance") {
-		lines.push("Payment: Private medical insurance (bill insurer)");
+		lines.push("Payment: Private medical insurance (clinic bills insurer)");
 		if (input.insurer) lines.push(`Insurer: ${input.insurer}`);
 		if (input.membershipNumber) {
 			lines.push(`Membership / policy: ${input.membershipNumber}`);
@@ -126,7 +126,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 		} catch (error) {
 			console.error("Checkout session confirm error:", error);
 			checkoutError =
-				"Payment may have succeeded, but we could not confirm the appointment automatically. Please contact the practice team with your payment receipt.";
+				"Payment may have succeeded, but we could not confirm the appointment automatically. Please contact the clinic team with your payment receipt.";
 		}
 	}
 
@@ -168,7 +168,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 			configured: true as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error:
-				"Could not load availability right now. Please try again shortly, or contact the practice team.",
+				"Could not load availability right now. Please try again shortly, or contact the clinic team.",
 			checkoutResult,
 			checkoutError,
 			checkoutCancelled,
@@ -303,7 +303,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				{
 					ok: false as const,
 					error:
-						"Self-pay booking is temporarily unavailable. Please choose insurance or contact the practice team.",
+						"Self-pay booking is temporarily unavailable. Please choose insurance or contact the clinic team.",
 					errors: {} as BookingFieldErrors,
 				},
 				{ status: 503 },
@@ -448,11 +448,11 @@ export default function BookPage() {
 									.
 									{confirmed.paymentMethod === "self-pay"
 										? " Payment was received."
-										: " The practice team will bill your insurer."}
+										: " The clinic will bill your insurer."}
 									{confirmed.emailSent
 										? " A confirmation email has been sent to the address you provided."
-										: " We could not send the confirmation email automatically — please contact the practice if you need written confirmation."}{" "}
-									The practice team may follow up if anything further is needed.
+										: " We could not send the confirmation email automatically — please contact the clinic if you need written confirmation."}{" "}
+									The clinic team may follow up if anything further is needed.
 								</p>
 							</div>
 						) : !configured ? (
@@ -462,7 +462,7 @@ export default function BookPage() {
 									Online booking is not configured yet
 								</h2>
 								<p className="mt-3 text-ink-soft">
-									Please contact the practice team by email to arrange an
+									Please contact the clinic team by email to arrange an
 									appointment.
 								</p>
 							</div>
@@ -472,8 +472,7 @@ export default function BookPage() {
 								<p className="mt-2 text-sm text-ink-muted">
 									Self-pay fees: New Patient Consultation {fees.newPatient};
 									other consultation types {fees.standard} (payable when you
-									book). Insurance bookings are confirmed without online payment
-									— the practice bills your insurer.
+									book). For private insurance, the clinic bills your insurer.
 								</p>
 
 								{checkoutCancelled ? (
@@ -516,7 +515,7 @@ export default function BookPage() {
 								{bookableDays.length === 0 && !availabilityError ? (
 									<p className="mt-8 text-ink-soft">
 										No open slots in the next few weeks. Please contact the
-										practice team to arrange an appointment.
+										clinic team to arrange an appointment.
 									</p>
 								) : null}
 
@@ -589,7 +588,7 @@ export default function BookPage() {
 														{
 															value: "insurance" as const,
 															label: "Private insurance",
-															hint: "Practice bills your insurer",
+															hint: "Clinic bills your insurer",
 														},
 													] as const
 												).map((option) => {
@@ -768,8 +767,7 @@ export default function BookPage() {
 													</p>
 												) : isInsurance ? (
 													<p className="mt-1.5 text-sm text-ink-muted">
-														No online payment — insurer details are used for
-														billing.
+														No online payment — the clinic bills your insurer.
 													</p>
 												) : null}
 												{fieldErrors?.type ? (
@@ -877,10 +875,10 @@ export default function BookPage() {
 					<aside className="h-fit border border-line bg-cream/70 p-7 sm:p-8">
 						<p className="eyebrow">Prefer to speak with someone?</p>
 						<h2 className="mt-3 font-display text-3xl text-ink">
-							Contact the practice team
+							Contact the clinic team
 						</h2>
 						<p className="mt-4 text-ink-soft">
-							For help arranging an appointment, email the practice team.
+							For help arranging an appointment, email the clinic team.
 						</p>
 						<ul className="mt-6 space-y-3 text-ink-soft">
 							<li>

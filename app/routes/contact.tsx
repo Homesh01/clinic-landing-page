@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 		{
 			name: "description",
 			content:
-				"Clinic locations, fees and insurance information, and how to contact Dr Karen Sayal’s practice team.",
+				"Clinic locations, fees and insurance information, and how to contact Dr Karen Sayal’s clinic team.",
 		},
 	];
 };
@@ -45,8 +45,8 @@ export default function ContactPage() {
 		<>
 			<PageHero
 				eyebrow="Contact &amp; Locations"
-				title="Reach the practice team"
-				summary="Appointments are available across central London clinics. Self-pay fees are listed below; insurance cover can be confirmed with the practice team before your first visit."
+				title="Reach the clinic team"
+				summary="Appointments are available across central London clinics. Self-pay fees are listed below; for private insurance, the clinic bills your insurer."
 			/>
 
 			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">

@@ -318,7 +318,7 @@ export async function fulfillPaidCheckoutSession(input: {
 			return {
 				ok: false,
 				error:
-					"Payment received, but that time was taken before confirmation. The practice team will contact you to rearrange or refund.",
+					"Payment received, but that time was taken before confirmation. The clinic team will contact you to rearrange or refund.",
 			};
 		}
 
@@ -326,7 +326,7 @@ export async function fulfillPaidCheckoutSession(input: {
 		return {
 			ok: false,
 			error:
-				"Payment received, but the appointment could not be confirmed automatically. The practice team will contact you shortly.",
+				"Payment received, but the appointment could not be confirmed automatically. The clinic team will contact you shortly.",
 		};
 	}
 }

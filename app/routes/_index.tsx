@@ -156,7 +156,7 @@ export default function Index() {
 
 			<CalloutBanner
 				eyebrow="Appointments"
-				title="Book a consultation, or speak with the practice team"
+				title="Book a consultation, or speak with the clinic team"
 				body="View available slots and request a consultation at a time that suits you. Clinics at University College Hospital Private Care (HCA), Leaders in Oncology Care (LOC), and The Harley Street Clinic."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
