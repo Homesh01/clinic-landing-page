@@ -690,7 +690,9 @@ export const fees = {
 		"If you are using private medical insurance, the clinic bills your insurer. Email the clinic team if you need help with pre-authorisation.",
 	selfPay: [
 		{ label: "New Patient Consultation", amount: "£350" },
-		{ label: "Other consultation types", amount: "£250" },
+		{ label: "Second Opinion", amount: "£350" },
+		{ label: "Virtual Consultation", amount: "£350" },
+		{ label: "Follow-up / Monitoring", amount: "£250" },
 	],
 };
 
@@ -737,7 +739,7 @@ export const booking = {
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
 	note: "Times shown are free on the clinic calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. Choose self-pay to pay securely online when you book, or private insurance — the clinic bills your insurer.",
 	fees: {
-		newPatient: "£350",
-		standard: "£250",
+		standard: "£350",
+		followUp: "£250",
 	},
 };

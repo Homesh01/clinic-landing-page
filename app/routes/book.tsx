@@ -131,10 +131,12 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 	}
 
 	const fees = {
-		newPatient: formatGbpFromPence(
+		standard: formatGbpFromPence(
 			consultationAmountPence("New Patient Consultation"),
 		),
-		standard: formatGbpFromPence(consultationAmountPence("Second Opinion")),
+		followUp: formatGbpFromPence(
+			consultationAmountPence("Follow-up / Monitoring"),
+		),
 	};
 
 	if (!config) {
@@ -407,8 +409,8 @@ export default function BookPage() {
 	const fieldErrors =
 		actionData && !actionData.ok ? actionData.errors : null;
 	const feeLabel =
-		consultationType === "New Patient Consultation"
-			? fees.newPatient
+		consultationType === "Follow-up / Monitoring"
+			? fees.followUp
 			: fees.standard;
 	const isInsurance = paymentMethod === "insurance";
 	const isSelfPay = paymentMethod === "self-pay";
@@ -470,9 +472,10 @@ export default function BookPage() {
 							<>
 								<p className="text-sm text-ink-muted">{booking.note}</p>
 								<p className="mt-2 text-sm text-ink-muted">
-									Self-pay fees: New Patient Consultation {fees.newPatient};
-									other consultation types {fees.standard} (payable when you
-									book). For private insurance, the clinic bills your insurer.
+									Self-pay fees: New Patient, Second Opinion and Virtual{" "}
+									{fees.standard}; Follow-up / Monitoring {fees.followUp}{" "}
+									(payable when you book). For private insurance, the clinic
+									bills your insurer.
 								</p>
 
 								{checkoutCancelled ? (
@@ -751,8 +754,8 @@ export default function BookPage() {
 														<option key={option} value={option}>
 															{option}
 															{isSelfPay
-																? option === "New Patient Consultation"
-																	? ` (${fees.newPatient})`
+																? option === "Follow-up / Monitoring"
+																	? ` (${fees.followUp})`
 																	: ` (${fees.standard})`
 																: ""}
 														</option>

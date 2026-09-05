@@ -13,8 +13,8 @@ export type StripeConfig = {
 	webhookSecret?: string;
 };
 
-const NEW_PATIENT_AMOUNT_PENCE = 350_00;
-const STANDARD_AMOUNT_PENCE = 250_00;
+const STANDARD_AMOUNT_PENCE = 350_00;
+const FOLLOW_UP_AMOUNT_PENCE = 250_00;
 
 /** Google Calendar event ids may only use [a-v0-9]. */
 export async function calendarEventIdForStripeSession(
@@ -45,8 +45,8 @@ export function getStripeConfig(env: Env | undefined): StripeConfig | null {
 }
 
 export function consultationAmountPence(type: string): number {
-	return type === "New Patient Consultation"
-		? NEW_PATIENT_AMOUNT_PENCE
+	return type === "Follow-up / Monitoring"
+		? FOLLOW_UP_AMOUNT_PENCE
 		: STANDARD_AMOUNT_PENCE;
 }
 

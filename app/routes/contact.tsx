@@ -39,8 +39,6 @@ function LocationBlock({
 }
 
 export default function ContactPage() {
-	const [firstLocation, secondLocation, thirdLocation] = locations;
-
 	return (
 		<>
 			<PageHero
@@ -51,78 +49,62 @@ export default function ContactPage() {
 
 			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">
 				<div className="site-container">
-					<div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16">
-						<p className="eyebrow">Locations</p>
-						<p className="eyebrow hidden lg:block">
-							{contact.secretaryLabel}
-						</p>
-					</div>
-
-					{/*
-					  Shared grid so row heights match across columns:
-					  row 1 = first location | secretary
-					  row 2 = second location | fees  (dividers align)
-					  row 3 = third location
-					*/}
-					<div className="mt-5 grid grid-cols-1 lg:grid-cols-2 lg:items-stretch lg:gap-x-16">
-						<div className="order-1 border-t border-line py-7">
-							<LocationBlock location={firstLocation} />
-						</div>
-
-						<div className="order-4 border-t border-line py-7 lg:order-2">
-							<p className="eyebrow mb-4 lg:hidden">
-								{contact.secretaryLabel}
-							</p>
-							<p className="text-[0.97rem] text-ink-soft">
-								<a
-									href={`mailto:${contact.email}`}
-									className="transition-colors hover:text-accent"
-								>
-									{contact.email}
-								</a>
-							</p>
-							<p className="mt-2 text-[0.92rem] italic text-ink-muted">
-								{contact.enquiriesNote}
-							</p>
-						</div>
-
-						<div className="order-2 border-t border-line py-7 lg:order-3">
-							<LocationBlock location={secondLocation} />
-						</div>
-
-						<div
-							id="fees"
-							className="order-5 scroll-mt-28 border-t border-line py-7 lg:order-4"
-						>
-							<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
-								Fees &amp; insurance
-							</p>
-							<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">
-								{fees.intro}
-							</p>
-							<ul className="mt-4 space-y-2 text-[0.97rem] text-ink">
-								{fees.selfPay.map((item) => (
-									<li
-										key={item.label}
-										className="flex items-baseline justify-between gap-4"
-									>
-										<span className="text-ink-soft">{item.label}</span>
-										<span className="shrink-0 font-medium tabular-nums">
-											{item.amount}
-										</span>
-									</li>
+					<div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-x-16">
+						<div>
+							<p className="eyebrow">Locations</p>
+							<div className="mt-5">
+								{locations.map((location) => (
+									<div key={location.name} className="border-t border-line py-7">
+										<LocationBlock location={location} />
+									</div>
 								))}
-							</ul>
-							<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-muted">
-								{fees.insurers}
-							</p>
+							</div>
 						</div>
 
-						{thirdLocation ? (
-							<div className="order-3 border-t border-line py-7 lg:order-5">
-								<LocationBlock location={thirdLocation} />
+						<div>
+							<p className="eyebrow">{contact.secretaryLabel}</p>
+							<div className="mt-5 border-t border-line py-7">
+								<p className="text-[0.97rem] text-ink-soft">
+									<a
+										href={`mailto:${contact.email}`}
+										className="transition-colors hover:text-accent"
+									>
+										{contact.email}
+									</a>
+								</p>
+								<p className="mt-2 text-[0.92rem] italic text-ink-muted">
+									{contact.enquiriesNote}
+								</p>
 							</div>
-						) : null}
+
+							<div
+								id="fees"
+								className="scroll-mt-28 border-t border-line py-7"
+							>
+								<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
+									Fees &amp; insurance
+								</p>
+								<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">
+									{fees.intro}
+								</p>
+								<ul className="mt-4 space-y-2 text-[0.97rem] text-ink">
+									{fees.selfPay.map((item) => (
+										<li
+											key={item.label}
+											className="flex items-baseline justify-between gap-4"
+										>
+											<span className="text-ink-soft">{item.label}</span>
+											<span className="shrink-0 font-medium tabular-nums">
+												{item.amount}
+											</span>
+										</li>
+									))}
+								</ul>
+								<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-muted">
+									{fees.insurers}
+								</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
