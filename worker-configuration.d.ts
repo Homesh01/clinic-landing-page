@@ -11,4 +11,6 @@ interface Env {
 	BOOKING_FROM_EMAIL?: string;
 	BOOKING_FROM_NAME?: string;
 	BOOKING_BCC_EMAIL?: string;
+	STRIPE_SECRET_KEY?: string;
+	STRIPE_WEBHOOK_SECRET?: string;
 }

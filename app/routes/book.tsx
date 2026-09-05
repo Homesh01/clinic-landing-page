@@ -11,23 +11,29 @@ import {
 	useNavigation,
 	useRevalidator,
 } from "@remix-run/react";
-import { json } from "@remix-run/cloudflare";
+import { json, redirect } from "@remix-run/cloudflare";
 import { useEffect, useMemo, useState } from "react";
 import { PageHero } from "~/components/PageHero";
 import { booking, contact, site } from "~/data/content";
 import {
-	BookingConflictError,
-	createBookingEvent,
 	getAvailableDays,
 	getBookingConfig,
+	isSlotAvailable,
 } from "~/utils/google-calendar.server";
-import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import {
 	CONSULTATION_TYPES,
 	type BookingFieldErrors,
 	validateBookingForm,
 } from "~/utils/booking-validation";
 import { requireSiteAccess } from "~/utils/site-auth.server";
+import {
+	consultationAmountPence,
+	createBookingCheckoutSession,
+	formatGbpFromPence,
+	fulfillPaidCheckoutSession,
+	getStripeConfig,
+	retrieveCheckoutSession,
+} from "~/utils/stripe.server";
 
 function formatBookingDate(dateIso: string): string {
 	const [year, month, day] = dateIso.split("-").map(Number);
@@ -41,6 +47,13 @@ function formatBookingDate(dateIso: string): string {
 	}).format(date);
 }
 
+type CheckoutResult = {
+	name: string;
+	dateIso: string;
+	timeLabel: string;
+	emailSent: boolean;
+};
+
 export const meta: MetaFunction = () => {
 	return [
 		{ title: `Book a consultation | ${site.name}` },
@@ -51,14 +64,54 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-export async function loader({ context }: LoaderFunctionArgs) {
-	const config = getBookingConfig(context.cloudflare.env);
+export async function loader({ request, context }: LoaderFunctionArgs) {
+	const env = context.cloudflare.env;
+	const config = getBookingConfig(env);
+	const stripe = getStripeConfig(env);
+	const url = new URL(request.url);
 
-	if (!config) {
+	let checkoutResult: CheckoutResult | null = null;
+	let checkoutError: string | null = null;
+	const checkoutCancelled = url.searchParams.get("checkout") === "cancelled";
+	const sessionId = url.searchParams.get("session_id");
+
+	if (sessionId && stripe && config) {
+		try {
+			const session = await retrieveCheckoutSession(stripe, sessionId);
+			const fulfillment = await fulfillPaidCheckoutSession({
+				env,
+				stripe,
+				session,
+			});
+			if (fulfillment.ok) {
+				checkoutResult = {
+					name: fulfillment.name,
+					dateIso: fulfillment.dateIso,
+					timeLabel: fulfillment.timeLabel,
+					emailSent: fulfillment.emailSent,
+				};
+			} else {
+				checkoutError = fulfillment.error;
+			}
+		} catch (error) {
+			console.error("Checkout session confirm error:", error);
+			checkoutError =
+				"Payment may have succeeded, but we could not confirm the appointment automatically. Please contact the practice team with your payment receipt.";
+		}
+	}
+
+	if (!config || !stripe) {
 		return json({
 			configured: false as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error: null as string | null,
+			checkoutResult,
+			checkoutError,
+			checkoutCancelled,
+			fees: {
+				newPatient: formatGbpFromPence(consultationAmountPence("New Patient Consultation")),
+				standard: formatGbpFromPence(consultationAmountPence("Second Opinion")),
+			},
 		});
 	}
 
@@ -68,6 +121,15 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			configured: true as const,
 			days,
 			error: null as string | null,
+			checkoutResult,
+			checkoutError,
+			checkoutCancelled,
+			fees: {
+				newPatient: formatGbpFromPence(
+					consultationAmountPence("New Patient Consultation"),
+				),
+				standard: formatGbpFromPence(consultationAmountPence("Second Opinion")),
+			},
 		});
 	} catch (error) {
 		console.error("Booking availability error:", error);
@@ -76,6 +138,15 @@ export async function loader({ context }: LoaderFunctionArgs) {
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
 			error:
 				"Could not load availability right now. Please try again shortly, or contact the practice team.",
+			checkoutResult,
+			checkoutError,
+			checkoutCancelled,
+			fees: {
+				newPatient: formatGbpFromPence(
+					consultationAmountPence("New Patient Consultation"),
+				),
+				standard: formatGbpFromPence(consultationAmountPence("Second Opinion")),
+			},
 		});
 	}
 }
@@ -83,8 +154,11 @@ export async function loader({ context }: LoaderFunctionArgs) {
 export async function action({ request, context }: ActionFunctionArgs) {
 	await requireSiteAccess(request, context.cloudflare.env);
 
-	const config = getBookingConfig(context.cloudflare.env);
-	if (!config) {
+	const env = context.cloudflare.env;
+	const config = getBookingConfig(env);
+	const stripe = getStripeConfig(env);
+
+	if (!config || !stripe) {
 		return json(
 			{
 				ok: false as const,
@@ -145,46 +219,60 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 
 	try {
-		await createBookingEvent(config, validated.data);
-
-		let emailSent = true;
-		try {
-			await sendPatientBookingConfirmation(config, validated.data);
-		} catch (emailError) {
-			emailSent = false;
-			console.error("Booking confirmation email error:", emailError);
+		const stillFree = await isSlotAvailable(
+			config,
+			validated.data.dateIso,
+			validated.data.timeLabel,
+		);
+		if (!stillFree) {
+			return json(
+				{
+					ok: false as const,
+					error: "That time was just taken. Please choose another slot.",
+					errors: {
+						time: "That time was just taken. Please choose another slot.",
+					} as BookingFieldErrors,
+				},
+				{ status: 409 },
+			);
 		}
 
-		return json({
-			ok: true as const,
-			dateIso: validated.data.dateIso,
-			timeLabel: validated.data.timeLabel,
-			name: validated.data.name,
-			emailSent,
+		const origin = new URL(request.url).origin;
+		const session = await createBookingCheckoutSession({
+			stripe,
+			booking: validated.data,
+			successUrl: `${origin}/book?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+			cancelUrl: `${origin}/book?checkout=cancelled`,
 		});
-	} catch (error) {
-		console.error("Booking create error:", error);
-		const message =
-			error instanceof BookingConflictError
-				? error.message
-				: "Could not complete the booking. Please try again.";
 
+		return redirect(session.url);
+	} catch (error) {
+		console.error("Stripe checkout create error:", error);
+		const detail =
+			error instanceof Error && /api key|invalid/i.test(error.message)
+				? "Stripe rejected the API key. Check STRIPE_SECRET_KEY in .dev.vars (test key from Developers → API keys), then restart the dev server."
+				: "Could not start payment. Please try again.";
 		return json(
 			{
 				ok: false as const,
-				error: message,
-				errors: (error instanceof BookingConflictError
-					? { time: message }
-					: {}) as BookingFieldErrors,
+				error: detail,
+				errors: {} as BookingFieldErrors,
 			},
-			{ status: error instanceof BookingConflictError ? 409 : 500 },
+			{ status: 500 },
 		);
 	}
 }
 
 export default function BookPage() {
-	const { configured, days, error: availabilityError } =
-		useLoaderData<typeof loader>();
+	const {
+		configured,
+		days,
+		error: availabilityError,
+		checkoutResult,
+		checkoutError,
+		checkoutCancelled,
+		fees,
+	} = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const revalidator = useRevalidator();
@@ -196,6 +284,9 @@ export default function BookPage() {
 	);
 	const [selectedDay, setSelectedDay] = useState(bookableDays[0]?.iso ?? "");
 	const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+	const [consultationType, setConsultationType] = useState<string>(
+		CONSULTATION_TYPES[0],
+	);
 
 	useEffect(() => {
 		if (!bookableDays.some((day) => day.iso === selectedDay)) {
@@ -218,9 +309,13 @@ export default function BookPage() {
 	const selectedDaySlots =
 		bookableDays.find((day) => day.iso === selectedDay)?.times ?? [];
 
-	const success = actionData && "ok" in actionData && actionData.ok;
+	const success = Boolean(checkoutResult);
 	const fieldErrors =
 		actionData && !actionData.ok ? actionData.errors : null;
+	const feeLabel =
+		consultationType === "New Patient Consultation"
+			? fees.newPatient
+			: fees.standard;
 
 	function fieldClass(hasError: boolean) {
 		return hasError
@@ -239,23 +334,23 @@ export default function BookPage() {
 			<section className="section-pad">
 				<div className="site-container grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
 					<div>
-						{success ? (
+						{success && checkoutResult ? (
 							<div className="border border-accent/25 bg-accent-soft px-6 py-8">
 								<p className="eyebrow">Booking confirmed</p>
 								<h2 className="mt-3 font-display text-3xl text-ink">
-									Thank you, {actionData.name}
+									Thank you, {checkoutResult.name}
 								</h2>
 								<p className="mt-3 text-ink-soft">
 									Your consultation is booked for{" "}
 									<strong className="font-semibold text-ink">
-										{formatBookingDate(actionData.dateIso)}
+										{formatBookingDate(checkoutResult.dateIso)}
 									</strong>{" "}
 									at{" "}
 									<strong className="font-semibold text-ink">
-										{actionData.timeLabel}
+										{checkoutResult.timeLabel}
 									</strong>
-									.
-									{actionData.emailSent
+									. Payment was received.
+									{checkoutResult.emailSent
 										? " A confirmation email has been sent to the address you provided."
 										: " We could not send the confirmation email automatically — please contact the practice if you need written confirmation."}{" "}
 									The practice team may follow up if anything further is needed.
@@ -275,6 +370,29 @@ export default function BookPage() {
 						) : (
 							<>
 								<p className="text-sm text-ink-muted">{booking.note}</p>
+								<p className="mt-2 text-sm text-ink-muted">
+									Fees: New Patient Consultation {fees.newPatient}; other
+									consultation types {fees.standard} (payable on booking).
+								</p>
+
+								{checkoutCancelled ? (
+									<p
+										className="mt-4 rounded-sm border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+										role="status"
+									>
+										Payment was cancelled. Your appointment has not been booked
+										— you can choose a time and try again.
+									</p>
+								) : null}
+
+								{checkoutError ? (
+									<p
+										className="mt-4 rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+										role="alert"
+									>
+										{checkoutError}
+									</p>
+								) : null}
 
 								{availabilityError ? (
 									<p
@@ -382,12 +500,12 @@ export default function BookPage() {
 													</span>
 													<input
 														required
+														type="text"
 														name="name"
 														autoComplete="name"
 														minLength={3}
 														maxLength={80}
 														className={fieldClass(Boolean(fieldErrors?.name))}
-														placeholder="First and last name"
 														aria-invalid={Boolean(fieldErrors?.name)}
 														aria-describedby={
 															fieldErrors?.name ? "name-error" : undefined
@@ -402,6 +520,7 @@ export default function BookPage() {
 														</span>
 													) : null}
 												</label>
+
 												<label className="block">
 													<span className="mb-2 block text-sm font-semibold text-ink">
 														Email
@@ -414,7 +533,6 @@ export default function BookPage() {
 														inputMode="email"
 														maxLength={120}
 														className={fieldClass(Boolean(fieldErrors?.email))}
-														placeholder="you@example.com"
 														aria-invalid={Boolean(fieldErrors?.email)}
 														aria-describedby={
 															fieldErrors?.email ? "email-error" : undefined
@@ -468,15 +586,27 @@ export default function BookPage() {
 													name="type"
 													required
 													className={fieldClass(Boolean(fieldErrors?.type))}
-													defaultValue="New Patient Consultation"
+													value={consultationType}
+													onChange={(event) =>
+														setConsultationType(event.target.value)
+													}
 													aria-invalid={Boolean(fieldErrors?.type)}
 												>
 													{CONSULTATION_TYPES.map((option) => (
 														<option key={option} value={option}>
 															{option}
+															{option === "New Patient Consultation"
+																? ` (${fees.newPatient})`
+																: ` (${fees.standard})`}
 														</option>
 													))}
 												</select>
+												<p className="mt-1.5 text-sm text-ink-muted">
+													Fee for this consultation:{" "}
+													<span className="font-semibold text-ink">
+														{feeLabel}
+													</span>
+												</p>
 												{fieldErrors?.type ? (
 													<span className="mt-1.5 block text-sm text-red-700">
 														{fieldErrors.type}
@@ -508,7 +638,9 @@ export default function BookPage() {
 												className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
 												disabled={!selectedDay || !selectedSlot || submitting}
 											>
-												{submitting ? "Booking…" : "Book a consultation"}
+												{submitting
+													? "Redirecting to payment…"
+													: `Pay ${feeLabel} and book`}
 											</button>
 										</Form>
 									</>

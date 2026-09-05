@@ -731,5 +731,9 @@ export const contact = {
 export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
-	note: "Times shown are free on the practice calendar (Mon–Fri, 09:00–16:00, Europe/London). Selecting a slot reserves it immediately and emails you a confirmation.",
+	note: "Times shown are free on the practice calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. After you submit, you will pay securely via Stripe. The appointment is confirmed once payment succeeds.",
+	fees: {
+		newPatient: "£350",
+		standard: "£250",
+	},
 };

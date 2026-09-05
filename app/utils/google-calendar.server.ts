@@ -16,10 +16,11 @@ export type DaySlots = {
 	times: string[];
 };
 
-const CLINIC_OPEN = { hour: 9, minute: 0 };
-const CLINIC_CLOSE = { hour: 16, minute: 0 };
+const CLINIC_OPEN = { hour: 9, minute: 30 };
+const CLINIC_CLOSE = { hour: 16, minute: 30 };
 const SLOT_MINUTES = 60;
-const AVAILABILITY_WEEKDAYS = 14;
+/** Number of upcoming Fridays to offer for booking. */
+const AVAILABILITY_FRIDAYS = 4;
 
 /** Trim and strip wrapping quotes / zero-width chars from dashboard secrets. */
 function cleanEnv(value: string | undefined): string | undefined {
@@ -226,12 +227,12 @@ function addCalendarDays(iso: string, days: number): string {
 	return date.toISOString().slice(0, 10);
 }
 
-function isWeekendInZone(iso: string, timeZone: string): boolean {
+function isFridayInZone(iso: string, timeZone: string): boolean {
 	const weekday = zonedDateTimeToUtc(iso, 12, 0, timeZone).toLocaleDateString(
 		"en-US",
 		{ weekday: "short", timeZone },
 	);
-	return weekday === "Sat" || weekday === "Sun";
+	return weekday === "Fri";
 }
 
 function listCandidateDays(timeZone: string, count: number): string[] {
@@ -245,7 +246,7 @@ function listCandidateDays(timeZone: string, count: number): string[] {
 
 	for (let offset = 1; days.length < count && offset < 60; offset += 1) {
 		const iso = addCalendarDays(todayIso, offset);
-		if (isWeekendInZone(iso, timeZone)) continue;
+		if (!isFridayInZone(iso, timeZone)) continue;
 		days.push(iso);
 	}
 
@@ -276,7 +277,7 @@ export async function getAvailableDays(
 ): Promise<DaySlots[]> {
 	assertUsableCalendarId(config.calendarId);
 	const accessToken = await getAccessToken(config);
-	const dayIsos = listCandidateDays(config.timeZone, AVAILABILITY_WEEKDAYS);
+	const dayIsos = listCandidateDays(config.timeZone, AVAILABILITY_FRIDAYS);
 	if (dayIsos.length === 0) return [];
 
 	const rangeStart = zonedDateTimeToUtc(
@@ -333,9 +334,9 @@ export async function isSlotAvailable(
 	const minute = Number(minuteText);
 	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
 
-	if (isWeekendInZone(dateIso, config.timeZone)) return false;
+	if (!isFridayInZone(dateIso, config.timeZone)) return false;
 	if (!slotStartsForDay().some((slot) => slot.label === timeLabel)) return false;
-	if (!listCandidateDays(config.timeZone, AVAILABILITY_WEEKDAYS).includes(dateIso)) {
+	if (!listCandidateDays(config.timeZone, AVAILABILITY_FRIDAYS).includes(dateIso)) {
 		return false;
 	}
 

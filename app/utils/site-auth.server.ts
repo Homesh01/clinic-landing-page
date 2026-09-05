@@ -89,6 +89,7 @@ export async function requireSiteAccess(
 
 	const url = new URL(request.url);
 	if (url.pathname === "/login") return;
+	if (url.pathname === "/api/stripe-webhook") return;
 
 	if (await hasSiteAccess(request, env, password)) return;
 

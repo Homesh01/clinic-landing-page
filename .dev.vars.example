@@ -2,6 +2,10 @@
 # Leave blank or remove this line to disable protection locally.
 SITE_PASSWORD=preview
 
+# Optional long random secret used to sign the site-access cookie.
+# If omitted, SITE_PASSWORD is used (fine for local; set separately in prod).
+# SITE_COOKIE_SECRET=
+
 # Google Calendar booking (OAuth refresh-token flow)
 # Enable APIs: Google Calendar API + Gmail API
 # OAuth scopes needed on the refresh token:
@@ -16,10 +20,11 @@ GOOGLE_CALENDAR_ID=........@group.calendar.google.com
 BOOKING_TIMEZONE=Europe/London
 
 # Must be a verified "Send mail as" alias on the OAuth Workspace user.
-# If this alias is missing, Gmail may show Homesh's address instead, or external
-# mail can land in spam / not arrive.
 BOOKING_FROM_EMAIL=bookings@personalisedcancercare.com
-BOOKING_FROM_NAME=Dr Karen Sayal bookings
+BOOKING_FROM_NAME=Personalised Cancer Care Bookings
 
-# Optional: BCC a copy of every patient confirmation (useful while testing)
-# BOOKING_BCC_EMAIL=homesh.sayal@personalisedcancercare.com
+# Stripe Checkout (test keys start with sk_test_ / whsec_)
+# New Patient Consultation = £350; other types = £250
+STRIPE_SECRET_KEY=sk_test_........
+# Local: stripe listen --forward-to localhost:5173/api/stripe-webhook
+# STRIPE_WEBHOOK_SECRET=whsec_........
