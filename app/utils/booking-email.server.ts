@@ -147,7 +147,7 @@ function buildPlainText(input: {
 				...(input.pending
 					? []
 					: [
-							"Self-pay cancellations receive an automatic full refund.",
+							"Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.",
 						]),
 				"",
 			]
@@ -251,7 +251,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations receive an automatic full refund.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -614,20 +614,25 @@ export async function sendBookingCancelledEmail(
 		refundStatus?:
 			| "none"
 			| "refunded"
+			| "not_eligible"
 			| "already_refunded";
 		refundAmountLabel?: string;
+		refundMinHours?: number;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
 	const fromName = config.fromName || `${site.name} bookings`;
 	const subject = `${site.name}: appointment cancelled (${input.bookingRef})`;
+	const refundMinHours = input.refundMinHours ?? 48;
 	const refundLine =
 		input.refundStatus === "refunded"
 			? `A full refund${input.refundAmountLabel ? ` of ${input.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`
 			: input.refundStatus === "already_refunded"
 				? "This payment had already been refunded."
-				: null;
+				: input.refundStatus === "not_eligible"
+					? `Self-pay refunds are automatic only when you cancel at least ${refundMinHours} hours before the appointment. Please contact the clinic team if you need to discuss this payment.`
+					: null;
 	const calendarLine =
 		"If this appointment is on your Google Calendar from the clinic invite, it will be removed automatically. Otherwise remove it manually from your calendar app.";
 

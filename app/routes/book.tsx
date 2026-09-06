@@ -730,8 +730,11 @@ export default function BookPage() {
 											) : null}
 											{isSelfPay ? (
 												<p className="mt-4 text-sm leading-relaxed text-ink-muted">
-													Self-pay cancellations receive an automatic full
-													refund.
+													Self-pay cancellations at least 48 hours before the
+													appointment receive an automatic full refund.
+													Cancellations within that window may not be refunded
+													automatically — contact the clinic team if you need to
+													discuss the payment.
 												</p>
 											) : null}
 										</div>
