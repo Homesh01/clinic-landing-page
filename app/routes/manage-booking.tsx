@@ -18,7 +18,7 @@ import {
 } from "~/utils/booking-ref";
 import {
 	BookingConflictError,
-	SELF_PAY_REFUND_MIN_DAYS,
+	SELF_PAY_REFUND_MIN_BUSINESS_DAYS,
 	cancelBookingEvent,
 	findBookingByEmailAndRef,
 	getAvailableDays,
@@ -64,7 +64,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 	const config = getBookingConfig(context.cloudflare.env);
 	return json({
 		configured: Boolean(config),
-		refundMinDays: SELF_PAY_REFUND_MIN_DAYS,
+		refundMinDays: SELF_PAY_REFUND_MIN_BUSINESS_DAYS,
 		timeZone: config?.timeZone ?? "Europe/London",
 	});
 }
@@ -251,7 +251,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					bookingRef: booking.bookingRef,
 					refundStatus,
 					refundAmountLabel,
-					refundMinDays: SELF_PAY_REFUND_MIN_DAYS,
+					refundMinDays: SELF_PAY_REFUND_MIN_BUSINESS_DAYS,
 				});
 			} catch (emailError) {
 				console.error("Cancel confirmation email error:", emailError);
@@ -443,8 +443,8 @@ export default function ManageBookingPage() {
 							) : cancelled.refundStatus === "not_eligible" ? (
 								<p className="mt-3 text-ink-soft">
 									Self-pay refunds are automatic only when you cancel at least{" "}
-									{refundMinDays} days before the appointment. Please contact
-									the clinic team if you need to discuss this payment.
+									{refundMinDays} business days before the appointment. Please
+									contact the clinic team if you need to discuss this payment.
 								</p>
 							) : null}
 							<p className="mt-4 text-ink-soft">
@@ -564,16 +564,16 @@ export default function ManageBookingPage() {
 												<>
 													{" "}
 													Because you are cancelling at least {refundMinDays}{" "}
-													days before the appointment, a full Stripe refund will
-													be started automatically.
+													business days before the appointment, a full Stripe
+													refund will be started automatically.
 												</>
 											) : (
 												<>
 													{" "}
 													Automatic self-pay refunds are only available at least{" "}
-													{refundMinDays} days before the appointment. Within
-													that window, please contact the clinic team about the
-													payment.
+													{refundMinDays} business days before the appointment.
+													Within that window, please contact the clinic team
+													about the payment.
 												</>
 											)
 										) : null}

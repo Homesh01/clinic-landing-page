@@ -384,8 +384,41 @@ export type CreateBookingInput = {
 	summaryPrefix?: string;
 };
 
-/** Full self-pay refund if cancelled at least this many days before the appointment. */
-export const SELF_PAY_REFUND_MIN_DAYS = 5;
+/** Full self-pay refund if cancelled at least this many business days before. */
+export const SELF_PAY_REFUND_MIN_BUSINESS_DAYS = 5;
+
+function todayIsoInZone(timeZone: string, now: Date = new Date()): string {
+	return new Intl.DateTimeFormat("en-CA", {
+		timeZone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(now);
+}
+
+function isBusinessDayInZone(iso: string, timeZone: string): boolean {
+	const weekday = zonedDateTimeToUtc(iso, 12, 0, timeZone).toLocaleDateString(
+		"en-US",
+		{ weekday: "short", timeZone },
+	);
+	return weekday !== "Sat" && weekday !== "Sun";
+}
+
+function subtractBusinessDays(
+	iso: string,
+	businessDays: number,
+	timeZone: string,
+): string {
+	let remaining = businessDays;
+	let current = iso;
+	while (remaining > 0) {
+		current = addCalendarDays(current, -1);
+		if (isBusinessDayInZone(current, timeZone)) {
+			remaining -= 1;
+		}
+	}
+	return current;
+}
 
 export function isSelfPayRefundEligible(
 	dateIso: string,
@@ -398,8 +431,15 @@ export function isSelfPayRefundEligible(
 	const minute = Number(minuteText);
 	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
 	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
-	const minMs = SELF_PAY_REFUND_MIN_DAYS * 24 * 60 * 60 * 1000;
-	return start.getTime() - now.getTime() >= minMs;
+	if (start.getTime() <= now.getTime()) return false;
+
+	const todayIso = todayIsoInZone(timeZone, now);
+	const lastRefundDateIso = subtractBusinessDays(
+		dateIso,
+		SELF_PAY_REFUND_MIN_BUSINESS_DAYS,
+		timeZone,
+	);
+	return todayIso <= lastRefundDateIso;
 }
 
 export type ManagedBooking = {
