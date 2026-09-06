@@ -810,25 +810,18 @@ export async function createBookingEvent(
 	};
 }
 
-export async function findBookingByEmailAndRef(
+async function listEventsByBookingRef(
 	config: BookingConfig,
-	email: string,
-	bookingRefRaw: string,
-): Promise<ManagedBooking | null> {
-	assertUsableCalendarId(config.calendarId);
-	const bookingRef = normalizeBookingRef(bookingRefRaw);
-	if (!isValidBookingRef(bookingRef)) return null;
-
-	const patientEmail = email.trim().toLowerCase();
-	const accessToken = await getAccessToken(config);
+	accessToken: string,
+	bookingRef: string,
+): Promise<CalendarEventPayload[]> {
 	const timeMin = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
 	const timeMax = new Date(Date.now() + 120 * 24 * 60 * 60 * 1000).toISOString();
-
 	const params = new URLSearchParams({
 		singleEvents: "true",
 		showDeleted: "false",
 		orderBy: "startTime",
-		maxResults: "10",
+		maxResults: "25",
 		timeMin,
 		timeMax,
 		privateExtendedProperty: `bookingRef=${bookingRef}`,
@@ -845,9 +838,55 @@ export async function findBookingByEmailAndRef(
 	if (!response.ok) {
 		throw new Error(data.error?.message || "Could not look up booking");
 	}
+	return data.items ?? [];
+}
+
+/** Remove leftover events from older create+delete reschedules (same booking ref). */
+async function deleteSiblingBookingEvents(
+	config: BookingConfig,
+	accessToken: string,
+	bookingRef: string,
+	keepEventId: string,
+	options?: { notifyAttendees?: boolean },
+): Promise<void> {
+	const notify = options?.notifyAttendees !== false;
+	const items = await listEventsByBookingRef(config, accessToken, bookingRef);
+	for (const item of items) {
+		if (!item.id || item.id === keepEventId || item.status === "cancelled") {
+			continue;
+		}
+		const response = await fetch(
+			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(item.id)}?sendUpdates=${notify ? "all" : "none"}`,
+			{
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${accessToken}` },
+			},
+		);
+		if (!response.ok && response.status !== 410) {
+			console.error(
+				"Failed to delete sibling booking event:",
+				item.id,
+				await response.text().catch(() => ""),
+			);
+		}
+	}
+}
+
+export async function findBookingByEmailAndRef(
+	config: BookingConfig,
+	email: string,
+	bookingRefRaw: string,
+): Promise<ManagedBooking | null> {
+	assertUsableCalendarId(config.calendarId);
+	const bookingRef = normalizeBookingRef(bookingRefRaw);
+	if (!isValidBookingRef(bookingRef)) return null;
+
+	const patientEmail = email.trim().toLowerCase();
+	const accessToken = await getAccessToken(config);
+	const items = await listEventsByBookingRef(config, accessToken, bookingRef);
 
 	const matches: ManagedBooking[] = [];
-	for (const item of data.items ?? []) {
+	for (const item of items) {
 		const listed = managedBookingFromEvent(item, config.timeZone);
 		if (!listed) continue;
 		if (listed.email !== patientEmail) continue;
@@ -862,11 +901,20 @@ export async function findBookingByEmailAndRef(
 	}
 
 	if (matches.length === 0) return null;
-	// If a prior reschedule left two events, prefer the later slot.
+	// Prefer the later slot, then remove any leftover duplicates from old reschedules.
 	matches.sort((a, b) =>
 		`${b.dateIso}T${b.timeLabel}`.localeCompare(`${a.dateIso}T${a.timeLabel}`),
 	);
-	return matches[0];
+	const preferred = matches[0];
+	if (matches.length > 1) {
+		await deleteSiblingBookingEvents(
+			config,
+			accessToken,
+			bookingRef,
+			preferred.eventId,
+		);
+	}
+	return preferred;
 }
 
 export async function cancelBookingEvent(
@@ -946,68 +994,95 @@ export async function rescheduleBookingEvent(
 		throw new BookingConflictError();
 	}
 
-	const noteLines = [
-		parseDescriptionField(existing.description, "Notes") || undefined,
-		managed.stripeSessionId
-			? `Stripe session: ${managed.stripeSessionId}`
-			: undefined,
-		managed.stripePaymentIntentId
-			? `Stripe payment: ${managed.stripePaymentIntentId}`
-			: undefined,
-	].filter(Boolean);
-
-	// Create the new slot first so a failure never leaves the patient unbooked.
-	const created = await createBookingEvent(config, {
-		dateIso: input.dateIso,
-		timeLabel: input.timeLabel,
-		name: managed.name,
-		email: managed.email,
-		phone: managed.phone || "Not provided",
-		type: managed.type,
-		bookingRef: managed.bookingRef,
-		paymentMethod:
-			managed.paymentMethod === "unknown"
-				? managed.pendingAuth
-					? "insurance"
-					: "self-pay"
-				: managed.paymentMethod,
-		stripeSessionId: managed.stripeSessionId,
-		stripePaymentIntentId: managed.stripePaymentIntentId,
-		status: managed.pendingAuth ? "tentative" : "confirmed",
-		summaryPrefix: managed.pendingAuth ? "PENDING AUTH —" : undefined,
-		notes: noteLines.length ? noteLines.join("\n") : undefined,
-	});
-
-	// Cancel the old invite so Gmail removes the previous time.
-	const deleteResponse = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
-		{
-			method: "DELETE",
-			headers: { Authorization: `Bearer ${accessToken}` },
-		},
+	const [hourRaw, minuteRaw] = input.timeLabel.split(":");
+	const hour = Number(hourRaw);
+	const minute = Number(minuteRaw);
+	if (Number.isNaN(hour) || Number.isNaN(minute)) {
+		throw new Error("Invalid time selected.");
+	}
+	const start = zonedDateTimeToUtc(
+		input.dateIso,
+		hour,
+		minute,
+		config.timeZone,
 	);
-	if (!deleteResponse.ok && deleteResponse.status !== 410) {
-		console.error(
-			"Reschedule created the new slot but failed to delete the old event:",
-			input.eventId,
-			await deleteResponse.text().catch(() => ""),
-		);
+	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
+	const paymentMethod =
+		managed.paymentMethod === "unknown"
+			? managed.pendingAuth
+				? "insurance"
+				: "self-pay"
+			: managed.paymentMethod;
+	const invitePatient = paymentMethod === "self-pay";
+	const nextSequence = managed.icsSequence + 1;
+	const privateProps: Record<string, string> = {
+		...(existing.extendedProperties?.private ?? {}),
+		bookingRef: managed.bookingRef,
+		patientEmail: managed.email,
+		paymentMethod,
+		icsSequence: String(nextSequence),
+	};
+	if (managed.stripeSessionId) {
+		privateProps.stripeSessionId = managed.stripeSessionId;
+	}
+	if (managed.stripePaymentIntentId) {
+		privateProps.stripePaymentIntentId = managed.stripePaymentIntentId;
 	}
 
-	const reloaded = await fetchCalendarEvent(
-		config,
-		await getAccessToken(config),
-		created.eventId,
+	// Move the same event in place so clinic + patient calendars update one entry
+	// (create+delete previously left both times on Google Calendar).
+	const patchResponse = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=${invitePatient ? "all" : "none"}`,
+		{
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				start: {
+					dateTime: start.toISOString(),
+					timeZone: config.timeZone,
+				},
+				end: {
+					dateTime: end.toISOString(),
+					timeZone: config.timeZone,
+				},
+				extendedProperties: { private: privateProps },
+				...(invitePatient
+					? {
+							attendees: [
+								{
+									email: managed.email,
+									displayName: managed.name,
+									responseStatus: "needsAction",
+								},
+							],
+						}
+					: {}),
+			}),
+		},
 	);
-	const updated =
-		(reloaded && managedBookingFromEvent(reloaded, config.timeZone)) ||
-		null;
+	const patched = (await patchResponse.json()) as CalendarEventPayload;
+	if (!patchResponse.ok || !patched.id) {
+		throw new Error(patched.error?.message || "Could not reschedule booking");
+	}
+
+	await deleteSiblingBookingEvents(
+		config,
+		accessToken,
+		managed.bookingRef,
+		input.eventId,
+		{ notifyAttendees: invitePatient },
+	);
+
+	const updated = managedBookingFromEvent(patched, config.timeZone);
 	if (!updated) {
 		throw new Error("Could not reschedule booking");
 	}
 	return {
 		...updated,
-		icsSequence: managed.icsSequence + 1,
+		icsSequence: nextSequence,
 	};
 }
 
