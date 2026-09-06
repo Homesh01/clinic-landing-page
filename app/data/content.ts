@@ -704,20 +704,17 @@ export const locations = [
 			"Huntley Street",
 			"London, WC1E 6AG",
 		],
-		mapsUrl:
-			"https://maps.google.com/?q=51.523115436389844,-0.1356995398324203",
+		mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
 	},
 	{
 		name: "LOC — Leaders in Oncology Care",
 		addressLines: ["95 Harley Street", "London, W1G 6AF"],
-		mapsUrl:
-			"https://www.google.com/maps/search/?api=1&query=95+Harley+Street+London+W1G+6AF",
+		mapsUrl: "https://maps.app.goo.gl/NBycteGA8KXvRmSJA",
 	},
 	{
 		name: "HCA Healthcare UK The Harley Street Clinic",
 		addressLines: ["35 Weymouth Street", "London, W1G 8BJ"],
-		mapsUrl:
-			"https://www.google.com/maps/search/?api=1&query=35+Weymouth+Street+London+W1G+8BJ",
+		mapsUrl: "https://maps.app.goo.gl/WahfeHGru3YVqmW3A",
 	},
 ] as const;
 

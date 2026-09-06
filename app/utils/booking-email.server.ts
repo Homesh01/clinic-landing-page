@@ -25,8 +25,7 @@ const CLINIC_LOCATION = {
 	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
 	url: "https://www.hcahealthcare.co.uk/facilities/hca-uk-at-university-college-hospital",
 	address: "5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG",
-	mapsUrl:
-		"https://maps.google.com/?q=51.523115436389844,-0.1356995398324203",
+	mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
 } as const;
 
 const COLORS = {
