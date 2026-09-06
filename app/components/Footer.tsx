@@ -35,7 +35,7 @@ export function Footer() {
 							</li>
 						</ul>
 						<p className="mt-6 text-sm text-ink-muted">
-							{locations[0].name} ({locations[0].group})
+							{locations[0].name}
 						</p>
 					</div>
 				</div>

@@ -21,10 +21,7 @@ function LocationBlock({
 }) {
 	return (
 		<>
-			<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
-				{location.group}
-			</p>
-			<h2 className="mt-2 font-display text-[1.45rem] leading-snug text-ink">
+			<h2 className="font-display text-[1.45rem] leading-snug text-ink">
 				{location.name}
 			</h2>
 			<address className="mt-2.5 text-[0.97rem] not-italic leading-relaxed text-ink-soft">
@@ -34,6 +31,14 @@ function LocationBlock({
 					</span>
 				))}
 			</address>
+			<a
+				href={location.mapsUrl}
+				target="_blank"
+				rel="noreferrer"
+				className="link-underline mt-3 text-[0.95rem]"
+			>
+				View on Google Maps
+			</a>
 		</>
 	);
 }
@@ -44,7 +49,7 @@ export default function ContactPage() {
 			<PageHero
 				eyebrow="Contact &amp; Locations"
 				title="Reach the clinic team"
-				summary="Appointments are available across central London clinics. Self-pay fees are listed below; for private insurance, the clinic bills your insurer."
+				summary="Appointments are available across central London clinics. Self-pay fees are listed below; insurance bookings need an authorisation code and are confirmed after verification."
 			/>
 
 			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">

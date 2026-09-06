@@ -273,7 +273,7 @@ export const faqPage = {
 				{
 					question: "Is private medical insurance accepted?",
 					answer:
-						"Yes. Dr Sayal accepts patients funded through private medical insurance as well as those paying for their own care. Where you use insurance, the clinic bills your insurer. Self-pay fees are confirmed when you book.",
+						"Yes. Dr Sayal accepts patients funded through private medical insurance as well as those paying for their own care. Insurance patients need an authorisation code from their insurer; the appointment is confirmed only after the clinic verifies that code. Self-pay fees are confirmed when you book.",
 				},
 			],
 		},
@@ -687,7 +687,7 @@ export const fees = {
 	intro:
 		"Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Self-pay consultation fees are payable when you book online.",
 	insurers:
-		"If you are using private medical insurance, the clinic bills your insurer. Email the clinic team if you need help with pre-authorisation.",
+		"If you are using private medical insurance, you will need an authorisation code from your insurer before the appointment can be confirmed. The clinic checks the code, then bills your insurer.",
 	selfPay: [
 		{ label: "New Patient Consultation", amount: "£350" },
 		{ label: "Second Opinion", amount: "£350" },
@@ -698,23 +698,26 @@ export const fees = {
 
 export const locations = [
 	{
-		group: "HCA Healthcare",
-		name: "University College Hospital Private Care",
+		name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
 		addressLines: [
-			"Grafton Way Building",
-			"1 Grafton Way",
-			"London WC1E 6AG",
+			"5th Floor UCH Macmillan Cancer Centre",
+			"Huntley Street",
+			"London, WC1E 6AG",
 		],
+		mapsUrl:
+			"https://maps.google.com/?q=51.523115436389844,-0.1356995398324203",
 	},
 	{
-		group: "HCA Healthcare",
-		name: "Leaders in Oncology Care (LOC)",
-		addressLines: ["95–97 Harley Street", "London W1G 6AF"],
+		name: "LOC — Leaders in Oncology Care",
+		addressLines: ["95 Harley Street", "London, W1G 6AF"],
+		mapsUrl:
+			"https://www.google.com/maps/search/?api=1&query=95+Harley+Street+London+W1G+6AF",
 	},
 	{
-		group: "HCA Healthcare",
-		name: "The Harley Street Clinic",
-		addressLines: ["35 Weymouth Street", "London W1G 8BJ"],
+		name: "HCA Healthcare UK The Harley Street Clinic",
+		addressLines: ["35 Weymouth Street", "London, W1G 8BJ"],
+		mapsUrl:
+			"https://www.google.com/maps/search/?api=1&query=35+Weymouth+Street+London+W1G+8BJ",
 	},
 ] as const;
 
@@ -737,7 +740,7 @@ export const contact = {
 export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
-	note: "Times shown are free on the clinic calendar (Fridays, 09:30–16:30, Europe/London) for the next four weeks. Choose self-pay to pay securely online when you book, or private insurance — the clinic bills your insurer.",
+	note: "Times shown are free on the clinic calendar. Choose self-pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
 	fees: {
 		standard: "£350",
 		followUp: "£250",

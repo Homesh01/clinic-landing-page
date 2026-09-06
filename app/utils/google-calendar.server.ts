@@ -16,11 +16,18 @@ export type DaySlots = {
 	times: string[];
 };
 
-const CLINIC_OPEN = { hour: 9, minute: 30 };
-const CLINIC_CLOSE = { hour: 16, minute: 30 };
+const CLINIC_OPEN = { hour: 10, minute: 30 };
+const CLINIC_CLOSE = { hour: 14, minute: 30 };
 const SLOT_MINUTES = 60;
 /** Number of upcoming Fridays to offer for booking. */
 const AVAILABILITY_FRIDAYS = 4;
+
+/** Fixed Friday slots — kept short so the diary does not look over-available. */
+const BOOKABLE_SLOTS = [
+	{ hour: 10, minute: 30, label: "10:30" },
+	{ hour: 11, minute: 30, label: "11:30" },
+	{ hour: 13, minute: 30, label: "13:30" },
+] as const;
 
 /** Trim and strip wrapping quotes / zero-width chars from dashboard secrets. */
 function cleanEnv(value: string | undefined): string | undefined {
@@ -254,22 +261,7 @@ function listCandidateDays(timeZone: string, count: number): string[] {
 }
 
 function slotStartsForDay(): { hour: number; minute: number; label: string }[] {
-	const slots: { hour: number; minute: number; label: string }[] = [];
-	let minutes = CLINIC_OPEN.hour * 60 + CLINIC_OPEN.minute;
-	const closeMinutes = CLINIC_CLOSE.hour * 60 + CLINIC_CLOSE.minute;
-
-	while (minutes + SLOT_MINUTES <= closeMinutes) {
-		const hour = Math.floor(minutes / 60);
-		const minute = minutes % 60;
-		slots.push({
-			hour,
-			minute,
-			label: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-		});
-		minutes += SLOT_MINUTES;
-	}
-
-	return slots;
+	return BOOKABLE_SLOTS.map((slot) => ({ ...slot }));
 }
 
 export async function getAvailableDays(
@@ -359,6 +351,9 @@ export type CreateBookingInput = {
 	notes?: string;
 	/** Deterministic Google event id ([a-v0-9]+) to prevent duplicate inserts. */
 	eventId?: string;
+	/** Insurance bookings stay tentative until the authorisation code is verified. */
+	status?: "confirmed" | "tentative";
+	summaryPrefix?: string;
 };
 
 function sanitizeCalendarLine(value: string): string {
@@ -434,8 +429,9 @@ export async function createBookingEvent(
 			},
 			body: JSON.stringify({
 				...(input.eventId ? { id: input.eventId } : {}),
-				summary: `Consultation — ${input.type}`,
+				summary: `${input.summaryPrefix ?? ""}${input.summaryPrefix ? " " : ""}Consultation — ${input.type}`.trim(),
 				description,
+				status: input.status === "tentative" ? "tentative" : "confirmed",
 				start: {
 					dateTime: start.toISOString(),
 					timeZone: config.timeZone,

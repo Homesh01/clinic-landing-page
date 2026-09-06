@@ -22,6 +22,7 @@ export type BookingFieldErrors = {
 	paymentMethod?: string;
 	insurer?: string;
 	membershipNumber?: string;
+	authorisationCode?: string;
 	notes?: string;
 };
 
@@ -35,6 +36,7 @@ export type ValidatedBookingInput = {
 	paymentMethod: PaymentMethod;
 	insurer?: string;
 	membershipNumber?: string;
+	authorisationCode?: string;
 	notes?: string;
 };
 
@@ -52,6 +54,7 @@ const MAX_PHONE = 30;
 const MAX_NOTES = 1000;
 const MAX_INSURER = 80;
 const MAX_MEMBERSHIP = 60;
+const MAX_AUTH_CODE = 80;
 
 function cleanText(value: string): string {
 	return value
@@ -78,6 +81,7 @@ export function validateBookingForm(input: {
 	paymentMethod: string;
 	insurer: string;
 	membershipNumber: string;
+	authorisationCode: string;
 	notes: string;
 	allowedTimesForDate: readonly string[];
 }):
@@ -94,6 +98,7 @@ export function validateBookingForm(input: {
 	const paymentMethod = cleanText(input.paymentMethod);
 	const insurer = cleanText(input.insurer);
 	const membershipNumber = cleanText(input.membershipNumber);
+	const authorisationCode = cleanText(input.authorisationCode);
 	const notes = cleanText(input.notes);
 
 	if (!DATE_RE.test(dateIso)) {
@@ -147,9 +152,15 @@ export function validateBookingForm(input: {
 			errors.insurer = "Insurer name must be 80 characters or fewer.";
 		}
 
-		if (!membershipNumber) {
-			errors.membershipNumber = "Please enter your membership or policy number.";
-		} else if (membershipNumber.length > MAX_MEMBERSHIP) {
+		if (!authorisationCode) {
+			errors.authorisationCode =
+				"Please enter the authorisation code from your insurer.";
+		} else if (authorisationCode.length > MAX_AUTH_CODE) {
+			errors.authorisationCode =
+				"Authorisation code must be 80 characters or fewer.";
+		}
+
+		if (membershipNumber.length > MAX_MEMBERSHIP) {
 			errors.membershipNumber =
 				"Membership number must be 60 characters or fewer.";
 		}
@@ -179,7 +190,11 @@ export function validateBookingForm(input: {
 			paymentMethod: paymentMethod as PaymentMethod,
 			insurer: paymentMethod === "insurance" ? insurer : undefined,
 			membershipNumber:
-				paymentMethod === "insurance" ? membershipNumber : undefined,
+				paymentMethod === "insurance" && membershipNumber
+					? membershipNumber
+					: undefined,
+			authorisationCode:
+				paymentMethod === "insurance" ? authorisationCode : undefined,
 			notes: notes || undefined,
 		},
 	};

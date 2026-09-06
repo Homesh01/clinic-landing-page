@@ -12,7 +12,7 @@ import {
 	useRevalidator,
 } from "@remix-run/react";
 import { json, redirect } from "@remix-run/cloudflare";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type AnimationEvent, type ChangeEvent, type FormEvent } from "react";
 import { PageHero } from "~/components/PageHero";
 import { booking, contact, site } from "~/data/content";
 import {
@@ -51,17 +51,61 @@ function formatBookingDate(dateIso: string): string {
 	}).format(date);
 }
 
+/** Keeps browser autofill and later edits in sync with React state. */
+function useEditableField<T extends HTMLInputElement | HTMLTextAreaElement>(
+	initial = "",
+) {
+	const [value, setValue] = useState(initial);
+	const ref = useRef<T | null>(null);
+
+	function syncFromDom() {
+		const next = ref.current?.value ?? "";
+		setValue((current) => (current === next ? current : next));
+	}
+
+	useEffect(() => {
+		// Chrome/Safari often autofill without firing input events.
+		const interval = window.setInterval(syncFromDom, 200);
+		const stop = window.setTimeout(() => window.clearInterval(interval), 2500);
+		return () => {
+			window.clearInterval(interval);
+			window.clearTimeout(stop);
+		};
+	}, []);
+
+	return {
+		ref,
+		value,
+		onChange: (event: ChangeEvent<T>) => setValue(event.target.value),
+		onInput: (event: FormEvent<T>) => setValue(event.currentTarget.value),
+		onFocus: syncFromDom,
+		onBlur: syncFromDom,
+		onAnimationStart: (event: AnimationEvent<T>) => {
+			if (event.animationName === "onAutoFillStart") syncFromDom();
+		},
+	};
+}
+
 function calendarNotesForBooking(input: {
 	paymentMethod: "self-pay" | "insurance";
 	insurer?: string;
 	membershipNumber?: string;
+	authorisationCode?: string;
 	notes?: string;
 	stripeSessionId?: string;
 }): string {
 	const lines: string[] = [];
 	if (input.paymentMethod === "insurance") {
-		lines.push("Payment: Private medical insurance (clinic bills insurer)");
+		lines.push(
+			"STATUS: PENDING — do not see patient until authorisation code is verified",
+		);
+		lines.push(
+			"Payment: Private medical insurance (verify authorisation, then bill insurer / share code with hospital)",
+		);
 		if (input.insurer) lines.push(`Insurer: ${input.insurer}`);
+		if (input.authorisationCode) {
+			lines.push(`Authorisation code: ${input.authorisationCode}`);
+		}
 		if (input.membershipNumber) {
 			lines.push(`Membership / policy: ${input.membershipNumber}`);
 		}
@@ -208,6 +252,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	const paymentMethod = String(formData.get("paymentMethod") ?? "");
 	const insurer = String(formData.get("insurer") ?? "");
 	const membershipNumber = String(formData.get("membershipNumber") ?? "");
+	const authorisationCode = String(formData.get("authorisationCode") ?? "");
 	const notes = String(formData.get("notes") ?? "");
 
 	let allowedTimesForDate: string[] = [];
@@ -238,6 +283,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		paymentMethod,
 		insurer,
 		membershipNumber,
+		authorisationCode,
 		notes,
 		allowedTimesForDate,
 	});
@@ -277,6 +323,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		if (booking.paymentMethod === "insurance") {
 			await createBookingEvent(config, {
 				...booking,
+				status: "tentative",
+				summaryPrefix: "PENDING AUTH —",
 				notes: calendarNotesForBooking(booking),
 			});
 
@@ -380,6 +428,13 @@ export default function BookPage() {
 	const [consultationType, setConsultationType] = useState<string>(
 		CONSULTATION_TYPES[0],
 	);
+	const nameField = useEditableField<HTMLInputElement>();
+	const emailField = useEditableField<HTMLInputElement>();
+	const phoneField = useEditableField<HTMLInputElement>();
+	const insurerField = useEditableField<HTMLInputElement>();
+	const membershipField = useEditableField<HTMLInputElement>();
+	const authorisationField = useEditableField<HTMLInputElement>();
+	const notesField = useEditableField<HTMLTextAreaElement>();
 
 	useEffect(() => {
 		if (!bookableDays.some((day) => day.iso === selectedDay)) {
@@ -434,27 +489,51 @@ export default function BookPage() {
 					<div>
 						{success && confirmed ? (
 							<div className="border border-accent/25 bg-accent-soft px-6 py-8">
-								<p className="eyebrow">Booking confirmed</p>
+								<p className="eyebrow">
+									{confirmed.paymentMethod === "insurance"
+										? "Request received"
+										: "Booking confirmed"}
+								</p>
 								<h2 className="mt-3 font-display text-3xl text-ink">
 									Thank you, {confirmed.name}
 								</h2>
 								<p className="mt-3 text-ink-soft">
-									Your consultation is booked for{" "}
-									<strong className="font-semibold text-ink">
-										{formatBookingDate(confirmed.dateIso)}
-									</strong>{" "}
-									at{" "}
-									<strong className="font-semibold text-ink">
-										{confirmed.timeLabel}
-									</strong>
-									.
-									{confirmed.paymentMethod === "self-pay"
-										? " Payment was received."
-										: " The clinic will bill your insurer."}
-									{confirmed.emailSent
-										? " A confirmation email has been sent to the address you provided."
-										: " We could not send the confirmation email automatically — please contact the clinic if you need written confirmation."}{" "}
-									The clinic team may follow up if anything further is needed.
+									{confirmed.paymentMethod === "insurance" ? (
+										<>
+											Your requested consultation for{" "}
+											<strong className="font-semibold text-ink">
+												{formatBookingDate(confirmed.dateIso)}
+											</strong>{" "}
+											at{" "}
+											<strong className="font-semibold text-ink">
+												{confirmed.timeLabel}
+											</strong>{" "}
+											is pending until we verify your insurer authorisation
+											code. The clinic team will confirm the appointment once
+											that check is complete — please do not attend until you
+											receive confirmation.
+											{confirmed.emailSent
+												? " A message has been sent to the address you provided."
+												: " We could not send the email automatically — please contact the clinic if you need written confirmation."}
+										</>
+									) : (
+										<>
+											Your consultation is booked for{" "}
+											<strong className="font-semibold text-ink">
+												{formatBookingDate(confirmed.dateIso)}
+											</strong>{" "}
+											at{" "}
+											<strong className="font-semibold text-ink">
+												{confirmed.timeLabel}
+											</strong>
+											. Payment was received.
+											{confirmed.emailSent
+												? " A confirmation email has been sent to the address you provided."
+												: " We could not send the confirmation email automatically — please contact the clinic if you need written confirmation."}{" "}
+											The clinic team may follow up if anything further is
+											needed.
+										</>
+									)}
 								</p>
 							</div>
 						) : !configured ? (
@@ -474,8 +553,9 @@ export default function BookPage() {
 								<p className="mt-2 text-sm text-ink-muted">
 									Self-pay fees: New Patient, Second Opinion and Virtual{" "}
 									{fees.standard}; Follow-up / Monitoring {fees.followUp}{" "}
-									(payable when you book). For private insurance, the clinic
-									bills your insurer.
+									(payable when you book). Insurance bookings need an
+									authorisation code and stay pending until the clinic verifies
+									it.
 								</p>
 
 								{checkoutCancelled ? (
@@ -591,7 +671,7 @@ export default function BookPage() {
 														{
 															value: "insurance" as const,
 															label: "Private insurance",
-															hint: "Clinic bills your insurer",
+															hint: "Authorisation code required",
 														},
 													] as const
 												).map((option) => {
@@ -663,6 +743,13 @@ export default function BookPage() {
 														autoComplete="name"
 														minLength={3}
 														maxLength={80}
+														ref={nameField.ref}
+														value={nameField.value}
+														onChange={nameField.onChange}
+														onInput={nameField.onInput}
+														onFocus={nameField.onFocus}
+														onBlur={nameField.onBlur}
+														onAnimationStart={nameField.onAnimationStart}
 														className={fieldClass(Boolean(fieldErrors?.name))}
 														aria-invalid={Boolean(fieldErrors?.name)}
 														aria-describedby={
@@ -690,6 +777,13 @@ export default function BookPage() {
 														autoComplete="email"
 														inputMode="email"
 														maxLength={120}
+														ref={emailField.ref}
+														value={emailField.value}
+														onChange={emailField.onChange}
+														onInput={emailField.onInput}
+														onFocus={emailField.onFocus}
+														onBlur={emailField.onBlur}
+														onAnimationStart={emailField.onAnimationStart}
 														className={fieldClass(Boolean(fieldErrors?.email))}
 														aria-invalid={Boolean(fieldErrors?.email)}
 														aria-describedby={
@@ -719,6 +813,13 @@ export default function BookPage() {
 													inputMode="tel"
 													minLength={8}
 													maxLength={30}
+													ref={phoneField.ref}
+													value={phoneField.value}
+													onChange={phoneField.onChange}
+													onInput={phoneField.onInput}
+													onFocus={phoneField.onFocus}
+													onBlur={phoneField.onBlur}
+													onAnimationStart={phoneField.onAnimationStart}
 													className={fieldClass(Boolean(fieldErrors?.phone))}
 													placeholder="Contact number"
 													aria-invalid={Boolean(fieldErrors?.phone)}
@@ -770,7 +871,8 @@ export default function BookPage() {
 													</p>
 												) : isInsurance ? (
 													<p className="mt-1.5 text-sm text-ink-muted">
-														No online payment — the clinic bills your insurer.
+														No online payment. Your appointment stays pending
+														until we verify your insurer authorisation code.
 													</p>
 												) : null}
 												{fieldErrors?.type ? (
@@ -781,38 +883,93 @@ export default function BookPage() {
 											</label>
 
 											{isInsurance ? (
-												<div className="grid gap-5 sm:grid-cols-2">
-													<label className="block">
-														<span className="mb-2 block text-sm font-semibold text-ink">
-															Insurer
-														</span>
-														<input
-															required
-															type="text"
-															name="insurer"
-															maxLength={80}
-															className={fieldClass(
-																Boolean(fieldErrors?.insurer),
-															)}
-															placeholder="e.g. Bupa, AXA, Aviva"
-															aria-invalid={Boolean(fieldErrors?.insurer)}
-														/>
-														{fieldErrors?.insurer ? (
-															<span className="mt-1.5 block text-sm text-red-700">
-																{fieldErrors.insurer}
+												<div className="space-y-5">
+													<div className="grid gap-5 sm:grid-cols-2">
+														<label className="block">
+															<span className="mb-2 block text-sm font-semibold text-ink">
+																Insurer
 															</span>
-														) : null}
-													</label>
+															<input
+																required
+																type="text"
+																name="insurer"
+																maxLength={80}
+																ref={insurerField.ref}
+																value={insurerField.value}
+																onChange={insurerField.onChange}
+																onInput={insurerField.onInput}
+																onFocus={insurerField.onFocus}
+																onBlur={insurerField.onBlur}
+																onAnimationStart={
+																	insurerField.onAnimationStart
+																}
+																className={fieldClass(
+																	Boolean(fieldErrors?.insurer),
+																)}
+																placeholder="e.g. Bupa, AXA, Aviva"
+																aria-invalid={Boolean(fieldErrors?.insurer)}
+															/>
+															{fieldErrors?.insurer ? (
+																<span className="mt-1.5 block text-sm text-red-700">
+																	{fieldErrors.insurer}
+																</span>
+															) : null}
+														</label>
+
+														<label className="block">
+															<span className="mb-2 block text-sm font-semibold text-ink">
+																Authorisation code
+															</span>
+															<input
+																required
+																type="text"
+																name="authorisationCode"
+																maxLength={80}
+																ref={authorisationField.ref}
+																value={authorisationField.value}
+																onChange={authorisationField.onChange}
+																onInput={authorisationField.onInput}
+																onFocus={authorisationField.onFocus}
+																onBlur={authorisationField.onBlur}
+																onAnimationStart={
+																	authorisationField.onAnimationStart
+																}
+																className={fieldClass(
+																	Boolean(fieldErrors?.authorisationCode),
+																)}
+																placeholder="From your insurer"
+																aria-invalid={Boolean(
+																	fieldErrors?.authorisationCode,
+																)}
+															/>
+															{fieldErrors?.authorisationCode ? (
+																<span className="mt-1.5 block text-sm text-red-700">
+																	{fieldErrors.authorisationCode}
+																</span>
+															) : null}
+														</label>
+													</div>
 
 													<label className="block">
 														<span className="mb-2 block text-sm font-semibold text-ink">
-															Membership / policy number
+															Membership / policy number{" "}
+															<span className="font-normal text-ink-muted">
+																(optional)
+															</span>
 														</span>
 														<input
-															required
 															type="text"
 															name="membershipNumber"
 															maxLength={60}
+															ref={membershipField.ref}
+															value={membershipField.value}
+															onChange={membershipField.onChange}
+															onInput={membershipField.onInput}
+															onFocus={membershipField.onFocus}
+															onBlur={membershipField.onBlur}
+															onAnimationStart={
+																membershipField.onAnimationStart
+															}
 															className={fieldClass(
 																Boolean(fieldErrors?.membershipNumber),
 															)}
@@ -826,6 +983,13 @@ export default function BookPage() {
 															</span>
 														) : null}
 													</label>
+
+													<p className="text-sm text-ink-muted">
+														Ask your insurer for an authorisation code before
+														booking. We verify the code before confirming your
+														appointment, and share it with the hospital for
+														facility billing.
+													</p>
 												</div>
 											) : null}
 
@@ -837,6 +1001,13 @@ export default function BookPage() {
 													name="notes"
 													rows={4}
 													maxLength={1000}
+													ref={notesField.ref}
+													value={notesField.value}
+													onChange={notesField.onChange}
+													onInput={notesField.onInput}
+													onFocus={notesField.onFocus}
+													onBlur={notesField.onBlur}
+													onAnimationStart={notesField.onAnimationStart}
 													className={fieldClass(Boolean(fieldErrors?.notes))}
 													placeholder="Brief context for the appointment"
 													aria-invalid={Boolean(fieldErrors?.notes)}
@@ -862,8 +1033,8 @@ export default function BookPage() {
 													? isInsurance
 														? "Booking…"
 														: "Redirecting to payment…"
-													: isInsurance
-														? "Book"
+														: isInsurance
+														? "Submit insurance request"
 														: isSelfPay
 															? "Pay and book"
 															: "Choose a payment method"}
