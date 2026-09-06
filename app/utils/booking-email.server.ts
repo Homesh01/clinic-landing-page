@@ -1,5 +1,8 @@
 import type { BookingConfig } from "~/utils/google-calendar.server";
-import { getAccessToken } from "~/utils/google-calendar.server";
+import {
+	getAccessToken,
+	zonedDateTimeToUtc,
+} from "~/utils/google-calendar.server";
 import { contact, site } from "~/data/content";
 
 export type BookingEmailInput = {
@@ -92,6 +95,78 @@ function formatFromHeader(fromEmail: string, fromName?: string): string {
 	return `"${escaped}" <${fromEmail}>`;
 }
 
+function escapeIcsText(value: string): string {
+	return value
+		.replace(/\\/g, "\\\\")
+		.replace(/;/g, "\\;")
+		.replace(/,/g, "\\,")
+		.replace(/\r\n|\n|\r/g, "\\n");
+}
+
+function toIcsUtcStamp(date: Date): string {
+	return date
+		.toISOString()
+		.replace(/[-:]/g, "")
+		.replace(/\.\d{3}Z$/, "Z");
+}
+
+/** Standard .ics invite — works in Outlook, Apple Calendar, Google, etc. */
+function buildCalendarInvite(input: {
+	dateIso: string;
+	timeLabel: string;
+	timeZone: string;
+	name: string;
+	email: string;
+	type: string;
+	organizerEmail?: string;
+	organizerName: string;
+}): string {
+	const [hourText, minuteText] = input.timeLabel.split(":");
+	const start = zonedDateTimeToUtc(
+		input.dateIso,
+		Number(hourText),
+		Number(minuteText),
+		input.timeZone,
+	);
+	const end = new Date(start.getTime() + 60 * 60 * 1000);
+	const uid = `booking-${input.dateIso}-${input.timeLabel.replace(":", "")}-${input.email.replace(/[^a-z0-9]/gi, "")}@personalisedcancercare.com`;
+	const summary = `Consultation — ${input.type} with ${site.name}`;
+	const description = [
+		`Consultation with ${site.name}`,
+		`Type: ${input.type}`,
+		`Location: ${CLINIC_LOCATION.name}`,
+		CLINIC_LOCATION.address,
+		`Maps: ${CLINIC_LOCATION.mapsUrl}`,
+		`Website: ${SITE_URL}`,
+	].join("\n");
+	const location = `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`;
+	const organizerEmail = input.organizerEmail || contact.email;
+
+	return [
+		"BEGIN:VCALENDAR",
+		"VERSION:2.0",
+		"PRODID:-//Personalised Cancer Care//Booking//EN",
+		"CALSCALE:GREGORIAN",
+		"METHOD:PUBLISH",
+		"BEGIN:VEVENT",
+		`UID:${uid}`,
+		`DTSTAMP:${toIcsUtcStamp(new Date())}`,
+		`DTSTART:${toIcsUtcStamp(start)}`,
+		`DTEND:${toIcsUtcStamp(end)}`,
+		`SUMMARY:${escapeIcsText(summary)}`,
+		`DESCRIPTION:${escapeIcsText(description)}`,
+		`LOCATION:${escapeIcsText(location)}`,
+		`ORGANIZER;CN=${escapeIcsText(input.organizerName)}:mailto:${organizerEmail}`,
+		`ATTENDEE;CN=${escapeIcsText(input.name)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${input.email}`,
+		"STATUS:CONFIRMED",
+		"SEQUENCE:0",
+		`URL:${SITE_URL}`,
+		"END:VEVENT",
+		"END:VCALENDAR",
+		"",
+	].join("\r\n");
+}
+
 function detailRow(input: {
 	icon: string;
 	iconBg: string;
@@ -165,7 +240,7 @@ function buildPlainText(input: {
 	return [
 		`Dear ${input.name},`,
 		"",
-		`Your consultation with ${site.name} is confirmed. The details are below, and this appointment has been added to your calendar.`,
+		`Your consultation with ${site.name} is confirmed. The details are below. Open the attached calendar invite (.ics) to add this appointment to Google Calendar, Outlook, Apple Calendar, or another calendar app.`,
 		"",
 		`Date: ${input.when}`,
 		`Time: ${input.timeLabel} (UK time)`,
@@ -223,7 +298,7 @@ function buildHtml(input: {
 		: "&#10003; Booking confirmed";
 	const lead = pending
 		? `We have received your insurance booking request with ${siteName}. Your appointment stays pending until we verify the authorisation code with your insurer.`
-		: `Your consultation with ${siteName} is confirmed. The details are below, and this appointment has been added to your calendar.`;
+		: `Your consultation with ${siteName} is confirmed. The details are below. Open the attached calendar invite (.ics) to add this appointment to Google Calendar, Outlook, Apple Calendar, or another calendar app.`;
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: "To change or cancel your appointment, simply reply to this email.";
@@ -366,8 +441,42 @@ function buildMimeMessage(input: {
 	subject: string;
 	text: string;
 	html: string;
+	ics?: string;
 }): string {
-	const boundary = `pcc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+	const mixedBoundary = `pcc_mix_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+	const altBoundary = `pcc_alt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+
+	const alternativeParts = [
+		`--${altBoundary}`,
+		'Content-Type: text/plain; charset="UTF-8"',
+		"Content-Transfer-Encoding: base64",
+		"",
+		toBase64Wrapped(input.text),
+		"",
+		`--${altBoundary}`,
+		'Content-Type: text/html; charset="UTF-8"',
+		"Content-Transfer-Encoding: base64",
+		"",
+		toBase64Wrapped(input.html),
+		"",
+		`--${altBoundary}--`,
+	];
+
+	if (!input.ics) {
+		return [
+			...(input.from ? [`From: ${input.from}`] : []),
+			`To: ${input.to}`,
+			...(input.replyTo ? [`Reply-To: ${input.replyTo}`] : []),
+			...(input.bcc ? [`Bcc: ${input.bcc}`] : []),
+			`Subject: ${input.subject}`,
+			"MIME-Version: 1.0",
+			`Content-Type: multipart/alternative; boundary="${altBoundary}"`,
+			"",
+			...alternativeParts,
+			"",
+		].join("\r\n");
+	}
+
 	return [
 		...(input.from ? [`From: ${input.from}`] : []),
 		`To: ${input.to}`,
@@ -375,21 +484,21 @@ function buildMimeMessage(input: {
 		...(input.bcc ? [`Bcc: ${input.bcc}`] : []),
 		`Subject: ${input.subject}`,
 		"MIME-Version: 1.0",
-		`Content-Type: multipart/alternative; boundary="${boundary}"`,
+		`Content-Type: multipart/mixed; boundary="${mixedBoundary}"`,
 		"",
-		`--${boundary}`,
-		'Content-Type: text/plain; charset="UTF-8"',
+		`--${mixedBoundary}`,
+		`Content-Type: multipart/alternative; boundary="${altBoundary}"`,
+		"",
+		...alternativeParts,
+		"",
+		`--${mixedBoundary}`,
+		'Content-Type: text/calendar; charset="UTF-8"; method=PUBLISH; name="consultation.ics"',
 		"Content-Transfer-Encoding: base64",
+		'Content-Disposition: attachment; filename="consultation.ics"',
 		"",
-		toBase64Wrapped(input.text),
+		toBase64Wrapped(input.ics),
 		"",
-		`--${boundary}`,
-		'Content-Type: text/html; charset="UTF-8"',
-		"Content-Transfer-Encoding: base64",
-		"",
-		toBase64Wrapped(input.html),
-		"",
-		`--${boundary}--`,
+		`--${mixedBoundary}--`,
 		"",
 	].join("\r\n");
 }
@@ -461,6 +570,18 @@ export async function sendPatientBookingConfirmation(
 		paymentValue,
 		pending: isInsurance,
 	});
+	const ics = isInsurance
+		? undefined
+		: buildCalendarInvite({
+				dateIso: input.dateIso,
+				timeLabel: input.timeLabel,
+				timeZone: config.timeZone,
+				name: input.name,
+				email: input.email,
+				type: input.type,
+				organizerEmail: config.fromEmail,
+				organizerName: fromName,
+			});
 
 	const baseMime = {
 		to: input.email,
@@ -469,6 +590,7 @@ export async function sendPatientBookingConfirmation(
 		subject,
 		text,
 		html,
+		ics,
 	};
 
 	try {
