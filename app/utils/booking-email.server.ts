@@ -111,16 +111,13 @@ function toIcsUtcStamp(date: Date): string {
 		.replace(/\.\d{3}Z$/, "Z");
 }
 
-/** Standard .ics invite — works in Outlook, Apple Calendar, Google, etc. */
+/** Standard .ics file — patient adds manually via “Add to Calendar”. */
 function buildCalendarInvite(input: {
 	dateIso: string;
 	timeLabel: string;
 	timeZone: string;
-	name: string;
 	email: string;
 	type: string;
-	organizerEmail?: string;
-	organizerName: string;
 }): string {
 	const [hourText, minuteText] = input.timeLabel.split(":");
 	const start = zonedDateTimeToUtc(
@@ -141,7 +138,6 @@ function buildCalendarInvite(input: {
 		`Website: ${SITE_URL}`,
 	].join("\n");
 	const location = `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`;
-	const organizerEmail = input.organizerEmail || contact.email;
 
 	return [
 		"BEGIN:VCALENDAR",
@@ -157,8 +153,6 @@ function buildCalendarInvite(input: {
 		`SUMMARY:${escapeIcsText(summary)}`,
 		`DESCRIPTION:${escapeIcsText(description)}`,
 		`LOCATION:${escapeIcsText(location)}`,
-		`ORGANIZER;CN=${escapeIcsText(input.organizerName)}:mailto:${organizerEmail}`,
-		`ATTENDEE;CN=${escapeIcsText(input.name)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${input.email}`,
 		"STATUS:CONFIRMED",
 		"SEQUENCE:0",
 		`URL:${SITE_URL}`,
@@ -612,11 +606,8 @@ export async function sendPatientBookingConfirmation(
 				dateIso: input.dateIso,
 				timeLabel: input.timeLabel,
 				timeZone: config.timeZone,
-				name: input.name,
 				email: input.email,
 				type: input.type,
-				organizerEmail: config.fromEmail,
-				organizerName: fromName,
 			});
 
 	const baseMime = {
@@ -768,11 +759,8 @@ export async function sendBookingRescheduledEmail(
 				dateIso: input.dateIso,
 				timeLabel: input.timeLabel,
 				timeZone: config.timeZone,
-				name: input.name,
 				email: input.email,
 				type: input.type,
-				organizerEmail: config.fromEmail,
-				organizerName: fromName,
 			});
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, {

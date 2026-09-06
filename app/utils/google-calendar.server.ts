@@ -635,16 +635,14 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				attendees: [{ email, displayName: input.name }],
+				// Do not invite the patient as an attendee — that can auto-add
+				// the clinic event to their Gmail calendar and conflict with the .ics.
 				extendedProperties: {
 					private: {
 						bookingRef,
 						patientEmail: email,
 					},
 				},
-				guestsCanInviteOthers: false,
-				guestsCanModify: false,
-				guestsCanSeeOtherGuests: false,
 				transparency: "opaque",
 			}),
 		},

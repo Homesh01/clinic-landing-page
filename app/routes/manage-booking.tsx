@@ -117,14 +117,19 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					{ status: 404 },
 				);
 			}
-			const days = await getAvailableDays(config, {
-				excludeEventId: booking.eventId,
-			});
+			const days = await getAvailableDays(config);
+			const availableDays = days.map((day) => ({
+				...day,
+				times:
+					day.iso === booking.dateIso
+						? day.times.filter((time) => time !== booking.timeLabel)
+						: day.times,
+			}));
 			return json({
 				ok: true as const,
 				intent: "lookup" as const,
 				booking,
-				days,
+				days: availableDays,
 			});
 		}
 
