@@ -18,12 +18,19 @@ import {
 } from "~/utils/booking-ref";
 import {
 	BookingConflictError,
+	SELF_PAY_REFUND_MIN_DAYS,
 	cancelBookingEvent,
 	findBookingByEmailAndRef,
 	getAvailableDays,
 	getBookingConfig,
+	isSelfPayRefundEligible,
 	rescheduleBookingEvent,
 } from "~/utils/google-calendar.server";
+import {
+	formatGbpFromPence,
+	getStripeConfig,
+	refundPaidCheckoutSession,
+} from "~/utils/stripe.server";
 import { requireSiteAccess } from "~/utils/site-auth.server";
 
 function formatBookingDate(dateIso: string): string {
@@ -55,7 +62,11 @@ export const meta: MetaFunction = () => {
 export async function loader({ request, context }: LoaderFunctionArgs) {
 	await requireSiteAccess(request, context.cloudflare.env);
 	const config = getBookingConfig(context.cloudflare.env);
-	return json({ configured: Boolean(config) });
+	return json({
+		configured: Boolean(config),
+		refundMinDays: SELF_PAY_REFUND_MIN_DAYS,
+		timeZone: config?.timeZone ?? "Europe/London",
+	});
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -148,6 +159,83 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		}
 
 		if (intent === "cancel") {
+			const existing = await findBookingByEmailAndRef(
+				config,
+				email,
+				bookingRef,
+			);
+			if (!existing || existing.eventId !== eventId) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error:
+							"No upcoming booking matched that email and reference. Check the confirmation email, or contact the clinic team.",
+						email,
+						bookingRef,
+					},
+					{ status: 404 },
+				);
+			}
+
+			let refundStatus: "none" | "refunded" | "not_eligible" | "already_refunded" =
+				"none";
+			let refundAmountLabel: string | undefined;
+
+			const wantsRefund =
+				existing.paymentMethod === "self-pay" &&
+				Boolean(existing.stripeSessionId);
+			if (wantsRefund && existing.stripeSessionId) {
+				const eligible = isSelfPayRefundEligible(
+					existing.dateIso,
+					existing.timeLabel,
+					config.timeZone,
+				);
+				if (!eligible) {
+					refundStatus = "not_eligible";
+				} else {
+					const stripe = getStripeConfig(context.cloudflare.env);
+					if (!stripe) {
+						return json(
+							{
+								ok: false as const,
+								intent,
+								error:
+									"Automatic refund is temporarily unavailable. Please contact the clinic team before cancelling so your payment can be refunded.",
+								email,
+								bookingRef,
+							},
+							{ status: 503 },
+						);
+					}
+					try {
+						const refund = await refundPaidCheckoutSession(
+							stripe,
+							existing.stripeSessionId,
+						);
+						refundStatus = refund.alreadyRefunded
+							? "already_refunded"
+							: "refunded";
+						if (refund.amountPence > 0) {
+							refundAmountLabel = formatGbpFromPence(refund.amountPence);
+						}
+					} catch (refundError) {
+						console.error("Self-pay cancel refund error:", refundError);
+						return json(
+							{
+								ok: false as const,
+								intent,
+								error:
+									"We could not process the Stripe refund automatically. Your appointment was not cancelled — please contact the clinic team.",
+								email,
+								bookingRef,
+							},
+							{ status: 502 },
+						);
+					}
+				}
+			}
+
 			const booking = await cancelBookingEvent(config, {
 				eventId,
 				email,
@@ -161,11 +249,20 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					timeLabel: booking.timeLabel,
 					type: booking.type,
 					bookingRef: booking.bookingRef,
+					refundStatus,
+					refundAmountLabel,
+					refundMinDays: SELF_PAY_REFUND_MIN_DAYS,
 				});
 			} catch (emailError) {
 				console.error("Cancel confirmation email error:", emailError);
 			}
-			return json({ ok: true as const, intent: "cancel" as const, booking });
+			return json({
+				ok: true as const,
+				intent: "cancel" as const,
+				booking,
+				refundStatus,
+				refundAmountLabel,
+			});
 		}
 
 		if (intent === "reschedule") {
@@ -249,7 +346,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function ManageBookingPage() {
-	const { configured } = useLoaderData<typeof loader>();
+	const { configured, refundMinDays, timeZone } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const submitting = navigation.state === "submitting";
@@ -260,7 +357,7 @@ export default function ManageBookingPage() {
 			: null;
 	const cancelled =
 		actionData && actionData.ok && actionData.intent === "cancel"
-			? actionData.booking
+			? actionData
 			: null;
 	const rescheduled =
 		actionData && actionData.ok && actionData.intent === "reschedule"
@@ -274,6 +371,10 @@ export default function ManageBookingPage() {
 		() => days.filter((day) => day.times.length > 0),
 		[days],
 	);
+	const refundEligible =
+		booking?.paymentMethod === "self-pay" &&
+		Boolean(booking.stripeSessionId) &&
+		isSelfPayRefundEligible(booking.dateIso, booking.timeLabel, timeZone);
 
 	const [selectedDay, setSelectedDay] = useState("");
 	const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -328,9 +429,24 @@ export default function ManageBookingPage() {
 								Your appointment has been cancelled
 							</h2>
 							<p className="mt-3 text-ink-soft">
-								{formatBookingDate(cancelled.dateIso)} at {cancelled.timeLabel}{" "}
-								({cancelled.bookingRef}) is no longer booked.
+								{formatBookingDate(cancelled.booking.dateIso)} at{" "}
+								{cancelled.booking.timeLabel} ({cancelled.booking.bookingRef}) is
+								no longer booked.
 							</p>
+							{cancelled.refundStatus === "refunded" ||
+							cancelled.refundStatus === "already_refunded" ? (
+								<p className="mt-3 text-ink-soft">
+									{cancelled.refundStatus === "already_refunded"
+										? "This payment had already been refunded."
+										: `A full refund${cancelled.refundAmountLabel ? ` of ${cancelled.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`}
+								</p>
+							) : cancelled.refundStatus === "not_eligible" ? (
+								<p className="mt-3 text-ink-soft">
+									Self-pay refunds are automatic only when you cancel at least{" "}
+									{refundMinDays} days before the appointment. Please contact
+									the clinic team if you need to discuss this payment.
+								</p>
+							) : null}
 							<p className="mt-4 text-ink-soft">
 								<Link to="/book" className="link-underline">
 									Book a new consultation
@@ -441,8 +557,26 @@ export default function ManageBookingPage() {
 										Cancel this appointment?
 									</h3>
 									<p className="mt-3 text-ink-soft">
-										This removes the hold from the clinic calendar. Self-pay
-										refunds, if needed, are handled by the clinic team.
+										This removes the appointment from the clinic calendar.
+										{booking.paymentMethod === "self-pay" &&
+										booking.stripeSessionId ? (
+											refundEligible ? (
+												<>
+													{" "}
+													Because you are cancelling at least {refundMinDays}{" "}
+													days before the appointment, a full Stripe refund will
+													be started automatically.
+												</>
+											) : (
+												<>
+													{" "}
+													Automatic self-pay refunds are only available at least{" "}
+													{refundMinDays} days before the appointment. Within
+													that window, please contact the clinic team about the
+													payment.
+												</>
+											)
+										) : null}
 									</p>
 									<div className="mt-6 flex flex-wrap gap-3">
 										<Form method="post">

@@ -66,6 +66,7 @@ type CheckoutSession = {
 	status: string;
 	customer_email?: string | null;
 	metadata?: Record<string, string> | null;
+	payment_intent?: string | { id: string; amount?: number; status?: string } | null;
 };
 
 async function stripeRequest<T>(
@@ -195,6 +196,68 @@ export async function retrieveCheckoutSession(
 	);
 }
 
+export async function refundPaidCheckoutSession(
+	stripe: StripeConfig,
+	sessionId: string,
+): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
+	const session = await stripeRequest<CheckoutSession>(
+		stripe.secretKey,
+		`/checkout/sessions/${encodeURIComponent(sessionId)}?expand[]=payment_intent`,
+	);
+
+	const paymentIntent =
+		typeof session.payment_intent === "string"
+			? session.payment_intent
+			: session.payment_intent?.id;
+	if (!paymentIntent) {
+		throw new Error("Paid session is missing a payment to refund.");
+	}
+
+	if (
+		typeof session.payment_intent === "object" &&
+		session.payment_intent?.status === "canceled"
+	) {
+		return {
+			refundId: paymentIntent,
+			amountPence: session.payment_intent.amount ?? 0,
+			alreadyRefunded: true,
+		};
+	}
+
+	try {
+		const refund = await stripeRequest<{
+			id: string;
+			amount: number;
+			status: string;
+		}>(stripe.secretKey, "/refunds", {
+			method: "POST",
+			form: {
+				payment_intent: paymentIntent,
+				reason: "requested_by_customer",
+			},
+		});
+		return {
+			refundId: refund.id,
+			amountPence: refund.amount,
+			alreadyRefunded: false,
+		};
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		// Idempotent cancel: treat prior full refund as success.
+		if (/already been refunded|has already been refunded/i.test(message)) {
+			return {
+				refundId: paymentIntent,
+				amountPence:
+					typeof session.payment_intent === "object"
+						? (session.payment_intent?.amount ?? 0)
+						: 0,
+				alreadyRefunded: true,
+			};
+		}
+		throw error;
+	}
+}
+
 async function markSessionFulfilled(
 	stripe: StripeConfig,
 	sessionId: string,
@@ -290,6 +353,8 @@ export async function fulfillPaidCheckoutSession(input: {
 			...booking,
 			eventId,
 			bookingRef,
+			paymentMethod: "self-pay",
+			stripeSessionId: session.id,
 			notes: [booking.notes, `Stripe session: ${session.id}`]
 				.filter(Boolean)
 				.join("\n"),

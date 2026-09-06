@@ -328,6 +328,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				...booking,
 				status: "tentative",
 				summaryPrefix: "PENDING AUTH —",
+				paymentMethod: "insurance",
 				notes: calendarNotesForBooking(booking),
 			});
 

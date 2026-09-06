@@ -377,10 +377,30 @@ export type CreateBookingInput = {
 	eventId?: string;
 	/** Patient-facing booking reference (generated if omitted). */
 	bookingRef?: string;
+	paymentMethod?: "self-pay" | "insurance";
+	stripeSessionId?: string;
 	/** Insurance bookings stay tentative until the authorisation code is verified. */
 	status?: "confirmed" | "tentative";
 	summaryPrefix?: string;
 };
+
+/** Full self-pay refund if cancelled at least this many days before the appointment. */
+export const SELF_PAY_REFUND_MIN_DAYS = 5;
+
+export function isSelfPayRefundEligible(
+	dateIso: string,
+	timeLabel: string,
+	timeZone: string,
+	now: Date = new Date(),
+): boolean {
+	const [hourText, minuteText] = timeLabel.split(":");
+	const hour = Number(hourText);
+	const minute = Number(minuteText);
+	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
+	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
+	const minMs = SELF_PAY_REFUND_MIN_DAYS * 24 * 60 * 60 * 1000;
+	return start.getTime() - now.getTime() >= minMs;
+}
 
 export type ManagedBooking = {
 	eventId: string;
@@ -393,6 +413,8 @@ export type ManagedBooking = {
 	type: string;
 	status: "confirmed" | "tentative" | "cancelled";
 	pendingAuth: boolean;
+	paymentMethod: "self-pay" | "insurance" | "unknown";
+	stripeSessionId?: string;
 };
 
 type CalendarEventPayload = {
@@ -520,6 +542,21 @@ function managedBookingFromEvent(
 	const pendingAuth =
 		event.status === "tentative" ||
 		Boolean(event.summary?.toUpperCase().includes("PENDING AUTH"));
+	const privateProps = event.extendedProperties?.private ?? {};
+	const stripeFromNotes =
+		event.description?.match(/Stripe session:\s*(cs_[\w]+)/i)?.[1] ??
+		undefined;
+	const stripeSessionId =
+		privateProps.stripeSessionId?.trim() || stripeFromNotes || undefined;
+	const paymentMethodRaw = privateProps.paymentMethod?.trim();
+	const paymentMethod: ManagedBooking["paymentMethod"] =
+		paymentMethodRaw === "self-pay" || paymentMethodRaw === "insurance"
+			? paymentMethodRaw
+			: stripeSessionId
+				? "self-pay"
+				: pendingAuth
+					? "insurance"
+					: "unknown";
 
 	return {
 		eventId: event.id,
@@ -532,6 +569,8 @@ function managedBookingFromEvent(
 		type,
 		status: event.status === "tentative" ? "tentative" : "confirmed",
 		pendingAuth,
+		paymentMethod,
+		stripeSessionId,
 	};
 }
 
@@ -606,6 +645,17 @@ export async function createBookingEvent(
 	);
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
 	const email = input.email.trim().toLowerCase();
+	const paymentMethod =
+		input.paymentMethod ??
+		(input.status === "tentative" ? "insurance" : "self-pay");
+	const privateProps: Record<string, string> = {
+		bookingRef,
+		patientEmail: email,
+		paymentMethod,
+	};
+	if (input.stripeSessionId?.trim()) {
+		privateProps.stripeSessionId = input.stripeSessionId.trim();
+	}
 
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
@@ -638,10 +688,7 @@ export async function createBookingEvent(
 				// Do not invite the patient as an attendee — that can auto-add
 				// the clinic event to their Gmail calendar and conflict with the .ics.
 				extendedProperties: {
-					private: {
-						bookingRef,
-						patientEmail: email,
-					},
+					private: privateProps,
 				},
 				transparency: "opaque",
 			}),
@@ -823,6 +870,13 @@ export async function rescheduleBookingEvent(
 					private: {
 						bookingRef: managed.bookingRef,
 						patientEmail: managed.email,
+						paymentMethod:
+							managed.paymentMethod === "unknown"
+								? "self-pay"
+								: managed.paymentMethod,
+						...(managed.stripeSessionId
+							? { stripeSessionId: managed.stripeSessionId }
+							: {}),
 					},
 				},
 			}),

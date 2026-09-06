@@ -213,6 +213,11 @@ function buildPlainText(input: {
 	const manageLines = input.bookingRef
 		? [
 				`To change or cancel your appointment, visit ${MANAGE_BOOKING_URL} and enter your email with booking reference ${input.bookingRef}.`,
+				...(input.pending
+					? []
+					: [
+							"Self-pay cancellations at least 5 days before the appointment receive an automatic full refund.",
+						]),
 				"",
 			]
 		: [
@@ -315,7 +320,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 5 days before the appointment receive an automatic full refund.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -676,12 +681,29 @@ export async function sendBookingCancelledEmail(
 		timeLabel: string;
 		type: string;
 		bookingRef: string;
+		refundStatus?:
+			| "none"
+			| "refunded"
+			| "not_eligible"
+			| "already_refunded";
+		refundAmountLabel?: string;
+		refundMinDays?: number;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
 	const fromName = config.fromName || `${site.name} bookings`;
 	const subject = `${site.name}: appointment cancelled (${input.bookingRef})`;
+	const refundMinDays = input.refundMinDays ?? 5;
+	const refundLine =
+		input.refundStatus === "refunded"
+			? `A full refund${input.refundAmountLabel ? ` of ${input.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`
+			: input.refundStatus === "already_refunded"
+				? "This payment had already been refunded."
+				: input.refundStatus === "not_eligible"
+					? `Self-pay refunds are automatic only when you cancel at least ${refundMinDays} days before the appointment. Please contact the clinic team if you need to discuss this payment.`
+					: null;
+
 	const text = [
 		`Dear ${input.name},`,
 		"",
@@ -691,6 +713,7 @@ export async function sendBookingCancelledEmail(
 		`Date: ${when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
+		...(refundLine ? ["", refundLine] : []),
 		"",
 		`If this was a mistake, you can book again at ${SITE_URL}/book.`,
 		"",
@@ -701,6 +724,7 @@ export async function sendBookingCancelledEmail(
 	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Your consultation with ${escapeHtml(site.name)} has been cancelled.</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)</p>
+${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(refundLine)}</p>` : ""}
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};">Book again</a></p>`;
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, {
