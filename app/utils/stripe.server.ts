@@ -339,16 +339,80 @@ export async function resolvePaymentIntentForBooking(
 				stripe,
 				safeRef,
 			);
-			if (!sessionId) return null;
-			const session = await retrieveCheckoutSession(stripe, sessionId);
-			return typeof session.payment_intent === "string"
-				? session.payment_intent
-				: session.payment_intent?.id ?? null;
+			if (sessionId) {
+				const session = await retrieveCheckoutSession(stripe, sessionId);
+				const fromSession =
+					typeof session.payment_intent === "string"
+						? session.payment_intent
+						: session.payment_intent?.id;
+				if (fromSession) return fromSession;
+			}
 		} catch (error) {
 			console.error("Stripe checkout session search failed:", error);
 		}
 	}
 
+	// Final fallback when Search API is unavailable: scan recent PaymentIntents.
+	try {
+		const scanned = await findPaymentIntentByScanning(stripe, {
+			bookingRef: safeRef,
+			email: safeEmail,
+			dateIso: safeDate,
+			timeLabel: safeTime,
+		});
+		if (scanned) return scanned;
+	} catch (error) {
+		console.error("Stripe payment_intent scan failed:", error);
+	}
+
+	return null;
+}
+
+type StripePaymentIntentListItem = {
+	id: string;
+	status?: string;
+	metadata?: Record<string, string> | null;
+};
+
+async function findPaymentIntentByScanning(
+	stripe: StripeConfig,
+	input: {
+		bookingRef: string;
+		email: string;
+		dateIso: string;
+		timeLabel: string;
+	},
+): Promise<string | null> {
+	let startingAfter: string | undefined;
+	for (let page = 0; page < 5; page += 1) {
+		const params = new URLSearchParams({ limit: "100" });
+		if (startingAfter) params.set("starting_after", startingAfter);
+		const result = await stripeRequest<{
+			data?: StripePaymentIntentListItem[];
+			has_more?: boolean;
+		}>(stripe.secretKey, `/payment_intents?${params.toString()}`);
+
+		for (const pi of result.data ?? []) {
+			if (pi.status !== "succeeded") continue;
+			const meta = pi.metadata ?? {};
+			if (input.bookingRef && meta.bookingRef === input.bookingRef) {
+				return pi.id;
+			}
+			if (
+				input.email &&
+				input.dateIso &&
+				input.timeLabel &&
+				meta.email?.toLowerCase() === input.email &&
+				meta.dateIso === input.dateIso &&
+				meta.timeLabel === input.timeLabel
+			) {
+				return pi.id;
+			}
+		}
+
+		if (!result.has_more || !result.data?.length) break;
+		startingAfter = result.data[result.data.length - 1]?.id;
+	}
 	return null;
 }
 

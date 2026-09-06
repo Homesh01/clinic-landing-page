@@ -385,24 +385,6 @@ export type CreateBookingInput = {
 	summaryPrefix?: string;
 };
 
-/** Full self-pay refund if cancelled at least this many hours before the appointment. */
-export const SELF_PAY_REFUND_MIN_HOURS = 48;
-
-export function isSelfPayRefundEligible(
-	dateIso: string,
-	timeLabel: string,
-	timeZone: string,
-	now: Date = new Date(),
-): boolean {
-	const [hourText, minuteText] = timeLabel.split(":");
-	const hour = Number(hourText);
-	const minute = Number(minuteText);
-	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
-	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
-	const minMs = SELF_PAY_REFUND_MIN_HOURS * 60 * 60 * 1000;
-	return start.getTime() - now.getTime() >= minMs;
-}
-
 export type ManagedBooking = {
 	eventId: string;
 	bookingRef: string;
