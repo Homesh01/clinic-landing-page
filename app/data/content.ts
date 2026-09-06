@@ -45,21 +45,20 @@ export const credentials = [
 
 export const appointments = [
 	{
-		role: "Consultant Clinical Oncologist & Translational AI Innovation Lead — UCLH",
-		current: true,
+		role: "Consultant Clinical Oncologist & Translational AI Innovation Lead | UCLH (current)",
 	},
 	{
-		role: "Formerly: Senior Director, AI Industrialised Clinical Development — Recursion Pharmaceuticals",
+		role: "Formerly: Senior Director, AI Industrialised Clinical Development | Recursion Pharmaceuticals",
 	},
 	{
-		role: "Formerly: Postdoctoral Fellow, AI Division — GSK Pharmaceuticals",
+		role: "Formerly: Postdoctoral Fellow | AI Division, GSK Pharmaceuticals",
 	},
 ] as const;
 
 export const about = {
 	heroTitle: "A clinician at the intersection of oncology and AI",
 	heroLede:
-		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. She combines specialist clinical training with a research and industry background in artificial intelligence — experience she draws on to help design treatment plans that are precise, well-informed, and built around each patient.",
+		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. She combines specialist clinical training with a research and industry background in artificial intelligence, experience she draws on to help design treatment plans that are precise, well informed, and built around each patient.",
 	sections: [
 		{
 			heading: "Where she practises",
@@ -71,19 +70,19 @@ export const about = {
 			heading: "Clinical training & research",
 			paragraphs: [
 				"Dr Sayal read medicine at Gonville and Caius College, University of Cambridge (MB BChir Cantab) and trained as a clinician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the Royal College of Radiologists (FRCR). She was the first NIHR-funded Academic Clinical Trainee in Clinical Oncology at the University of Oxford, and went on to complete a DPhil (Oxon) as a Cancer Research UK Clinical Research Training Fellow at the Oxford CRUK Cancer Centre.",
-				"Her doctoral research examined the tumour microenvironment in triple-negative breast cancer using spatial transcriptomics and single-cell sequencing — techniques that map how individual cells within a tumour behave, and how they respond to treatment — including a research collaboration with the Broad Institute of MIT and Harvard.",
+				"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, techniques that map how individual cells within a tumour behave, and how they respond to treatment, including a research collaboration with the Broad Institute of MIT and Harvard.",
 			],
 		},
 		{
 			heading: "From research to industry AI",
 			paragraphs: [
-				"It was during her doctoral research that Dr Sayal taught herself linear algebra and statistical inference — the mathematical foundations of machine learning — a decision that shaped the next stage of her career. After her DPhil, she completed a postdoctoral fellowship in the AI division of GSK Pharmaceuticals, before being appointed Senior Director in AI Industrialised Clinical Development at Recursion Pharmaceuticals, a leading AI-driven drug discovery company, where she led work applying artificial intelligence to accelerate and de-risk clinical development at scale.",
+				"It was during her doctoral research that Dr Sayal taught herself linear algebra and statistical inference, the mathematical foundations of machine learning, a decision that shaped the next stage of her career. After her DPhil, she completed a postdoctoral fellowship in the AI division of GSK Pharmaceuticals, before being appointed Senior Director in AI Industrialised Clinical Development at Recursion Pharmaceuticals, a leading AI driven drug discovery company, where she led work applying artificial intelligence to accelerate clinical development and reduce its risk at scale.",
 			],
 		},
 		{
 			heading: "Bringing it together",
 			paragraphs: [
-				"Dr Sayal brings that experience directly into the care of her own patients. Because she is personally involved in developing and testing new AI-driven technologies at UCLH, she can draw on first-hand knowledge of which emerging tools and treatments are genuinely ready to help — not simply what is already established practice — when she reviews a patient's scans, pathology and options. She continues to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy throughout, with every treatment plan still built around the individual in front of her.",
+				"Dr Sayal brings that experience directly into the care of her own patients. Because she is personally involved in developing and testing new AI driven technologies at UCLH, she can draw on firsthand knowledge of which emerging tools and treatments are genuinely ready to help, not simply what is already established practice, when she reviews a patient's scans, pathology and options. She continues to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy throughout, with every treatment plan still built around the individual in front of her.",
 			],
 		},
 	],
@@ -416,7 +415,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 		description: [
 			{
 				text:
-					"Will take part in an invited panel discussion on the responsible use of AI in medicine, in conversation with the Chief Data Officer of MD Anderson Cancer Center, at the Women in Cancer event during the ESMO Congress 2026 in Madrid, Spain, on 24 October 2026.",
+					"Will take part in an invited panel discussion on the responsible use of AI in medicine, in conversation with Dr. Caroline Chung, the Chief Data Officer of MD Anderson Cancer Center, at the Women in Cancer event during the ESMO Congress 2026 in Madrid, Spain, on 24 October 2026.",
 			},
 		],
 	},
@@ -436,7 +435,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			},
 			{
 				text:
-					" Will present two invited talks at the SOHO meeting in Riyadh, Saudi Arabia, from 9 to 10 October 2026.",
+					" Will present an invited talk and panel discussion at the SOHO meeting in Riyadh, Saudi Arabia, from 9 to 10 October 2026.",
 			},
 		],
 	},
