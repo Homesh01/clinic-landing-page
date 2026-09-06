@@ -379,6 +379,7 @@ export type CreateBookingInput = {
 	bookingRef?: string;
 	paymentMethod?: "self-pay" | "insurance";
 	stripeSessionId?: string;
+	stripePaymentIntentId?: string;
 	/** Insurance bookings stay tentative until the authorisation code is verified. */
 	status?: "confirmed" | "tentative";
 	summaryPrefix?: string;
@@ -415,6 +416,7 @@ export type ManagedBooking = {
 	pendingAuth: boolean;
 	paymentMethod: "self-pay" | "insurance" | "unknown";
 	stripeSessionId?: string;
+	stripePaymentIntentId?: string;
 	icsSequence: number;
 };
 
@@ -545,15 +547,22 @@ function managedBookingFromEvent(
 		Boolean(event.summary?.toUpperCase().includes("PENDING AUTH"));
 	const privateProps = event.extendedProperties?.private ?? {};
 	const stripeFromNotes =
-		event.description?.match(/Stripe session:\s*(cs_[\w]+)/i)?.[1] ??
+		event.description?.match(/Stripe session:\s*(cs_[a-zA-Z0-9_]+)/i)?.[1] ??
+		undefined;
+	const paymentIntentFromNotes =
+		event.description?.match(/Stripe payment:\s*(pi_[a-zA-Z0-9_]+)/i)?.[1] ??
 		undefined;
 	const stripeSessionId =
 		privateProps.stripeSessionId?.trim() || stripeFromNotes || undefined;
+	const stripePaymentIntentId =
+		privateProps.stripePaymentIntentId?.trim() ||
+		paymentIntentFromNotes ||
+		undefined;
 	const paymentMethodRaw = privateProps.paymentMethod?.trim();
 	const paymentMethod: ManagedBooking["paymentMethod"] =
 		paymentMethodRaw === "self-pay" || paymentMethodRaw === "insurance"
 			? paymentMethodRaw
-			: stripeSessionId
+			: stripeSessionId || stripePaymentIntentId
 				? "self-pay"
 				: pendingAuth
 					? "insurance"
@@ -572,6 +581,7 @@ function managedBookingFromEvent(
 		pendingAuth,
 		paymentMethod,
 		stripeSessionId,
+		stripePaymentIntentId,
 		icsSequence: Number.parseInt(privateProps.icsSequence ?? "0", 10) || 0,
 	};
 }
@@ -650,6 +660,7 @@ export async function createBookingEvent(
 	const paymentMethod =
 		input.paymentMethod ??
 		(input.status === "tentative" ? "insurance" : "self-pay");
+	const invitePatient = paymentMethod === "self-pay";
 	const privateProps: Record<string, string> = {
 		bookingRef,
 		patientEmail: email,
@@ -659,9 +670,12 @@ export async function createBookingEvent(
 	if (input.stripeSessionId?.trim()) {
 		privateProps.stripeSessionId = input.stripeSessionId.trim();
 	}
+	if (input.stripePaymentIntentId?.trim()) {
+		privateProps.stripePaymentIntentId = input.stripePaymentIntentId.trim();
+	}
 
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=${invitePatient ? "all" : "none"}`,
 		{
 			method: "POST",
 			headers: {
@@ -688,8 +702,21 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				// Do not invite the patient as an attendee — that can auto-add
-				// the clinic event to their Gmail calendar and conflict with the .ics.
+				// Self-pay: invite the patient so Gmail updates/cancels natively.
+				...(invitePatient
+					? {
+							attendees: [
+								{
+									email,
+									displayName: input.name,
+									responseStatus: "needsAction",
+								},
+							],
+							guestsCanInviteOthers: false,
+							guestsCanModify: false,
+							guestsCanSeeOtherGuests: false,
+						}
+					: {}),
 				extendedProperties: {
 					private: privateProps,
 				},
@@ -756,10 +783,17 @@ export async function findBookingByEmailAndRef(
 	}
 
 	for (const item of data.items ?? []) {
-		const managed = managedBookingFromEvent(item, config.timeZone);
+		const listed = managedBookingFromEvent(item, config.timeZone);
+		if (!listed) continue;
+		if (listed.email !== patientEmail) continue;
+		if (listed.bookingRef !== bookingRef) continue;
+		// List responses can omit private props — reload the full event.
+		const full = await fetchCalendarEvent(config, accessToken, listed.eventId);
+		const managed = full
+			? managedBookingFromEvent(full, config.timeZone)
+			: listed;
 		if (!managed) continue;
 		if (managed.email !== patientEmail) continue;
-		if (managed.bookingRef !== bookingRef) continue;
 		return managed;
 	}
 
@@ -785,7 +819,7 @@ export async function cancelBookingEvent(
 	}
 
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
 		{
 			method: "DELETE",
 			headers: { Authorization: `Bearer ${accessToken}` },
@@ -853,8 +887,9 @@ export async function rescheduleBookingEvent(
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
 
 	const nextSequence = managed.icsSequence + 1;
+	const invitePatient = managed.paymentMethod !== "insurance";
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=${invitePatient ? "all" : "none"}`,
 		{
 			method: "PATCH",
 			headers: {
@@ -870,6 +905,17 @@ export async function rescheduleBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
+				...(invitePatient
+					? {
+							attendees: [
+								{
+									email: managed.email,
+									displayName: managed.name,
+									responseStatus: "needsAction",
+								},
+							],
+						}
+					: {}),
 				extendedProperties: {
 					private: {
 						bookingRef: managed.bookingRef,
@@ -881,6 +927,9 @@ export async function rescheduleBookingEvent(
 						icsSequence: String(nextSequence),
 						...(managed.stripeSessionId
 							? { stripeSessionId: managed.stripeSessionId }
+							: {}),
+						...(managed.stripePaymentIntentId
+							? { stripePaymentIntentId: managed.stripePaymentIntentId }
 							: {}),
 					},
 				},

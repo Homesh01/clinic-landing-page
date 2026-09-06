@@ -1,8 +1,5 @@
 import type { BookingConfig } from "~/utils/google-calendar.server";
-import {
-	getAccessToken,
-	zonedDateTimeToUtc,
-} from "~/utils/google-calendar.server";
+import { getAccessToken } from "~/utils/google-calendar.server";
 import { contact, site } from "~/data/content";
 
 export type BookingEmailInput = {
@@ -94,89 +91,6 @@ function formatFromHeader(fromEmail: string, fromName?: string): string {
 	if (!fromName) return fromEmail;
 	const escaped = fromName.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 	return `"${escaped}" <${fromEmail}>`;
-}
-
-function escapeIcsText(value: string): string {
-	return value
-		.replace(/\\/g, "\\\\")
-		.replace(/;/g, "\\;")
-		.replace(/,/g, "\\,")
-		.replace(/\r\n|\n|\r/g, "\\n");
-}
-
-function toIcsUtcStamp(date: Date): string {
-	return date
-		.toISOString()
-		.replace(/[-:]/g, "")
-		.replace(/\.\d{3}Z$/, "Z");
-}
-
-function bookingIcsUid(bookingRef: string): string {
-	const safe = bookingRef.replace(/[^A-Za-z0-9-]/g, "");
-	return `booking-${safe}@personalisedcancercare.com`;
-}
-
-/** .ics for add / update / cancel — stable UID so Gmail can replace or remove it. */
-function buildCalendarInvite(input: {
-	dateIso: string;
-	timeLabel: string;
-	timeZone: string;
-	email: string;
-	type: string;
-	bookingRef: string;
-	sequence?: number;
-	method?: "PUBLISH" | "REQUEST" | "CANCEL";
-	organizerEmail?: string;
-	organizerName: string;
-}): string {
-	const method = input.method ?? "PUBLISH";
-	const sequence = input.sequence ?? 0;
-	const [hourText, minuteText] = input.timeLabel.split(":");
-	const start = zonedDateTimeToUtc(
-		input.dateIso,
-		Number(hourText),
-		Number(minuteText),
-		input.timeZone,
-	);
-	const end = new Date(start.getTime() + 60 * 60 * 1000);
-	const uid = bookingIcsUid(input.bookingRef);
-	const summary = `Consultation — ${input.type} with ${site.name}`;
-	const description = [
-		`Consultation with ${site.name}`,
-		`Booking ref: ${input.bookingRef}`,
-		`Type: ${input.type}`,
-		`Location: ${CLINIC_LOCATION.name}`,
-		CLINIC_LOCATION.address,
-		`Maps: ${CLINIC_LOCATION.mapsUrl}`,
-		`Website: ${SITE_URL}`,
-	].join("\n");
-	const location = `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`;
-	const organizerEmail = input.organizerEmail || contact.email;
-	const status = method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
-
-	return [
-		"BEGIN:VCALENDAR",
-		"VERSION:2.0",
-		"PRODID:-//Personalised Cancer Care//Booking//EN",
-		"CALSCALE:GREGORIAN",
-		`METHOD:${method}`,
-		"BEGIN:VEVENT",
-		`UID:${uid}`,
-		`DTSTAMP:${toIcsUtcStamp(new Date())}`,
-		`DTSTART:${toIcsUtcStamp(start)}`,
-		`DTEND:${toIcsUtcStamp(end)}`,
-		`SUMMARY:${escapeIcsText(summary)}`,
-		`DESCRIPTION:${escapeIcsText(description)}`,
-		`LOCATION:${escapeIcsText(location)}`,
-		`ORGANIZER;CN=${escapeIcsText(input.organizerName)}:mailto:${organizerEmail}`,
-		`ATTENDEE;CN=${escapeIcsText(input.email)};ROLE=REQ-PARTICIPANT;PARTSTAT=${method === "CANCEL" ? "DECLINED" : "NEEDS-ACTION"};RSVP=FALSE:mailto:${input.email}`,
-		`STATUS:${status}`,
-		`SEQUENCE:${sequence}`,
-		`URL:${SITE_URL}`,
-		"END:VEVENT",
-		"END:VCALENDAR",
-		"",
-	].join("\r\n");
 }
 
 function detailRow(input: {
@@ -626,21 +540,7 @@ export async function sendPatientBookingConfirmation(
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
 	});
-	const ics =
-		isInsurance || !input.bookingRef
-			? undefined
-			: buildCalendarInvite({
-					dateIso: input.dateIso,
-					timeLabel: input.timeLabel,
-					timeZone: config.timeZone,
-					email: input.email,
-					type: input.type,
-					bookingRef: input.bookingRef,
-					sequence: 0,
-					method: "PUBLISH",
-					organizerEmail: config.fromEmail,
-					organizerName: fromName,
-				});
+	const ics = undefined;
 
 	const baseMime = {
 		to: input.email,
@@ -650,8 +550,6 @@ export async function sendPatientBookingConfirmation(
 		text,
 		html,
 		ics,
-		icsMethod: "PUBLISH" as const,
-		icsFilename: "consultation.ics",
 	};
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, baseMime);
@@ -739,7 +637,7 @@ export async function sendBookingCancelledEmail(
 						? "Your appointment was cancelled, but we could not match the Stripe payment automatically. Please contact the clinic team about a refund."
 						: null;
 	const calendarLine =
-		"If you added this appointment to your calendar from the confirmation email, open the attached calendar cancellation to remove it (Gmail, Outlook, and Apple Calendar usually update automatically).";
+		"If this appointment is on your Google Calendar from the clinic invite, it will be removed automatically. Otherwise remove it manually from your calendar app.";
 
 	const text = [
 		`Dear ${input.name},`,
@@ -767,19 +665,6 @@ ${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};">Book again</a></p>`;
 
-	const ics = buildCalendarInvite({
-		dateIso: input.dateIso,
-		timeLabel: input.timeLabel,
-		timeZone: config.timeZone,
-		email: input.email,
-		type: input.type,
-		bookingRef: input.bookingRef,
-		sequence: (input.icsSequence ?? 0) + 1,
-		method: "CANCEL",
-		organizerEmail: config.fromEmail,
-		organizerName: fromName,
-	});
-
 	await sendMimeWithFromFallback(accessToken, config, fromName, {
 		to: input.email,
 		replyTo: config.fromEmail,
@@ -787,9 +672,6 @@ ${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;
 		subject,
 		text,
 		html,
-		ics,
-		icsMethod: "CANCEL",
-		icsFilename: "consultation-cancelled.ics",
 	});
 }
 
@@ -815,7 +697,7 @@ export async function sendBookingRescheduledEmail(
 		: "Your consultation time has been updated. The details are below.";
 	const calendarLine = input.pendingAuth
 		? null
-		: "If you added the previous time to your calendar, open the attached calendar update so Gmail, Outlook, or Apple Calendar can replace it.";
+		: "If this appointment is on your Google Calendar from the clinic invite, the time will update automatically. Otherwise update or replace it in your calendar app.";
 	const text = [
 		`Dear ${input.name},`,
 		"",
@@ -839,21 +721,6 @@ export async function sendBookingRescheduledEmail(
 ${calendarLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>` : ""}
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};">Manage booking</a></p>`;
 
-	const ics = input.pendingAuth
-		? undefined
-		: buildCalendarInvite({
-				dateIso: input.dateIso,
-				timeLabel: input.timeLabel,
-				timeZone: config.timeZone,
-				email: input.email,
-				type: input.type,
-				bookingRef: input.bookingRef,
-				sequence: input.icsSequence ?? 1,
-				method: "REQUEST",
-				organizerEmail: config.fromEmail,
-				organizerName: fromName,
-			});
-
 	await sendMimeWithFromFallback(accessToken, config, fromName, {
 		to: input.email,
 		replyTo: config.fromEmail,
@@ -861,8 +728,5 @@ ${calendarLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15p
 		subject,
 		text,
 		html,
-		ics,
-		icsMethod: ics ? "REQUEST" : undefined,
-		icsFilename: "consultation-updated.ics",
 	});
 }

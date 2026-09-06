@@ -27,10 +27,10 @@ import {
 	rescheduleBookingEvent,
 } from "~/utils/google-calendar.server";
 import {
-	findPaidCheckoutSessionByBookingRef,
 	formatGbpFromPence,
 	getStripeConfig,
-	refundPaidCheckoutSession,
+	refundPaymentIntent,
+	resolvePaymentIntentForBooking,
 } from "~/utils/stripe.server";
 import { requireSiteAccess } from "~/utils/site-auth.server";
 
@@ -216,35 +216,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						);
 					}
 
-					let stripeSessionId = existing.stripeSessionId;
-					if (!stripeSessionId) {
-						try {
-							stripeSessionId =
-								(await findPaidCheckoutSessionByBookingRef(
-									stripe,
-									existing.bookingRef,
-								)) ?? undefined;
-						} catch (lookupError) {
-							console.error(
-								"Stripe session lookup by booking ref failed:",
-								lookupError,
-							);
-						}
+					let paymentIntentId: string | null = null;
+					try {
+						paymentIntentId = await resolvePaymentIntentForBooking(stripe, {
+							bookingRef: existing.bookingRef,
+							stripeSessionId: existing.stripeSessionId,
+							stripePaymentIntentId: existing.stripePaymentIntentId,
+						});
+					} catch (lookupError) {
+						console.error("Stripe payment lookup for refund failed:", lookupError);
 					}
 
-					if (!stripeSessionId) {
-						// Self-pay without a recoverable Stripe session — cancel diary,
-						// but tell the patient to contact the clinic about payment.
+					if (!paymentIntentId) {
 						refundStatus =
 							existing.paymentMethod === "self-pay"
 								? "missing_payment"
 								: "none";
 					} else {
 						try {
-							const refund = await refundPaidCheckoutSession(
-								stripe,
-								stripeSessionId,
-							);
+							const refund = await refundPaymentIntent(stripe, paymentIntentId);
 							refundStatus = refund.alreadyRefunded
 								? "already_refunded"
 								: "refunded";

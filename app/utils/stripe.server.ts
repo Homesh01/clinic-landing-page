@@ -200,13 +200,7 @@ export async function refundPaidCheckoutSession(
 	stripe: StripeConfig,
 	sessionId: string,
 ): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
-	const session = await stripeRequest<CheckoutSession>(
-		stripe.secretKey,
-		`/checkout/sessions/${encodeURIComponent(sessionId)}?${new URLSearchParams({
-			"expand[]": "payment_intent",
-		}).toString()}`,
-	);
-
+	const session = await retrieveCheckoutSession(stripe, sessionId);
 	const paymentIntentId =
 		typeof session.payment_intent === "string"
 			? session.payment_intent
@@ -214,18 +208,13 @@ export async function refundPaidCheckoutSession(
 	if (!paymentIntentId) {
 		throw new Error("Paid session is missing a payment to refund.");
 	}
+	return refundPaymentIntent(stripe, paymentIntentId);
+}
 
-	const paymentIntent =
-		typeof session.payment_intent === "object" ? session.payment_intent : null;
-
-	if (paymentIntent?.status === "canceled") {
-		return {
-			refundId: paymentIntentId,
-			amountPence: paymentIntent.amount ?? 0,
-			alreadyRefunded: true,
-		};
-	}
-
+export async function refundPaymentIntent(
+	stripe: StripeConfig,
+	paymentIntentId: string,
+): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
 	try {
 		const refund = await stripeRequest<{
 			id: string;
@@ -245,15 +234,92 @@ export async function refundPaidCheckoutSession(
 		};
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
-		// Idempotent cancel: treat prior full refund as success.
-		if (/already been refunded|has already been refunded|charge_already_refunded/i.test(message)) {
+		if (
+			/already been refunded|has already been refunded|charge_already_refunded/i.test(
+				message,
+			)
+		) {
+			const pi = await stripeRequest<{
+				id: string;
+				amount?: number;
+				amount_received?: number;
+			}>(
+				stripe.secretKey,
+				`/payment_intents/${encodeURIComponent(paymentIntentId)}`,
+			);
 			return {
 				refundId: paymentIntentId,
-				amountPence: paymentIntent?.amount ?? 0,
+				amountPence: pi.amount_received ?? pi.amount ?? 0,
 				alreadyRefunded: true,
 			};
 		}
 		throw error;
+	}
+}
+
+/** Resolve a PaymentIntent id from session id, PI id, or booking-ref metadata search. */
+export async function resolvePaymentIntentForBooking(
+	stripe: StripeConfig,
+	input: {
+		bookingRef: string;
+		stripeSessionId?: string;
+		stripePaymentIntentId?: string;
+	},
+): Promise<string | null> {
+	if (input.stripePaymentIntentId?.startsWith("pi_")) {
+		return input.stripePaymentIntentId;
+	}
+
+	if (input.stripeSessionId?.startsWith("cs_")) {
+		try {
+			const session = await retrieveCheckoutSession(
+				stripe,
+				input.stripeSessionId,
+			);
+			const fromSession =
+				typeof session.payment_intent === "string"
+					? session.payment_intent
+					: session.payment_intent?.id;
+			if (fromSession) return fromSession;
+		} catch (error) {
+			console.error("Stripe session retrieve for refund failed:", error);
+		}
+	}
+
+	const safeRef = input.bookingRef.replace(/[^A-Za-z0-9-]/g, "");
+	if (!safeRef) return null;
+
+	try {
+		const piSearch = await stripeRequest<{
+			data?: { id: string; status?: string }[];
+		}>(
+			stripe.secretKey,
+			`/payment_intents/search?${new URLSearchParams({
+				query: `metadata['bookingRef']:'${safeRef}'`,
+				limit: "5",
+			}).toString()}`,
+		);
+		const succeeded = (piSearch.data ?? []).find(
+			(pi) => pi.status === "succeeded",
+		);
+		if (succeeded?.id) return succeeded.id;
+	} catch (error) {
+		console.error("Stripe payment_intent search failed:", error);
+	}
+
+	try {
+		const sessionId = await findPaidCheckoutSessionByBookingRef(
+			stripe,
+			safeRef,
+		);
+		if (!sessionId) return null;
+		const session = await retrieveCheckoutSession(stripe, sessionId);
+		return typeof session.payment_intent === "string"
+			? session.payment_intent
+			: session.payment_intent?.id ?? null;
+	} catch (error) {
+		console.error("Stripe checkout session search failed:", error);
+		return null;
 	}
 }
 
@@ -373,13 +439,22 @@ export async function fulfillPaidCheckoutSession(input: {
 			booking.bookingRef?.trim() ||
 			session.metadata?.bookingRef?.trim() ||
 			undefined;
+		const paymentIntentId =
+			typeof session.payment_intent === "string"
+				? session.payment_intent
+				: session.payment_intent?.id;
 		const created = await createBookingEvent(calendarConfig, {
 			...booking,
 			eventId,
 			bookingRef,
 			paymentMethod: "self-pay",
 			stripeSessionId: session.id,
-			notes: [booking.notes, `Stripe session: ${session.id}`]
+			stripePaymentIntentId: paymentIntentId,
+			notes: [
+				booking.notes,
+				`Stripe session: ${session.id}`,
+				paymentIntentId ? `Stripe payment: ${paymentIntentId}` : null,
+			]
 				.filter(Boolean)
 				.join("\n"),
 		});
