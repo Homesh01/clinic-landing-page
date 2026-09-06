@@ -384,41 +384,8 @@ export type CreateBookingInput = {
 	summaryPrefix?: string;
 };
 
-/** Full self-pay refund if cancelled at least this many business days before. */
-export const SELF_PAY_REFUND_MIN_BUSINESS_DAYS = 5;
-
-function todayIsoInZone(timeZone: string, now: Date = new Date()): string {
-	return new Intl.DateTimeFormat("en-CA", {
-		timeZone,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-	}).format(now);
-}
-
-function isBusinessDayInZone(iso: string, timeZone: string): boolean {
-	const weekday = zonedDateTimeToUtc(iso, 12, 0, timeZone).toLocaleDateString(
-		"en-US",
-		{ weekday: "short", timeZone },
-	);
-	return weekday !== "Sat" && weekday !== "Sun";
-}
-
-function subtractBusinessDays(
-	iso: string,
-	businessDays: number,
-	timeZone: string,
-): string {
-	let remaining = businessDays;
-	let current = iso;
-	while (remaining > 0) {
-		current = addCalendarDays(current, -1);
-		if (isBusinessDayInZone(current, timeZone)) {
-			remaining -= 1;
-		}
-	}
-	return current;
-}
+/** Full self-pay refund if cancelled at least this many hours before the appointment. */
+export const SELF_PAY_REFUND_MIN_HOURS = 48;
 
 export function isSelfPayRefundEligible(
 	dateIso: string,
@@ -431,15 +398,8 @@ export function isSelfPayRefundEligible(
 	const minute = Number(minuteText);
 	if (Number.isNaN(hour) || Number.isNaN(minute)) return false;
 	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
-	if (start.getTime() <= now.getTime()) return false;
-
-	const todayIso = todayIsoInZone(timeZone, now);
-	const lastRefundDateIso = subtractBusinessDays(
-		dateIso,
-		SELF_PAY_REFUND_MIN_BUSINESS_DAYS,
-		timeZone,
-	);
-	return todayIso <= lastRefundDateIso;
+	const minMs = SELF_PAY_REFUND_MIN_HOURS * 60 * 60 * 1000;
+	return start.getTime() - now.getTime() >= minMs;
 }
 
 export type ManagedBooking = {
@@ -455,6 +415,7 @@ export type ManagedBooking = {
 	pendingAuth: boolean;
 	paymentMethod: "self-pay" | "insurance" | "unknown";
 	stripeSessionId?: string;
+	icsSequence: number;
 };
 
 type CalendarEventPayload = {
@@ -611,6 +572,7 @@ function managedBookingFromEvent(
 		pendingAuth,
 		paymentMethod,
 		stripeSessionId,
+		icsSequence: Number.parseInt(privateProps.icsSequence ?? "0", 10) || 0,
 	};
 }
 
@@ -692,6 +654,7 @@ export async function createBookingEvent(
 		bookingRef,
 		patientEmail: email,
 		paymentMethod,
+		icsSequence: "0",
 	};
 	if (input.stripeSessionId?.trim()) {
 		privateProps.stripeSessionId = input.stripeSessionId.trim();
@@ -889,6 +852,7 @@ export async function rescheduleBookingEvent(
 	);
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
 
+	const nextSequence = managed.icsSequence + 1;
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
 		{
@@ -914,6 +878,7 @@ export async function rescheduleBookingEvent(
 							managed.paymentMethod === "unknown"
 								? "self-pay"
 								: managed.paymentMethod,
+						icsSequence: String(nextSequence),
 						...(managed.stripeSessionId
 							? { stripeSessionId: managed.stripeSessionId }
 							: {}),

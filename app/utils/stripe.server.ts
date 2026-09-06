@@ -202,24 +202,26 @@ export async function refundPaidCheckoutSession(
 ): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
 	const session = await stripeRequest<CheckoutSession>(
 		stripe.secretKey,
-		`/checkout/sessions/${encodeURIComponent(sessionId)}?expand[]=payment_intent`,
+		`/checkout/sessions/${encodeURIComponent(sessionId)}?${new URLSearchParams({
+			"expand[]": "payment_intent",
+		}).toString()}`,
 	);
 
-	const paymentIntent =
+	const paymentIntentId =
 		typeof session.payment_intent === "string"
 			? session.payment_intent
 			: session.payment_intent?.id;
-	if (!paymentIntent) {
+	if (!paymentIntentId) {
 		throw new Error("Paid session is missing a payment to refund.");
 	}
 
-	if (
-		typeof session.payment_intent === "object" &&
-		session.payment_intent?.status === "canceled"
-	) {
+	const paymentIntent =
+		typeof session.payment_intent === "object" ? session.payment_intent : null;
+
+	if (paymentIntent?.status === "canceled") {
 		return {
-			refundId: paymentIntent,
-			amountPence: session.payment_intent.amount ?? 0,
+			refundId: paymentIntentId,
+			amountPence: paymentIntent.amount ?? 0,
 			alreadyRefunded: true,
 		};
 	}
@@ -232,7 +234,7 @@ export async function refundPaidCheckoutSession(
 		}>(stripe.secretKey, "/refunds", {
 			method: "POST",
 			form: {
-				payment_intent: paymentIntent,
+				payment_intent: paymentIntentId,
 				reason: "requested_by_customer",
 			},
 		});
@@ -244,18 +246,40 @@ export async function refundPaidCheckoutSession(
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		// Idempotent cancel: treat prior full refund as success.
-		if (/already been refunded|has already been refunded/i.test(message)) {
+		if (/already been refunded|has already been refunded|charge_already_refunded/i.test(message)) {
 			return {
-				refundId: paymentIntent,
-				amountPence:
-					typeof session.payment_intent === "object"
-						? (session.payment_intent?.amount ?? 0)
-						: 0,
+				refundId: paymentIntentId,
+				amountPence: paymentIntent?.amount ?? 0,
 				alreadyRefunded: true,
 			};
 		}
 		throw error;
 	}
+}
+
+/** Look up a paid Checkout session by booking reference when calendar metadata is missing. */
+export async function findPaidCheckoutSessionByBookingRef(
+	stripe: StripeConfig,
+	bookingRef: string,
+): Promise<string | null> {
+	const safeRef = bookingRef.replace(/[^A-Za-z0-9-]/g, "");
+	if (!safeRef) return null;
+
+	const query = `metadata['bookingRef']:'${safeRef}'`;
+	const result = await stripeRequest<{
+		data?: { id: string; payment_status?: string }[];
+	}>(
+		stripe.secretKey,
+		`/checkout/sessions/search?${new URLSearchParams({
+			query,
+			limit: "5",
+		}).toString()}`,
+	);
+
+	const paid = (result.data ?? []).find(
+		(session) => session.payment_status === "paid",
+	);
+	return paid?.id ?? null;
 }
 
 async function markSessionFulfilled(

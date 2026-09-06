@@ -111,14 +111,26 @@ function toIcsUtcStamp(date: Date): string {
 		.replace(/\.\d{3}Z$/, "Z");
 }
 
-/** Standard .ics file — patient adds manually via “Add to Calendar”. */
+function bookingIcsUid(bookingRef: string): string {
+	const safe = bookingRef.replace(/[^A-Za-z0-9-]/g, "");
+	return `booking-${safe}@personalisedcancercare.com`;
+}
+
+/** .ics for add / update / cancel — stable UID so Gmail can replace or remove it. */
 function buildCalendarInvite(input: {
 	dateIso: string;
 	timeLabel: string;
 	timeZone: string;
 	email: string;
 	type: string;
+	bookingRef: string;
+	sequence?: number;
+	method?: "PUBLISH" | "REQUEST" | "CANCEL";
+	organizerEmail?: string;
+	organizerName: string;
 }): string {
+	const method = input.method ?? "PUBLISH";
+	const sequence = input.sequence ?? 0;
 	const [hourText, minuteText] = input.timeLabel.split(":");
 	const start = zonedDateTimeToUtc(
 		input.dateIso,
@@ -127,10 +139,11 @@ function buildCalendarInvite(input: {
 		input.timeZone,
 	);
 	const end = new Date(start.getTime() + 60 * 60 * 1000);
-	const uid = `booking-${input.dateIso}-${input.timeLabel.replace(":", "")}-${input.email.replace(/[^a-z0-9]/gi, "")}@personalisedcancercare.com`;
+	const uid = bookingIcsUid(input.bookingRef);
 	const summary = `Consultation — ${input.type} with ${site.name}`;
 	const description = [
 		`Consultation with ${site.name}`,
+		`Booking ref: ${input.bookingRef}`,
 		`Type: ${input.type}`,
 		`Location: ${CLINIC_LOCATION.name}`,
 		CLINIC_LOCATION.address,
@@ -138,13 +151,15 @@ function buildCalendarInvite(input: {
 		`Website: ${SITE_URL}`,
 	].join("\n");
 	const location = `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`;
+	const organizerEmail = input.organizerEmail || contact.email;
+	const status = method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
 
 	return [
 		"BEGIN:VCALENDAR",
 		"VERSION:2.0",
 		"PRODID:-//Personalised Cancer Care//Booking//EN",
 		"CALSCALE:GREGORIAN",
-		"METHOD:PUBLISH",
+		`METHOD:${method}`,
 		"BEGIN:VEVENT",
 		`UID:${uid}`,
 		`DTSTAMP:${toIcsUtcStamp(new Date())}`,
@@ -153,8 +168,10 @@ function buildCalendarInvite(input: {
 		`SUMMARY:${escapeIcsText(summary)}`,
 		`DESCRIPTION:${escapeIcsText(description)}`,
 		`LOCATION:${escapeIcsText(location)}`,
-		"STATUS:CONFIRMED",
-		"SEQUENCE:0",
+		`ORGANIZER;CN=${escapeIcsText(input.organizerName)}:mailto:${organizerEmail}`,
+		`ATTENDEE;CN=${escapeIcsText(input.email)};ROLE=REQ-PARTICIPANT;PARTSTAT=${method === "CANCEL" ? "DECLINED" : "NEEDS-ACTION"};RSVP=FALSE:mailto:${input.email}`,
+		`STATUS:${status}`,
+		`SEQUENCE:${sequence}`,
 		`URL:${SITE_URL}`,
 		"END:VEVENT",
 		"END:VCALENDAR",
@@ -216,7 +233,7 @@ function buildPlainText(input: {
 				...(input.pending
 					? []
 					: [
-							"Self-pay cancellations at least 5 business days before the appointment receive an automatic full refund.",
+							"Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.",
 						]),
 				"",
 			]
@@ -320,7 +337,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 5 business days before the appointment receive an automatic full refund.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -475,9 +492,13 @@ function buildMimeMessage(input: {
 	text: string;
 	html: string;
 	ics?: string;
+	icsMethod?: "PUBLISH" | "REQUEST" | "CANCEL";
+	icsFilename?: string;
 }): string {
 	const mixedBoundary = `pcc_mix_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 	const altBoundary = `pcc_alt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+	const icsMethod = input.icsMethod ?? "PUBLISH";
+	const icsFilename = input.icsFilename ?? "consultation.ics";
 
 	const alternativeParts = [
 		`--${altBoundary}`,
@@ -525,9 +546,9 @@ function buildMimeMessage(input: {
 		...alternativeParts,
 		"",
 		`--${mixedBoundary}`,
-		'Content-Type: text/calendar; charset="UTF-8"; method=PUBLISH; name="consultation.ics"',
+		`Content-Type: text/calendar; charset="UTF-8"; method=${icsMethod}; name="${icsFilename}"`,
 		"Content-Transfer-Encoding: base64",
-		'Content-Disposition: attachment; filename="consultation.ics"',
+		`Content-Disposition: attachment; filename="${icsFilename}"`,
 		"",
 		toBase64Wrapped(input.ics),
 		"",
@@ -605,15 +626,21 @@ export async function sendPatientBookingConfirmation(
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
 	});
-	const ics = isInsurance
-		? undefined
-		: buildCalendarInvite({
-				dateIso: input.dateIso,
-				timeLabel: input.timeLabel,
-				timeZone: config.timeZone,
-				email: input.email,
-				type: input.type,
-			});
+	const ics =
+		isInsurance || !input.bookingRef
+			? undefined
+			: buildCalendarInvite({
+					dateIso: input.dateIso,
+					timeLabel: input.timeLabel,
+					timeZone: config.timeZone,
+					email: input.email,
+					type: input.type,
+					bookingRef: input.bookingRef,
+					sequence: 0,
+					method: "PUBLISH",
+					organizerEmail: config.fromEmail,
+					organizerName: fromName,
+				});
 
 	const baseMime = {
 		to: input.email,
@@ -623,6 +650,8 @@ export async function sendPatientBookingConfirmation(
 		text,
 		html,
 		ics,
+		icsMethod: "PUBLISH" as const,
+		icsFilename: "consultation.ics",
 	};
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, baseMime);
@@ -640,6 +669,8 @@ async function sendMimeWithFromFallback(
 		text: string;
 		html: string;
 		ics?: string;
+		icsMethod?: "PUBLISH" | "REQUEST" | "CANCEL";
+		icsFilename?: string;
 	},
 ): Promise<void> {
 	try {
@@ -681,28 +712,34 @@ export async function sendBookingCancelledEmail(
 		timeLabel: string;
 		type: string;
 		bookingRef: string;
+		icsSequence?: number;
 		refundStatus?:
 			| "none"
 			| "refunded"
 			| "not_eligible"
-			| "already_refunded";
+			| "already_refunded"
+			| "missing_payment";
 		refundAmountLabel?: string;
-		refundMinDays?: number;
+		refundMinHours?: number;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
 	const fromName = config.fromName || `${site.name} bookings`;
 	const subject = `${site.name}: appointment cancelled (${input.bookingRef})`;
-	const refundMinDays = input.refundMinDays ?? 5;
+	const refundMinHours = input.refundMinHours ?? 48;
 	const refundLine =
 		input.refundStatus === "refunded"
 			? `A full refund${input.refundAmountLabel ? ` of ${input.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`
 			: input.refundStatus === "already_refunded"
 				? "This payment had already been refunded."
 				: input.refundStatus === "not_eligible"
-					? `Self-pay refunds are automatic only when you cancel at least ${refundMinDays} business days before the appointment. Please contact the clinic team if you need to discuss this payment.`
-					: null;
+					? `Self-pay refunds are automatic only when you cancel at least ${refundMinHours} hours before the appointment. Please contact the clinic team if you need to discuss this payment.`
+					: input.refundStatus === "missing_payment"
+						? "Your appointment was cancelled, but we could not match the Stripe payment automatically. Please contact the clinic team about a refund."
+						: null;
+	const calendarLine =
+		"If you added this appointment to your calendar from the confirmation email, open the attached calendar cancellation to remove it (Gmail, Outlook, and Apple Calendar usually update automatically).";
 
 	const text = [
 		`Dear ${input.name},`,
@@ -715,6 +752,8 @@ export async function sendBookingCancelledEmail(
 		`Consultation: ${input.type}`,
 		...(refundLine ? ["", refundLine] : []),
 		"",
+		calendarLine,
+		"",
 		`If this was a mistake, you can book again at ${SITE_URL}/book.`,
 		"",
 		"Kind regards,",
@@ -725,7 +764,21 @@ export async function sendBookingCancelledEmail(
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Your consultation with ${escapeHtml(site.name)} has been cancelled.</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)</p>
 ${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(refundLine)}</p>` : ""}
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};">Book again</a></p>`;
+
+	const ics = buildCalendarInvite({
+		dateIso: input.dateIso,
+		timeLabel: input.timeLabel,
+		timeZone: config.timeZone,
+		email: input.email,
+		type: input.type,
+		bookingRef: input.bookingRef,
+		sequence: (input.icsSequence ?? 0) + 1,
+		method: "CANCEL",
+		organizerEmail: config.fromEmail,
+		organizerName: fromName,
+	});
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, {
 		to: input.email,
@@ -734,6 +787,9 @@ ${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;
 		subject,
 		text,
 		html,
+		ics,
+		icsMethod: "CANCEL",
+		icsFilename: "consultation-cancelled.ics",
 	});
 }
 
@@ -747,6 +803,7 @@ export async function sendBookingRescheduledEmail(
 		type: string;
 		bookingRef: string;
 		pendingAuth?: boolean;
+		icsSequence?: number;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
@@ -756,6 +813,9 @@ export async function sendBookingRescheduledEmail(
 	const statusLine = input.pendingAuth
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
+	const calendarLine = input.pendingAuth
+		? null
+		: "If you added the previous time to your calendar, open the attached calendar update so Gmail, Outlook, or Apple Calendar can replace it.";
 	const text = [
 		`Dear ${input.name},`,
 		"",
@@ -765,6 +825,7 @@ export async function sendBookingRescheduledEmail(
 		`Date: ${when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
+		...(calendarLine ? ["", calendarLine] : []),
 		"",
 		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
 		"",
@@ -775,6 +836,7 @@ export async function sendBookingRescheduledEmail(
 	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(statusLine)}</p>
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)<br/><strong>Consultation:</strong> ${escapeHtml(input.type)}</p>
+${calendarLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>` : ""}
 <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};">Manage booking</a></p>`;
 
 	const ics = input.pendingAuth
@@ -785,6 +847,11 @@ export async function sendBookingRescheduledEmail(
 				timeZone: config.timeZone,
 				email: input.email,
 				type: input.type,
+				bookingRef: input.bookingRef,
+				sequence: input.icsSequence ?? 1,
+				method: "REQUEST",
+				organizerEmail: config.fromEmail,
+				organizerName: fromName,
 			});
 
 	await sendMimeWithFromFallback(accessToken, config, fromName, {
@@ -795,5 +862,7 @@ export async function sendBookingRescheduledEmail(
 		text,
 		html,
 		ics,
+		icsMethod: ics ? "REQUEST" : undefined,
+		icsFilename: "consultation-updated.ics",
 	});
 }
