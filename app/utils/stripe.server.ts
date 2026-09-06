@@ -103,7 +103,7 @@ async function stripeRequest<T>(
 }
 
 function bookingToMetadata(
-	input: ValidatedBookingInput,
+	input: ValidatedBookingInput & { bookingRef: string },
 ): Record<string, string> {
 	return {
 		dateIso: input.dateIso,
@@ -114,12 +114,13 @@ function bookingToMetadata(
 		type: input.type.slice(0, 500),
 		paymentMethod: "self-pay",
 		notes: (input.notes ?? "").slice(0, 500),
+		bookingRef: input.bookingRef.slice(0, 32),
 	};
 }
 
 function metadataToBooking(
 	metadata: Record<string, string> | null | undefined,
-): ValidatedBookingInput | null {
+): (ValidatedBookingInput & { bookingRef?: string }) | null {
 	if (!metadata?.dateIso || !metadata.timeLabel || !metadata.name) return null;
 	if (!metadata.email || !metadata.phone || !metadata.type) return null;
 	if (!(CONSULTATION_TYPES as readonly string[]).includes(metadata.type)) {
@@ -135,17 +136,22 @@ function metadataToBooking(
 		type: metadata.type as ValidatedBookingInput["type"],
 		paymentMethod: "self-pay",
 		notes: metadata.notes?.trim() ? metadata.notes.trim() : undefined,
+		bookingRef: metadata.bookingRef?.trim() || undefined,
 	};
 }
 
 export async function createBookingCheckoutSession(input: {
 	stripe: StripeConfig;
 	booking: ValidatedBookingInput;
+	bookingRef: string;
 	successUrl: string;
 	cancelUrl: string;
 }): Promise<{ id: string; url: string }> {
 	const amount = consultationAmountPence(input.booking.type);
-	const metadata = bookingToMetadata(input.booking);
+	const metadata = bookingToMetadata({
+		...input.booking,
+		bookingRef: input.bookingRef,
+	});
 
 	const form: Record<string, string> = {
 		mode: "payment",
@@ -193,18 +199,20 @@ async function markSessionFulfilled(
 	stripe: StripeConfig,
 	sessionId: string,
 	eventId: string,
+	bookingRef: string,
 ): Promise<void> {
 	await stripeRequest(stripe.secretKey, `/checkout/sessions/${encodeURIComponent(sessionId)}`, {
 		method: "POST",
 		form: {
 			"metadata[calendar_event_id]": eventId,
+			"metadata[bookingRef]": bookingRef,
 			"metadata[fulfilled]": "1",
 		},
 	});
 }
 
 function successFromBooking(
-	booking: ValidatedBookingInput,
+	booking: ValidatedBookingInput & { bookingRef?: string },
 	alreadyFulfilled: boolean,
 	emailSent: boolean,
 ): FulfillmentResult {
@@ -215,6 +223,7 @@ function successFromBooking(
 		timeLabel: booking.timeLabel,
 		name: booking.name,
 		emailSent,
+		bookingRef: booking.bookingRef,
 	};
 }
 
@@ -226,13 +235,14 @@ export type FulfillmentResult =
 			timeLabel: string;
 			name: string;
 			emailSent: boolean;
+			bookingRef?: string;
 	  }
 	| { ok: false; error: string };
 
 async function readFulfilledBooking(
 	stripe: StripeConfig,
 	sessionId: string,
-): Promise<ValidatedBookingInput | null> {
+): Promise<(ValidatedBookingInput & { bookingRef?: string }) | null> {
 	const session = await retrieveCheckoutSession(stripe, sessionId);
 	if (session.metadata?.fulfilled !== "1") return null;
 	return metadataToBooking(session.metadata);
@@ -272,17 +282,31 @@ export async function fulfillPaidCheckoutSession(input: {
 
 	try {
 		const eventId = await calendarEventIdForStripeSession(session.id);
+		const bookingRef =
+			booking.bookingRef?.trim() ||
+			session.metadata?.bookingRef?.trim() ||
+			undefined;
 		const created = await createBookingEvent(calendarConfig, {
 			...booking,
 			eventId,
+			bookingRef,
 			notes: [booking.notes, `Stripe session: ${session.id}`]
 				.filter(Boolean)
 				.join("\n"),
 		});
-		await markSessionFulfilled(input.stripe, session.id, created.eventId);
+		await markSessionFulfilled(
+			input.stripe,
+			session.id,
+			created.eventId,
+			created.bookingRef,
+		);
 
 		if (created.alreadyExisted) {
-			return successFromBooking(booking, true, true);
+			return successFromBooking(
+				{ ...booking, bookingRef: created.bookingRef },
+				true,
+				true,
+			);
 		}
 
 		let emailSent = true;
@@ -290,13 +314,18 @@ export async function fulfillPaidCheckoutSession(input: {
 			await sendPatientBookingConfirmation(calendarConfig, {
 				...booking,
 				paymentMethod: "self-pay",
+				bookingRef: created.bookingRef,
 			});
 		} catch (emailError) {
 			emailSent = false;
 			console.error("Post-payment confirmation email error:", emailError);
 		}
 
-		return successFromBooking(booking, false, emailSent);
+		return successFromBooking(
+			{ ...booking, bookingRef: created.bookingRef },
+			false,
+			emailSent,
+		);
 	} catch (error) {
 		// Another request (webhook or success page) may have just fulfilled this payment.
 		const fulfilledBooking = await readFulfilledBooking(

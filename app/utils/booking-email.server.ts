@@ -16,10 +16,12 @@ export type BookingEmailInput = {
 	paymentMethod?: "self-pay" | "insurance";
 	insurer?: string;
 	authorisationCode?: string;
+	bookingRef?: string;
 };
 
 const SITE_URL = "https://personalisedcancercare.com";
 const SITE_HOST = "personalisedcancercare.com";
+const MANAGE_BOOKING_URL = `${SITE_URL}/manage-booking`;
 
 const CLINIC_LOCATION = {
 	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
@@ -209,13 +211,28 @@ function buildPlainText(input: {
 	type: string;
 	paymentLine: string;
 	pending: boolean;
+	bookingRef?: string;
 }): string {
+	const refLines = input.bookingRef
+		? [`Booking reference: ${input.bookingRef}`, ""]
+		: [];
+	const manageLines = input.bookingRef
+		? [
+				`To change or cancel your appointment, visit ${MANAGE_BOOKING_URL} and enter your email with booking reference ${input.bookingRef}.`,
+				"",
+			]
+		: [
+				"To change or cancel your appointment, simply reply to this email.",
+				"",
+			];
+
 	if (input.pending) {
 		return [
 			`Dear ${input.name},`,
 			"",
 			`We have received your insurance booking request with ${site.name}.`,
 			"",
+			...refLines,
 			`Requested date: ${input.when}`,
 			`Requested time: ${input.timeLabel} (UK time)`,
 			`Consultation: ${input.type}`,
@@ -225,6 +242,7 @@ function buildPlainText(input: {
 			"",
 			"Your appointment is pending until we verify the authorisation code with your insurer. We will email you again once it is confirmed. Please do not attend until you receive that confirmation.",
 			"",
+			...manageLines,
 			`Website: ${SITE_URL}`,
 			"",
 			"If you have questions, reply to this email.",
@@ -239,8 +257,9 @@ function buildPlainText(input: {
 	return [
 		`Dear ${input.name},`,
 		"",
-		`Your consultation with ${site.name} is confirmed. The details are below. Open the attached calendar invite (.ics) to add this appointment to Google Calendar, Outlook, Apple Calendar, or another calendar app.`,
+		`Your consultation with ${site.name} is confirmed. The details are below.`,
 		"",
+		...refLines,
 		`Date: ${input.when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
@@ -249,8 +268,7 @@ function buildPlainText(input: {
 		CLINIC_LOCATION.address,
 		`Maps: ${CLINIC_LOCATION.mapsUrl}`,
 		"",
-		"To change or cancel your appointment, simply reply to this email.",
-		"",
+		...manageLines,
 		`Website: ${SITE_URL}`,
 		`Book again: ${SITE_URL}/book`,
 		"",
@@ -269,6 +287,7 @@ function buildHtml(input: {
 	paymentLabel: string;
 	paymentValue: string;
 	pending: boolean;
+	bookingRef?: string;
 }): string {
 	const name = escapeHtml(input.name);
 	const when = escapeHtml(input.when);
@@ -280,6 +299,7 @@ function buildHtml(input: {
 	const siteTitle = escapeHtml(site.title);
 	const locationName = escapeHtml(CLINIC_LOCATION.name);
 	const locationAddress = escapeHtml(CLINIC_LOCATION.address);
+	const bookingRef = input.bookingRef ? escapeHtml(input.bookingRef) : "";
 	const pending = input.pending;
 
 	const locationSub = `
@@ -297,10 +317,24 @@ function buildHtml(input: {
 		: "&#10003; Booking confirmed";
 	const lead = pending
 		? `We have received your insurance booking request with ${siteName}. Your appointment stays pending until we verify the authorisation code with your insurer.`
-		: `Your consultation with ${siteName} is confirmed. The details are below. Open the attached calendar invite (.ics) to add this appointment to Google Calendar, Outlook, Apple Calendar, or another calendar app.`;
+		: `Your consultation with ${siteName} is confirmed. The details are below.`;
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
-		: "To change or cancel your appointment, simply reply to this email.";
+		: bookingRef
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>.`
+			: "To change or cancel your appointment, simply reply to this email.";
+	const pendingManage = bookingRef
+		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
+		: "";
+	const noteHtml = pending ? `${note}${pendingManage}` : note;
+	const refRow = bookingRef
+		? detailRow({
+				icon: "&#128196;",
+				iconBg: COLORS.iconConsult,
+				label: "Booking reference",
+				valueHtml: bookingRef,
+			})
+		: "";
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -350,6 +384,7 @@ function buildHtml(input: {
 								<tr>
 									<td style="padding:6px 26px;">
 										<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+											${refRow}
 											${detailRow({
 												icon: "&#128197;",
 												iconBg: COLORS.iconCal,
@@ -388,14 +423,14 @@ function buildHtml(input: {
 							</table>
 
 							<p style="margin:26px 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:${COLORS.inkSoft};">
-								${note}
+								${noteHtml}
 							</p>
 
 							<table role="presentation" cellpadding="0" cellspacing="0" border="0">
 								<tr>
 									<td style="padding-right:14px;padding-bottom:8px;">
-										<a href="${SITE_URL}" style="display:inline-block;padding:13px 24px;background:${COLORS.accent};color:${COLORS.white};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">
-											Visit the website
+										<a href="${bookingRef ? MANAGE_BOOKING_URL : SITE_URL}" style="display:inline-block;padding:13px 24px;background:${COLORS.accent};color:${COLORS.white};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">
+											${bookingRef ? "Manage booking" : "Visit the website"}
 										</a>
 									</td>
 									${
@@ -559,6 +594,7 @@ export async function sendPatientBookingConfirmation(
 		type: input.type,
 		paymentLine,
 		pending: isInsurance,
+		bookingRef: input.bookingRef,
 	});
 	const html = buildHtml({
 		name: input.name,
@@ -568,6 +604,7 @@ export async function sendPatientBookingConfirmation(
 		paymentLabel,
 		paymentValue,
 		pending: isInsurance,
+		bookingRef: input.bookingRef,
 	});
 	const ics = isInsurance
 		? undefined
@@ -592,6 +629,23 @@ export async function sendPatientBookingConfirmation(
 		ics,
 	};
 
+	await sendMimeWithFromFallback(accessToken, config, fromName, baseMime);
+}
+
+async function sendMimeWithFromFallback(
+	accessToken: string,
+	config: BookingConfig,
+	fromName: string,
+	baseMime: {
+		to: string;
+		replyTo?: string;
+		bcc?: string;
+		subject: string;
+		text: string;
+		html: string;
+		ics?: string;
+	},
+): Promise<void> {
 	try {
 		if (!config.fromEmail) {
 			throw new Error("BOOKING_FROM_EMAIL not set");
@@ -620,4 +674,114 @@ export async function sendPatientBookingConfirmation(
 			),
 		);
 	}
+}
+
+export async function sendBookingCancelledEmail(
+	config: BookingConfig,
+	input: {
+		name: string;
+		email: string;
+		dateIso: string;
+		timeLabel: string;
+		type: string;
+		bookingRef: string;
+	},
+): Promise<void> {
+	const accessToken = await getAccessToken(config);
+	const when = formatAppointmentDate(input.dateIso, config.timeZone);
+	const fromName = config.fromName || `${site.name} bookings`;
+	const subject = `${site.name}: appointment cancelled (${input.bookingRef})`;
+	const text = [
+		`Dear ${input.name},`,
+		"",
+		`Your consultation with ${site.name} has been cancelled.`,
+		"",
+		`Booking reference: ${input.bookingRef}`,
+		`Date: ${when}`,
+		`Time: ${input.timeLabel} (UK time)`,
+		`Consultation: ${input.type}`,
+		"",
+		`If this was a mistake, you can book again at ${SITE_URL}/book.`,
+		"",
+		"Kind regards,",
+		`${site.name} · ${site.title}`,
+		contact.email,
+	].join("\n");
+	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Your consultation with ${escapeHtml(site.name)} has been cancelled.</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};">Book again</a></p>`;
+
+	await sendMimeWithFromFallback(accessToken, config, fromName, {
+		to: input.email,
+		replyTo: config.fromEmail,
+		bcc: config.bccEmail,
+		subject,
+		text,
+		html,
+	});
+}
+
+export async function sendBookingRescheduledEmail(
+	config: BookingConfig,
+	input: {
+		name: string;
+		email: string;
+		dateIso: string;
+		timeLabel: string;
+		type: string;
+		bookingRef: string;
+		pendingAuth?: boolean;
+	},
+): Promise<void> {
+	const accessToken = await getAccessToken(config);
+	const when = formatAppointmentDate(input.dateIso, config.timeZone);
+	const fromName = config.fromName || `${site.name} bookings`;
+	const subject = `${site.name}: appointment updated (${input.bookingRef})`;
+	const statusLine = input.pendingAuth
+		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
+		: "Your consultation time has been updated. The details are below.";
+	const text = [
+		`Dear ${input.name},`,
+		"",
+		statusLine,
+		"",
+		`Booking reference: ${input.bookingRef}`,
+		`Date: ${when}`,
+		`Time: ${input.timeLabel} (UK time)`,
+		`Consultation: ${input.type}`,
+		"",
+		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
+		"",
+		"Kind regards,",
+		`${site.name} · ${site.title}`,
+		contact.email,
+	].join("\n");
+	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(statusLine)}</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)<br/><strong>Consultation:</strong> ${escapeHtml(input.type)}</p>
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};">Manage booking</a></p>`;
+
+	const ics = input.pendingAuth
+		? undefined
+		: buildCalendarInvite({
+				dateIso: input.dateIso,
+				timeLabel: input.timeLabel,
+				timeZone: config.timeZone,
+				name: input.name,
+				email: input.email,
+				type: input.type,
+				organizerEmail: config.fromEmail,
+				organizerName: fromName,
+			});
+
+	await sendMimeWithFromFallback(accessToken, config, fromName, {
+		to: input.email,
+		replyTo: config.fromEmail,
+		bcc: config.bccEmail,
+		subject,
+		text,
+		html,
+		ics,
+	});
 }

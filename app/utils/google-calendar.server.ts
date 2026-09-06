@@ -1,3 +1,9 @@
+import {
+	generateBookingRef,
+	isValidBookingRef,
+	normalizeBookingRef,
+} from "~/utils/booking-ref";
+
 export type BookingConfig = {
 	clientId: string;
 	clientSecret: string;
@@ -266,6 +272,7 @@ function slotStartsForDay(): { hour: number; minute: number; label: string }[] {
 
 export async function getAvailableDays(
 	config: BookingConfig,
+	options?: { excludeEventId?: string },
 ): Promise<DaySlots[]> {
 	assertUsableCalendarId(config.calendarId);
 	const accessToken = await getAccessToken(config);
@@ -286,12 +293,20 @@ export async function getAvailableDays(
 		config.timeZone,
 	);
 
-	const busy = await fetchBusyPeriods(
+	let busy = await fetchBusyPeriods(
 		config,
 		accessToken,
 		rangeStart,
 		rangeEnd,
 	);
+	if (options?.excludeEventId) {
+		busy = await withoutExcludedEventBusy(
+			config,
+			accessToken,
+			busy,
+			options.excludeEventId,
+		);
+	}
 	const slotTemplate = slotStartsForDay();
 	const now = Date.now();
 
@@ -320,6 +335,7 @@ export async function isSlotAvailable(
 	config: BookingConfig,
 	dateIso: string,
 	timeLabel: string,
+	options?: { excludeEventId?: string },
 ): Promise<boolean> {
 	const [hourText, minuteText] = timeLabel.split(":");
 	const hour = Number(hourText);
@@ -337,7 +353,15 @@ export async function isSlotAvailable(
 	if (start.getTime() <= Date.now()) return false;
 
 	const accessToken = await getAccessToken(config);
-	const busy = await fetchBusyPeriods(config, accessToken, start, end);
+	let busy = await fetchBusyPeriods(config, accessToken, start, end);
+	if (options?.excludeEventId) {
+		busy = await withoutExcludedEventBusy(
+			config,
+			accessToken,
+			busy,
+			options.excludeEventId,
+		);
+	}
 	return !overlaps(start, end, busy);
 }
 
@@ -351,39 +375,216 @@ export type CreateBookingInput = {
 	notes?: string;
 	/** Deterministic Google event id ([a-v0-9]+) to prevent duplicate inserts. */
 	eventId?: string;
+	/** Patient-facing booking reference (generated if omitted). */
+	bookingRef?: string;
 	/** Insurance bookings stay tentative until the authorisation code is verified. */
 	status?: "confirmed" | "tentative";
 	summaryPrefix?: string;
+};
+
+export type ManagedBooking = {
+	eventId: string;
+	bookingRef: string;
+	dateIso: string;
+	timeLabel: string;
+	name: string;
+	email: string;
+	phone: string;
+	type: string;
+	status: "confirmed" | "tentative" | "cancelled";
+	pendingAuth: boolean;
+};
+
+type CalendarEventPayload = {
+	id?: string;
+	htmlLink?: string;
+	status?: string;
+	summary?: string;
+	description?: string;
+	start?: { dateTime?: string; timeZone?: string };
+	end?: { dateTime?: string; timeZone?: string };
+	attendees?: { email?: string; displayName?: string }[];
+	extendedProperties?: {
+		private?: Record<string, string>;
+	};
+	error?: { message?: string; code?: number; errors?: { reason?: string }[] };
 };
 
 function sanitizeCalendarLine(value: string): string {
 	return value.replace(/[\r\n]+/g, " ").trim();
 }
 
+function sameInstant(a: Date, b: Date): boolean {
+	return Math.abs(a.getTime() - b.getTime()) < 2000;
+}
+
+async function fetchCalendarEvent(
+	config: BookingConfig,
+	accessToken: string,
+	eventId: string,
+): Promise<CalendarEventPayload | null> {
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(eventId)}`,
+		{ headers: { Authorization: `Bearer ${accessToken}` } },
+	);
+	if (response.status === 404) return null;
+	const data = (await response.json()) as CalendarEventPayload;
+	if (!response.ok || !data.id) {
+		throw new Error(data.error?.message || "Could not load calendar event");
+	}
+	return data;
+}
+
+async function withoutExcludedEventBusy(
+	config: BookingConfig,
+	accessToken: string,
+	busy: BusyPeriod[],
+	excludeEventId: string,
+): Promise<BusyPeriod[]> {
+	const event = await fetchCalendarEvent(config, accessToken, excludeEventId);
+	if (!event?.start?.dateTime || !event.end?.dateTime) return busy;
+	const excludeStart = new Date(event.start.dateTime);
+	const excludeEnd = new Date(event.end.dateTime);
+	return busy.filter(
+		(period) =>
+			!(sameInstant(period.start, excludeStart) && sameInstant(period.end, excludeEnd)),
+	);
+}
+
+function wallClockFromEvent(
+	dateTime: string,
+	timeZone: string,
+): { dateIso: string; timeLabel: string } | null {
+	const date = new Date(dateTime);
+	if (Number.isNaN(date.getTime())) return null;
+	const parts = new Intl.DateTimeFormat("en-GB", {
+		timeZone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		hourCycle: "h23",
+	}).formatToParts(date);
+	const get = (type: Intl.DateTimeFormatPartTypes) =>
+		parts.find((part) => part.type === type)?.value;
+	const year = get("year");
+	const month = get("month");
+	const day = get("day");
+	const hour = get("hour");
+	const minute = get("minute");
+	if (!year || !month || !day || !hour || !minute) return null;
+	return {
+		dateIso: `${year}-${month}-${day}`,
+		timeLabel: `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`,
+	};
+}
+
+function parseDescriptionField(
+	description: string | undefined,
+	label: string,
+): string {
+	if (!description) return "";
+	const match = description.match(new RegExp(`^${label}:\\s*(.+)$`, "im"));
+	return match?.[1]?.trim() ?? "";
+}
+
+function managedBookingFromEvent(
+	event: CalendarEventPayload,
+	timeZone: string,
+): ManagedBooking | null {
+	if (!event.id || event.status === "cancelled") return null;
+	const bookingRef = event.extendedProperties?.private?.bookingRef?.trim();
+	if (!bookingRef) return null;
+	const start = event.start?.dateTime;
+	if (!start) return null;
+	const wall = wallClockFromEvent(start, timeZone);
+	if (!wall) return null;
+
+	const email = (
+		event.extendedProperties?.private?.patientEmail ||
+		event.attendees?.[0]?.email ||
+		parseDescriptionField(event.description, "Email")
+	)
+		.trim()
+		.toLowerCase();
+	const name =
+		event.attendees?.[0]?.displayName ||
+		parseDescriptionField(event.description, "Patient") ||
+		"Patient";
+	const phone = parseDescriptionField(event.description, "Phone");
+	const type =
+		parseDescriptionField(event.description, "Consultation type") ||
+		event.summary?.replace(/^PENDING AUTH —\s*/i, "").replace(/^Consultation —\s*/i, "") ||
+		"Consultation";
+	const pendingAuth =
+		event.status === "tentative" ||
+		Boolean(event.summary?.toUpperCase().includes("PENDING AUTH"));
+
+	return {
+		eventId: event.id,
+		bookingRef,
+		dateIso: wall.dateIso,
+		timeLabel: wall.timeLabel,
+		name,
+		email,
+		phone,
+		type,
+		status: event.status === "tentative" ? "tentative" : "confirmed",
+		pendingAuth,
+	};
+}
+
+function buildEventDescription(input: {
+	name: string;
+	email: string;
+	phone: string;
+	type: string;
+	bookingRef: string;
+	notes?: string;
+}): string {
+	return [
+		`Booking ref: ${sanitizeCalendarLine(input.bookingRef)}`,
+		`Patient: ${sanitizeCalendarLine(input.name)}`,
+		`Email: ${sanitizeCalendarLine(input.email)}`,
+		`Phone: ${sanitizeCalendarLine(input.phone)}`,
+		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
+		input.notes?.trim()
+			? `Notes: ${sanitizeCalendarLine(input.notes.trim())}`
+			: null,
+		"",
+		"Booked via clinic website.",
+	]
+		.filter(Boolean)
+		.join("\n");
+}
+
 export async function createBookingEvent(
 	config: BookingConfig,
 	input: CreateBookingInput,
-): Promise<{ eventId: string; htmlLink?: string; alreadyExisted?: boolean }> {
+): Promise<{
+	eventId: string;
+	bookingRef: string;
+	htmlLink?: string;
+	alreadyExisted?: boolean;
+}> {
 	const accessToken = await getAccessToken(config);
+	const bookingRef = input.bookingRef?.trim() || generateBookingRef();
 
 	if (input.eventId) {
-		const existing = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}`,
-			{ headers: { Authorization: `Bearer ${accessToken}` } },
+		const existing = await fetchCalendarEvent(
+			config,
+			accessToken,
+			input.eventId,
 		);
-		if (existing.ok) {
-			const data = (await existing.json()) as {
-				id?: string;
-				htmlLink?: string;
-				status?: string;
+		if (existing?.id && existing.status !== "cancelled") {
+			const managed = managedBookingFromEvent(existing, config.timeZone);
+			return {
+				eventId: existing.id,
+				bookingRef: managed?.bookingRef || bookingRef,
+				htmlLink: existing.htmlLink,
+				alreadyExisted: true,
 			};
-			if (data.id && data.status !== "cancelled") {
-				return {
-					eventId: data.id,
-					htmlLink: data.htmlLink,
-					alreadyExisted: true,
-				};
-			}
 		}
 	}
 
@@ -404,20 +605,7 @@ export async function createBookingEvent(
 		config.timeZone,
 	);
 	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
-
-	const description = [
-		`Patient: ${sanitizeCalendarLine(input.name)}`,
-		`Email: ${sanitizeCalendarLine(input.email)}`,
-		`Phone: ${sanitizeCalendarLine(input.phone)}`,
-		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
-		input.notes?.trim()
-			? `Notes: ${sanitizeCalendarLine(input.notes.trim())}`
-			: null,
-		"",
-		"Booked via clinic website.",
-	]
-		.filter(Boolean)
-		.join("\n");
+	const email = input.email.trim().toLowerCase();
 
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
@@ -430,7 +618,14 @@ export async function createBookingEvent(
 			body: JSON.stringify({
 				...(input.eventId ? { id: input.eventId } : {}),
 				summary: `${input.summaryPrefix ?? ""}${input.summaryPrefix ? " " : ""}Consultation — ${input.type}`.trim(),
-				description,
+				description: buildEventDescription({
+					name: input.name,
+					email,
+					phone: input.phone,
+					type: input.type,
+					bookingRef,
+					notes: input.notes,
+				}),
 				status: input.status === "tentative" ? "tentative" : "confirmed",
 				start: {
 					dateTime: start.toISOString(),
@@ -440,7 +635,13 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				attendees: [{ email: input.email, displayName: input.name }],
+				attendees: [{ email, displayName: input.name }],
+				extendedProperties: {
+					private: {
+						bookingRef,
+						patientEmail: email,
+					},
+				},
 				guestsCanInviteOthers: false,
 				guestsCanModify: false,
 				guestsCanSeeOtherGuests: false,
@@ -449,15 +650,11 @@ export async function createBookingEvent(
 		},
 	);
 
-	const data = (await response.json()) as {
-		id?: string;
-		htmlLink?: string;
-		error?: { message?: string; code?: number; errors?: { reason?: string }[] };
-	};
+	const data = (await response.json()) as CalendarEventPayload;
 
 	if (response.status === 409 || data.error?.errors?.[0]?.reason === "duplicate") {
 		if (input.eventId) {
-			return { eventId: input.eventId, alreadyExisted: true };
+			return { eventId: input.eventId, bookingRef, alreadyExisted: true };
 		}
 		throw new BookingConflictError();
 	}
@@ -466,7 +663,184 @@ export async function createBookingEvent(
 		throw new Error(data.error?.message || "Could not create calendar event");
 	}
 
-	return { eventId: data.id, htmlLink: data.htmlLink, alreadyExisted: false };
+	return {
+		eventId: data.id,
+		bookingRef,
+		htmlLink: data.htmlLink,
+		alreadyExisted: false,
+	};
+}
+
+export async function findBookingByEmailAndRef(
+	config: BookingConfig,
+	email: string,
+	bookingRefRaw: string,
+): Promise<ManagedBooking | null> {
+	assertUsableCalendarId(config.calendarId);
+	const bookingRef = normalizeBookingRef(bookingRefRaw);
+	if (!isValidBookingRef(bookingRef)) return null;
+
+	const patientEmail = email.trim().toLowerCase();
+	const accessToken = await getAccessToken(config);
+	const timeMin = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+	const timeMax = new Date(Date.now() + 120 * 24 * 60 * 60 * 1000).toISOString();
+
+	const params = new URLSearchParams({
+		singleEvents: "true",
+		showDeleted: "false",
+		orderBy: "startTime",
+		maxResults: "10",
+		timeMin,
+		timeMax,
+		privateExtendedProperty: `bookingRef=${bookingRef}`,
+	});
+
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?${params}`,
+		{ headers: { Authorization: `Bearer ${accessToken}` } },
+	);
+	const data = (await response.json()) as {
+		items?: CalendarEventPayload[];
+		error?: { message?: string };
+	};
+	if (!response.ok) {
+		throw new Error(data.error?.message || "Could not look up booking");
+	}
+
+	for (const item of data.items ?? []) {
+		const managed = managedBookingFromEvent(item, config.timeZone);
+		if (!managed) continue;
+		if (managed.email !== patientEmail) continue;
+		if (managed.bookingRef !== bookingRef) continue;
+		return managed;
+	}
+
+	return null;
+}
+
+export async function cancelBookingEvent(
+	config: BookingConfig,
+	input: { eventId: string; email: string; bookingRef: string },
+): Promise<ManagedBooking> {
+	const accessToken = await getAccessToken(config);
+	const existing = await fetchCalendarEvent(config, accessToken, input.eventId);
+	if (!existing) {
+		throw new Error("Booking not found.");
+	}
+	const managed = managedBookingFromEvent(existing, config.timeZone);
+	if (
+		!managed ||
+		managed.email !== input.email.trim().toLowerCase() ||
+		managed.bookingRef !== normalizeBookingRef(input.bookingRef)
+	) {
+		throw new Error("Booking not found.");
+	}
+
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
+		{
+			method: "DELETE",
+			headers: { Authorization: `Bearer ${accessToken}` },
+		},
+	);
+
+	if (!response.ok && response.status !== 410) {
+		const data = (await response.json().catch(() => ({}))) as {
+			error?: { message?: string };
+		};
+		throw new Error(data.error?.message || "Could not cancel booking");
+	}
+
+	return { ...managed, status: "cancelled" };
+}
+
+export async function rescheduleBookingEvent(
+	config: BookingConfig,
+	input: {
+		eventId: string;
+		email: string;
+		bookingRef: string;
+		dateIso: string;
+		timeLabel: string;
+	},
+): Promise<ManagedBooking> {
+	const accessToken = await getAccessToken(config);
+	const existing = await fetchCalendarEvent(config, accessToken, input.eventId);
+	if (!existing) {
+		throw new Error("Booking not found.");
+	}
+	const managed = managedBookingFromEvent(existing, config.timeZone);
+	if (
+		!managed ||
+		managed.email !== input.email.trim().toLowerCase() ||
+		managed.bookingRef !== normalizeBookingRef(input.bookingRef)
+	) {
+		throw new Error("Booking not found.");
+	}
+
+	if (
+		managed.dateIso === input.dateIso &&
+		managed.timeLabel === input.timeLabel
+	) {
+		return managed;
+	}
+
+	const available = await isSlotAvailable(
+		config,
+		input.dateIso,
+		input.timeLabel,
+		{ excludeEventId: input.eventId },
+	);
+	if (!available) {
+		throw new BookingConflictError();
+	}
+
+	const [hourText, minuteText] = input.timeLabel.split(":");
+	const start = zonedDateTimeToUtc(
+		input.dateIso,
+		Number(hourText),
+		Number(minuteText),
+		config.timeZone,
+	);
+	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
+
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
+		{
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				start: {
+					dateTime: start.toISOString(),
+					timeZone: config.timeZone,
+				},
+				end: {
+					dateTime: end.toISOString(),
+					timeZone: config.timeZone,
+				},
+				extendedProperties: {
+					private: {
+						bookingRef: managed.bookingRef,
+						patientEmail: managed.email,
+					},
+				},
+			}),
+		},
+	);
+
+	const data = (await response.json()) as CalendarEventPayload;
+	if (!response.ok || !data.id) {
+		throw new Error(data.error?.message || "Could not reschedule booking");
+	}
+
+	const updated = managedBookingFromEvent(data, config.timeZone);
+	if (!updated) {
+		throw new Error("Could not reschedule booking");
+	}
+	return updated;
 }
 
 export class BookingConflictError extends Error {

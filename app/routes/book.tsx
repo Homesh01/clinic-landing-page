@@ -29,6 +29,7 @@ import {
 	validateBookingForm,
 } from "~/utils/booking-validation";
 import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
+import { generateBookingRef } from "~/utils/booking-ref";
 import { requireSiteAccess } from "~/utils/site-auth.server";
 import {
 	consultationAmountPence,
@@ -125,6 +126,7 @@ type BookingSuccess = {
 	timeLabel: string;
 	emailSent: boolean;
 	paymentMethod: "self-pay" | "insurance";
+	bookingRef?: string;
 };
 
 export const meta: MetaFunction = () => {
@@ -163,6 +165,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 					timeLabel: fulfillment.timeLabel,
 					emailSent: fulfillment.emailSent,
 					paymentMethod: "self-pay",
+					bookingRef: fulfillment.bookingRef,
 				};
 			} else {
 				checkoutError = fulfillment.error;
@@ -321,7 +324,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		}
 
 		if (booking.paymentMethod === "insurance") {
-			await createBookingEvent(config, {
+			const created = await createBookingEvent(config, {
 				...booking,
 				status: "tentative",
 				summaryPrefix: "PENDING AUTH —",
@@ -330,7 +333,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 			let emailSent = true;
 			try {
-				await sendPatientBookingConfirmation(config, booking);
+				await sendPatientBookingConfirmation(config, {
+					...booking,
+					bookingRef: created.bookingRef,
+				});
 			} catch (emailError) {
 				emailSent = false;
 				console.error("Insurance booking confirmation email error:", emailError);
@@ -344,6 +350,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					timeLabel: booking.timeLabel,
 					emailSent,
 					paymentMethod: "insurance" as const,
+					bookingRef: created.bookingRef,
 				},
 			});
 		}
@@ -361,9 +368,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		}
 
 		const origin = new URL(request.url).origin;
+		const bookingRef = generateBookingRef();
 		const session = await createBookingCheckoutSession({
 			stripe,
 			booking,
+			bookingRef,
 			successUrl: `${origin}/book?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
 			cancelUrl: `${origin}/book?checkout=cancelled`,
 		});
@@ -535,6 +544,18 @@ export default function BookPage() {
 										</>
 									)}
 								</p>
+								{confirmed.bookingRef ? (
+									<p className="mt-4 text-ink-soft">
+										Booking reference:{" "}
+										<strong className="font-semibold text-ink">
+											{confirmed.bookingRef}
+										</strong>
+										.{" "}
+										<Link to="/manage-booking" className="link-underline">
+											Manage booking
+										</Link>
+									</p>
+								) : null}
 							</div>
 						) : !configured ? (
 							<div className="border border-line bg-cream/70 px-6 py-8">
