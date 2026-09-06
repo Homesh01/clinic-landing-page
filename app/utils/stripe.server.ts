@@ -2,6 +2,7 @@ import {
 	BookingConflictError,
 	createBookingEvent,
 	getBookingConfig,
+	patchBookingPaymentDetails,
 } from "~/utils/google-calendar.server";
 import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import type { ValidatedBookingInput } from "~/utils/booking-validation";
@@ -381,6 +382,7 @@ async function markSessionFulfilled(
 	sessionId: string,
 	eventId: string,
 	bookingRef: string,
+	paymentIntentId?: string,
 ): Promise<void> {
 	await stripeRequest(stripe.secretKey, `/checkout/sessions/${encodeURIComponent(sessionId)}`, {
 		method: "POST",
@@ -388,6 +390,9 @@ async function markSessionFulfilled(
 			"metadata[calendar_event_id]": eventId,
 			"metadata[bookingRef]": bookingRef,
 			"metadata[fulfilled]": "1",
+			...(paymentIntentId
+				? { "metadata[payment_intent_id]": paymentIntentId }
+				: {}),
 		},
 	});
 }
@@ -486,11 +491,19 @@ export async function fulfillPaidCheckoutSession(input: {
 				.filter(Boolean)
 				.join("\n"),
 		});
+		await patchBookingPaymentDetails(calendarConfig, created.eventId, {
+			bookingRef: created.bookingRef,
+			email: booking.email,
+			paymentMethod: "self-pay",
+			stripeSessionId: session.id,
+			stripePaymentIntentId: paymentIntentId,
+		});
 		await markSessionFulfilled(
 			input.stripe,
 			session.id,
 			created.eventId,
 			created.bookingRef,
+			paymentIntentId,
 		);
 
 		if (created.alreadyExisted) {

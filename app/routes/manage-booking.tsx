@@ -183,23 +183,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				| "none"
 				| "refunded"
 				| "not_eligible"
-				| "already_refunded"
-				| "missing_payment" = "none";
+				| "already_refunded" = "none";
 			let refundAmountLabel: string | undefined;
 
-			const mayBeSelfPay = existing.paymentMethod !== "insurance";
-			if (mayBeSelfPay) {
+			const isInsuranceOnly =
+				existing.paymentMethod === "insurance" &&
+				!existing.stripeSessionId &&
+				!existing.stripePaymentIntentId;
+
+			if (!isInsuranceOnly) {
 				const eligible = isSelfPayRefundEligible(
 					existing.dateIso,
 					existing.timeLabel,
 					config.timeZone,
 				);
 				if (!eligible) {
-					refundStatus =
-						existing.paymentMethod === "self-pay" ||
-						Boolean(existing.stripeSessionId)
-							? "not_eligible"
-							: "none";
+					refundStatus = "not_eligible";
 				} else {
 					const stripe = getStripeConfig(context.cloudflare.env);
 					if (!stripe) {
@@ -208,7 +207,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 								ok: false as const,
 								intent,
 								error:
-									"Automatic refund is temporarily unavailable. Please contact the clinic team before cancelling so your payment can be refunded.",
+									"Automatic refund is temporarily unavailable. Your appointment was not cancelled — please contact the clinic team.",
 								email,
 								bookingRef,
 							},
@@ -230,31 +229,49 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						console.error("Stripe payment lookup for refund failed:", lookupError);
 					}
 
+					console.log("Cancel refund lookup", {
+						bookingRef: existing.bookingRef,
+						paymentMethod: existing.paymentMethod,
+						hasSessionId: Boolean(existing.stripeSessionId),
+						hasPaymentIntentId: Boolean(existing.stripePaymentIntentId),
+						resolvedPaymentIntentId: paymentIntentId ? "yes" : "no",
+						eligible: true,
+					});
+
 					if (!paymentIntentId) {
-						refundStatus = "missing_payment";
-					} else {
-						try {
-							const refund = await refundPaymentIntent(stripe, paymentIntentId);
-							refundStatus = refund.alreadyRefunded
-								? "already_refunded"
-								: "refunded";
-							if (refund.amountPence > 0) {
-								refundAmountLabel = formatGbpFromPence(refund.amountPence);
-							}
-						} catch (refundError) {
-							console.error("Self-pay cancel refund error:", refundError);
-							return json(
-								{
-									ok: false as const,
-									intent,
-									error:
-										"We could not process the Stripe refund automatically. Your appointment was not cancelled — please contact the clinic team.",
-									email,
-									bookingRef,
-								},
-								{ status: 502 },
-							);
+						return json(
+							{
+								ok: false as const,
+								intent,
+								error:
+									"We could not find the Stripe payment for this booking, so it was not cancelled. Please contact the clinic team for a refund and cancellation.",
+								email,
+								bookingRef,
+							},
+							{ status: 502 },
+						);
+					}
+
+					try {
+						const refund = await refundPaymentIntent(stripe, paymentIntentId);
+						refundStatus = refund.alreadyRefunded
+							? "already_refunded"
+							: "refunded";
+						if (refund.amountPence > 0) {
+							refundAmountLabel = formatGbpFromPence(refund.amountPence);
 						}
+					} catch (refundError) {
+						console.error("Self-pay cancel refund error:", refundError);
+						return json(
+							{
+								ok: false as const,
+								intent,
+								error: `We could not process the Stripe refund (${refundError instanceof Error ? refundError.message : "unknown error"}). Your appointment was not cancelled — please contact the clinic team.`,
+								email,
+								bookingRef,
+							},
+							{ status: 502 },
+						);
 					}
 				}
 			}
@@ -451,31 +468,36 @@ export default function ManageBookingPage() {
 						<div className="border border-accent/25 bg-accent-soft px-6 py-8">
 							<p className="eyebrow">Cancelled</p>
 							<h2 className="mt-3 font-display text-3xl text-ink">
-								Your appointment has been cancelled
+								{cancelled.refundStatus === "refunded" ||
+								cancelled.refundStatus === "already_refunded"
+									? "Cancelled — refund started"
+									: cancelled.refundStatus === "not_eligible"
+										? "Cancelled — no automatic refund"
+										: "Your appointment has been cancelled"}
 							</h2>
 							<p className="mt-3 text-ink-soft">
 								{formatBookingDate(cancelled.booking.dateIso)} at{" "}
 								{cancelled.booking.timeLabel} ({cancelled.booking.bookingRef}) is
 								no longer booked.
 							</p>
-							{cancelled.refundStatus === "refunded" ||
-							cancelled.refundStatus === "already_refunded" ? (
-								<p className="mt-3 text-ink-soft">
-									{cancelled.refundStatus === "already_refunded"
-										? "This payment had already been refunded."
-										: `A full refund${cancelled.refundAmountLabel ? ` of ${cancelled.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`}
+							{cancelled.refundStatus === "refunded" ? (
+								<p className="mt-3 font-semibold text-ink">
+									A full Stripe refund
+									{cancelled.refundAmountLabel
+										? ` of ${cancelled.refundAmountLabel}`
+										: ""}{" "}
+									has been started. It should appear on the Stripe dashboard
+									shortly and on the patient’s statement in a few days.
+								</p>
+							) : cancelled.refundStatus === "already_refunded" ? (
+								<p className="mt-3 font-semibold text-ink">
+									This payment had already been refunded in Stripe.
 								</p>
 							) : cancelled.refundStatus === "not_eligible" ? (
-								<p className="mt-3 text-ink-soft">
-									Self-pay refunds are automatic only when you cancel at least{" "}
-									{refundMinHours} hours before the appointment. Please contact
-									the clinic team if you need to discuss this payment.
-								</p>
-							) : cancelled.refundStatus === "missing_payment" ? (
-								<p className="mt-3 text-ink-soft">
-									Your appointment was cancelled, but we could not match the
-									Stripe payment automatically. Please contact the clinic team
-									about a refund.
+								<p className="mt-3 font-semibold text-ink">
+									No automatic refund: cancellations must be at least{" "}
+									{refundMinHours} hours before the appointment. Contact the
+									clinic team if you need to discuss the payment.
 								</p>
 							) : null}
 							<p className="mt-4 text-ink-soft">

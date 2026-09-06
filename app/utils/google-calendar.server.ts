@@ -460,6 +460,70 @@ async function fetchCalendarEvent(
 	return data;
 }
 
+/** Ensure Stripe / booking payment fields are stored on the calendar event. */
+export async function patchBookingPaymentDetails(
+	config: BookingConfig,
+	eventId: string,
+	input: {
+		bookingRef: string;
+		email: string;
+		paymentMethod?: "self-pay" | "insurance";
+		stripeSessionId?: string;
+		stripePaymentIntentId?: string;
+	},
+): Promise<void> {
+	const accessToken = await getAccessToken(config);
+	const existing = await fetchCalendarEvent(config, accessToken, eventId);
+	if (!existing?.id || existing.status === "cancelled") return;
+
+	const privateProps: Record<string, string> = {
+		...(existing.extendedProperties?.private ?? {}),
+		bookingRef: input.bookingRef,
+		patientEmail: input.email.trim().toLowerCase(),
+		paymentMethod: input.paymentMethod ?? "self-pay",
+	};
+	if (input.stripeSessionId?.trim()) {
+		privateProps.stripeSessionId = input.stripeSessionId.trim();
+	}
+	if (input.stripePaymentIntentId?.trim()) {
+		privateProps.stripePaymentIntentId = input.stripePaymentIntentId.trim();
+	}
+
+	const description = existing.description ?? "";
+	const withSession =
+		input.stripeSessionId && !/Stripe session:/i.test(description)
+			? `${description.trim()}\nStripe session: ${input.stripeSessionId}`
+			: description;
+	const withPayment =
+		input.stripePaymentIntentId && !/Stripe payment:/i.test(withSession)
+			? `${withSession.trim()}\nStripe payment: ${input.stripePaymentIntentId}`
+			: withSession;
+
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+		{
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				description: withPayment,
+				extendedProperties: { private: privateProps },
+			}),
+		},
+	);
+	if (!response.ok) {
+		const data = (await response.json().catch(() => ({}))) as {
+			error?: { message?: string };
+		};
+		console.error(
+			"Failed to patch booking payment details:",
+			data.error?.message || response.status,
+		);
+	}
+}
+
 async function withoutExcludedEventBusy(
 	config: BookingConfig,
 	accessToken: string,
