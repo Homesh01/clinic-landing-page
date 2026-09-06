@@ -74,21 +74,23 @@ async function stripeRequest<T>(
 	path: string,
 	init?: RequestInit & { form?: Record<string, string> },
 ): Promise<T> {
+	const { form, headers: initHeaders, ...rest } = init ?? {};
 	const headers: HeadersInit = {
 		Authorization: `Bearer ${secretKey}`,
+		...(initHeaders ?? {}),
 	};
 
-	let body: BodyInit | undefined;
-	if (init?.form) {
-		headers["Content-Type"] = "application/x-www-form-urlencoded";
-		body = new URLSearchParams(init.form);
-	} else {
-		body = init?.body ?? undefined;
+	let body: BodyInit | undefined = rest.body ?? undefined;
+	if (form) {
+		(headers as Record<string, string>)["Content-Type"] =
+			"application/x-www-form-urlencoded";
+		body = new URLSearchParams(form);
 	}
 
 	const response = await fetch(`https://api.stripe.com/v1${path}`, {
-		...init,
-		headers: { ...headers, ...init?.headers },
+		...rest,
+		method: form ? rest.method ?? "POST" : rest.method,
+		headers,
 		body,
 	});
 
@@ -257,13 +259,16 @@ export async function refundPaymentIntent(
 	}
 }
 
-/** Resolve a PaymentIntent id from session id, PI id, or booking-ref metadata search. */
+/** Resolve a PaymentIntent id from session id, PI id, or booking metadata search. */
 export async function resolvePaymentIntentForBooking(
 	stripe: StripeConfig,
 	input: {
 		bookingRef: string;
 		stripeSessionId?: string;
 		stripePaymentIntentId?: string;
+		email?: string;
+		dateIso?: string;
+		timeLabel?: string;
 	},
 ): Promise<string | null> {
 	if (input.stripePaymentIntentId?.startsWith("pi_")) {
@@ -287,40 +292,63 @@ export async function resolvePaymentIntentForBooking(
 	}
 
 	const safeRef = input.bookingRef.replace(/[^A-Za-z0-9-]/g, "");
-	if (!safeRef) return null;
+	const safeEmail = (input.email ?? "").trim().toLowerCase().replace(/'/g, "");
+	const safeDate = (input.dateIso ?? "").replace(/[^0-9-]/g, "");
+	const safeTime = (input.timeLabel ?? "").replace(/[^0-9:]/g, "");
 
-	try {
+	const trySearch = async (query: string): Promise<string | null> => {
 		const piSearch = await stripeRequest<{
 			data?: { id: string; status?: string }[];
 		}>(
 			stripe.secretKey,
 			`/payment_intents/search?${new URLSearchParams({
-				query: `metadata['bookingRef']:'${safeRef}'`,
+				query,
 				limit: "5",
 			}).toString()}`,
 		);
 		const succeeded = (piSearch.data ?? []).find(
 			(pi) => pi.status === "succeeded",
 		);
-		if (succeeded?.id) return succeeded.id;
-	} catch (error) {
-		console.error("Stripe payment_intent search failed:", error);
+		return succeeded?.id ?? null;
+	};
+
+	if (safeRef) {
+		try {
+			const byRef = await trySearch(`metadata['bookingRef']:'${safeRef}'`);
+			if (byRef) return byRef;
+		} catch (error) {
+			console.error("Stripe payment_intent search by bookingRef failed:", error);
+		}
 	}
 
-	try {
-		const sessionId = await findPaidCheckoutSessionByBookingRef(
-			stripe,
-			safeRef,
-		);
-		if (!sessionId) return null;
-		const session = await retrieveCheckoutSession(stripe, sessionId);
-		return typeof session.payment_intent === "string"
-			? session.payment_intent
-			: session.payment_intent?.id ?? null;
-	} catch (error) {
-		console.error("Stripe checkout session search failed:", error);
-		return null;
+	if (safeEmail && safeDate && safeTime) {
+		try {
+			const bySlot = await trySearch(
+				`metadata['email']:'${safeEmail}' AND metadata['dateIso']:'${safeDate}' AND metadata['timeLabel']:'${safeTime}'`,
+			);
+			if (bySlot) return bySlot;
+		} catch (error) {
+			console.error("Stripe payment_intent search by slot failed:", error);
+		}
 	}
+
+	if (safeRef) {
+		try {
+			const sessionId = await findPaidCheckoutSessionByBookingRef(
+				stripe,
+				safeRef,
+			);
+			if (!sessionId) return null;
+			const session = await retrieveCheckoutSession(stripe, sessionId);
+			return typeof session.payment_intent === "string"
+				? session.payment_intent
+				: session.payment_intent?.id ?? null;
+		} catch (error) {
+			console.error("Stripe checkout session search failed:", error);
+		}
+	}
+
+	return null;
 }
 
 /** Look up a paid Checkout session by booking reference when calendar metadata is missing. */

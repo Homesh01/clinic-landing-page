@@ -782,22 +782,27 @@ export async function findBookingByEmailAndRef(
 		throw new Error(data.error?.message || "Could not look up booking");
 	}
 
+	const matches: ManagedBooking[] = [];
 	for (const item of data.items ?? []) {
 		const listed = managedBookingFromEvent(item, config.timeZone);
 		if (!listed) continue;
 		if (listed.email !== patientEmail) continue;
 		if (listed.bookingRef !== bookingRef) continue;
-		// List responses can omit private props — reload the full event.
 		const full = await fetchCalendarEvent(config, accessToken, listed.eventId);
 		const managed = full
 			? managedBookingFromEvent(full, config.timeZone)
 			: listed;
 		if (!managed) continue;
 		if (managed.email !== patientEmail) continue;
-		return managed;
+		matches.push(managed);
 	}
 
-	return null;
+	if (matches.length === 0) return null;
+	// If a prior reschedule left two events, prefer the later slot.
+	matches.sort((a, b) =>
+		`${b.dateIso}T${b.timeLabel}`.localeCompare(`${a.dateIso}T${a.timeLabel}`),
+	);
+	return matches[0];
 }
 
 export async function cancelBookingEvent(
@@ -877,76 +882,69 @@ export async function rescheduleBookingEvent(
 		throw new BookingConflictError();
 	}
 
-	const [hourText, minuteText] = input.timeLabel.split(":");
-	const start = zonedDateTimeToUtc(
-		input.dateIso,
-		Number(hourText),
-		Number(minuteText),
-		config.timeZone,
-	);
-	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
+	const noteLines = [
+		parseDescriptionField(existing.description, "Notes") || undefined,
+		managed.stripeSessionId
+			? `Stripe session: ${managed.stripeSessionId}`
+			: undefined,
+		managed.stripePaymentIntentId
+			? `Stripe payment: ${managed.stripePaymentIntentId}`
+			: undefined,
+	].filter(Boolean);
 
-	const nextSequence = managed.icsSequence + 1;
-	const invitePatient = managed.paymentMethod !== "insurance";
-	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=${invitePatient ? "all" : "none"}`,
+	// Create the new slot first so a failure never leaves the patient unbooked.
+	const created = await createBookingEvent(config, {
+		dateIso: input.dateIso,
+		timeLabel: input.timeLabel,
+		name: managed.name,
+		email: managed.email,
+		phone: managed.phone || "Not provided",
+		type: managed.type,
+		bookingRef: managed.bookingRef,
+		paymentMethod:
+			managed.paymentMethod === "unknown"
+				? managed.pendingAuth
+					? "insurance"
+					: "self-pay"
+				: managed.paymentMethod,
+		stripeSessionId: managed.stripeSessionId,
+		stripePaymentIntentId: managed.stripePaymentIntentId,
+		status: managed.pendingAuth ? "tentative" : "confirmed",
+		summaryPrefix: managed.pendingAuth ? "PENDING AUTH —" : undefined,
+		notes: noteLines.length ? noteLines.join("\n") : undefined,
+	});
+
+	// Cancel the old invite so Gmail removes the previous time.
+	const deleteResponse = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
 		{
-			method: "PATCH",
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				start: {
-					dateTime: start.toISOString(),
-					timeZone: config.timeZone,
-				},
-				end: {
-					dateTime: end.toISOString(),
-					timeZone: config.timeZone,
-				},
-				...(invitePatient
-					? {
-							attendees: [
-								{
-									email: managed.email,
-									displayName: managed.name,
-									responseStatus: "needsAction",
-								},
-							],
-						}
-					: {}),
-				extendedProperties: {
-					private: {
-						bookingRef: managed.bookingRef,
-						patientEmail: managed.email,
-						paymentMethod:
-							managed.paymentMethod === "unknown"
-								? "self-pay"
-								: managed.paymentMethod,
-						icsSequence: String(nextSequence),
-						...(managed.stripeSessionId
-							? { stripeSessionId: managed.stripeSessionId }
-							: {}),
-						...(managed.stripePaymentIntentId
-							? { stripePaymentIntentId: managed.stripePaymentIntentId }
-							: {}),
-					},
-				},
-			}),
+			method: "DELETE",
+			headers: { Authorization: `Bearer ${accessToken}` },
 		},
 	);
-
-	const data = (await response.json()) as CalendarEventPayload;
-	if (!response.ok || !data.id) {
-		throw new Error(data.error?.message || "Could not reschedule booking");
+	if (!deleteResponse.ok && deleteResponse.status !== 410) {
+		console.error(
+			"Reschedule created the new slot but failed to delete the old event:",
+			input.eventId,
+			await deleteResponse.text().catch(() => ""),
+		);
 	}
 
-	const updated = managedBookingFromEvent(data, config.timeZone);
+	const reloaded = await fetchCalendarEvent(
+		config,
+		await getAccessToken(config),
+		created.eventId,
+	);
+	const updated =
+		(reloaded && managedBookingFromEvent(reloaded, config.timeZone)) ||
+		null;
 	if (!updated) {
 		throw new Error("Could not reschedule booking");
 	}
-	return updated;
+	return {
+		...updated,
+		icsSequence: managed.icsSequence + 1,
+	};
 }
 
 export class BookingConflictError extends Error {

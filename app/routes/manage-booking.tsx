@@ -222,16 +222,16 @@ export async function action({ request, context }: ActionFunctionArgs) {
 							bookingRef: existing.bookingRef,
 							stripeSessionId: existing.stripeSessionId,
 							stripePaymentIntentId: existing.stripePaymentIntentId,
+							email: existing.email,
+							dateIso: existing.dateIso,
+							timeLabel: existing.timeLabel,
 						});
 					} catch (lookupError) {
 						console.error("Stripe payment lookup for refund failed:", lookupError);
 					}
 
 					if (!paymentIntentId) {
-						refundStatus =
-							existing.paymentMethod === "self-pay"
-								? "missing_payment"
-								: "none";
+						refundStatus = "missing_payment";
 					} else {
 						try {
 							const refund = await refundPaymentIntent(stripe, paymentIntentId);
