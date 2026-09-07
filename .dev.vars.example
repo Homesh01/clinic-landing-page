@@ -1,34 +1,23 @@
-# Shared site password for local development.
-# Leave blank or remove this line to disable protection locally.
+# Site gate (omit or blank to disable locally)
 SITE_PASSWORD=preview
 
-# Optional long random secret used to sign the site-access cookie.
-# If omitted, SITE_PASSWORD is used (fine for local; set separately in prod).
-# SITE_COOKIE_SECRET=
-
-# Google Calendar booking (OAuth refresh-token flow)
-# Enable APIs: Google Calendar API + Gmail API
-# OAuth scopes needed on the refresh token:
-#   https://www.googleapis.com/auth/calendar
-#   https://www.googleapis.com/auth/gmail.send
-#
-# IMPORTANT: Authorise as bookings@personalisedcancercare.com (not a personal
-# mailbox). Google Calendar invite / update / cancel emails always come from
-# the OAuth user who owns the event. If you authorise as homesh.sayal@…,
-# patients will see that address on calendar notifications.
+# Google Calendar + Gmail (OAuth as bookings@personalisedcancercare.com)
+# Scopes: calendar + gmail.send
 GOOGLE_CLIENT_ID=........apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=........
 GOOGLE_REFRESH_TOKEN=........
 GOOGLE_CALENDAR_ID=........@group.calendar.google.com
 BOOKING_TIMEZONE=Europe/London
-
-# Branded Gmail API From address. Prefer OAuth as this same mailbox so
-# calendar invites and confirmation emails both show bookings@.
 BOOKING_FROM_EMAIL=bookings@personalisedcancercare.com
 BOOKING_FROM_NAME=Personalised Cancer Care Bookings
+# BOOKING_BCC_EMAIL=
 
-# Stripe Checkout (test keys start with sk_test_ / whsec_)
-# New Patient / Second Opinion / Virtual = £350; Follow-up / Monitoring = £250
+# /clinic staff magic-link (10 min). Comma-separated allowlist.
+CLINIC_STAFF_EMAILS=you@example.com
+# CLINIC_STAFF_COOKIE_SECRET=
+
+# Stripe (test: sk_test_… / whsec_…)
+# Fees: New Patient / Second Opinion / Virtual £350; Follow-up / Monitoring £250
 STRIPE_SECRET_KEY=sk_test_........
-# Local: stripe listen --forward-to localhost:5173/api/stripe-webhook
+# stripe listen --forward-to localhost:5173/api/stripe-webhook
 # STRIPE_WEBHOOK_SECRET=whsec_........
