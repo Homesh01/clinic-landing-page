@@ -2,15 +2,14 @@ import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { PageHero } from "~/components/PageHero";
 import { consultationsPage, services, site } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Consultations | ${site.name}` },
-		{
-			name: "description",
-			content: consultationsPage.lede,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Consultations"),
+		description: consultationsPage.lede,
+		path: "/consultations",
+	});
 };
 
 export default function ConsultationsPage() {

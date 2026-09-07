@@ -2,16 +2,15 @@ import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { PageHero } from "~/components/PageHero";
 import { contact, contactPage, fees, locations, site } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Contact & locations | ${site.name}` },
-		{
-			name: "description",
-			content:
-				"Clinic locations, fees and insurance information, and how to contact Dr Karen Sayal’s clinic team.",
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Contact & locations"),
+		description:
+			"Contact Personalised Cancer Care — London clinic locations, fees, insurance, and how to reach the clinic team.",
+		path: "/contact",
+	});
 };
 
 function LocationBlock({

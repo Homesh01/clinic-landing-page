@@ -15,6 +15,8 @@ import { requireSiteAccess } from "~/utils/site-auth.server";
 import "./tailwind.css";
 
 export const links: LinksFunction = () => [
+	{ rel: "icon", href: "/logo-mark.png", type: "image/png" },
+	{ rel: "apple-touch-icon", href: "/logo-mark.png" },
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
 	{
 		rel: "preconnect",

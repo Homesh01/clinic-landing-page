@@ -10,15 +10,14 @@ import {
 	conferencesPage,
 	site,
 } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Conferences & publications | ${site.name}` },
-		{
-			name: "description",
-			content: conferencesPage.lede,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Conferences & publications"),
+		description: conferencesPage.lede,
+		path: "/conferences",
+	});
 };
 
 type Filter = "all" | "upcoming" | "past";

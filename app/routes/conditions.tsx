@@ -3,15 +3,14 @@ import { Link } from "@remix-run/react";
 import { BloodIcon, ThyroidIcon } from "~/components/ConditionIcons";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { conditions, conditionsPage, site } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Conditions | ${site.name}` },
-		{
-			name: "description",
-			content: conditionsPage.lede,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Conditions"),
+		description: conditionsPage.lede,
+		path: "/conditions",
+	});
 };
 
 export default function ConditionsPage() {

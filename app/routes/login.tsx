@@ -12,9 +12,15 @@ import {
 	hasSiteAccess,
 	timingSafeEqual,
 } from "~/utils/site-auth.server";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [{ title: `Private access | ${site.name}` }];
+	return buildPageMeta({
+		title: clinicPageTitle("Private access"),
+		description: "Private access to Personalised Cancer Care.",
+		path: "/login",
+		noIndex: true,
+	});
 };
 
 export async function loader({ request, context }: LoaderFunctionArgs) {

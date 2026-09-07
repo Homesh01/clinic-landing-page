@@ -6,15 +6,15 @@ import {
 	credentials,
 	site,
 } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `About | ${site.name}` },
-		{
-			name: "description",
-			content: about.heroLede,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("About the clinic"),
+		description:
+			"About Personalised Cancer Care — private consultant oncology in London, led by Dr Karen Sayal, specialising in thyroid cancer and radiotherapy for haematological cancers.",
+		path: "/about",
+	});
 };
 
 export default function AboutPage() {

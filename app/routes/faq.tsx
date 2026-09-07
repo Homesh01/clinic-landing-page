@@ -1,22 +1,23 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { FaqAccordion } from "~/components/FaqAccordion";
+import { JsonLd } from "~/components/JsonLd";
 import { PageHero } from "~/components/PageHero";
-import { faqPage, site } from "~/data/content";
+import { faqPage } from "~/data/content";
+import { buildPageMeta, clinicPageTitle, faqPageJsonLd } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `FAQ | ${site.name}` },
-		{
-			name: "description",
-			content: faqPage.lede,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("FAQ"),
+		description: faqPage.lede,
+		path: "/faq",
+	});
 };
 
 export default function FaqPage() {
 	return (
 		<>
+			<JsonLd data={faqPageJsonLd()} />
 			<PageHero
 				eyebrow="FAQ"
 				title={faqPage.title}

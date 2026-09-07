@@ -2,15 +2,14 @@ import type { MetaFunction } from "@remix-run/cloudflare";
 import { useState } from "react";
 import { PageHero } from "~/components/PageHero";
 import { type BlogPost, blog, blogPosts, site } from "~/data/content";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Blog | ${site.name}` },
-		{
-			name: "description",
-			content: blog.intro,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Blog"),
+		description: blog.intro,
+		path: "/blog",
+	});
 };
 
 const PREVIEW_PARAGRAPHS = 2;

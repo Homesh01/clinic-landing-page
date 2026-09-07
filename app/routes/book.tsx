@@ -39,6 +39,7 @@ import {
 	getStripeConfig,
 	retrieveCheckoutSession,
 } from "~/utils/stripe.server";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 function formatBookingDate(dateIso: string): string {
 	const [year, month, day] = dateIso.split("-").map(Number);
@@ -130,13 +131,11 @@ type BookingSuccess = {
 };
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Book a consultation | ${site.name}` },
-		{
-			name: "description",
-			content: booking.intro,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Book a consultation"),
+		description: booking.intro,
+		path: "/book",
+	});
 };
 
 export async function loader({ request, context }: LoaderFunctionArgs) {

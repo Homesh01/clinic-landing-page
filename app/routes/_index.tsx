@@ -1,21 +1,28 @@
 import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
+import { JsonLd } from "~/components/JsonLd";
 import { conditions, faqPage, services, site } from "~/data/content";
+import {
+	CLINIC_TAGLINE,
+	buildPageMeta,
+	clinicJsonLd,
+	clinicPageTitle,
+	websiteJsonLd,
+} from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `${site.name} | ${site.title}` },
-		{
-			name: "description",
-			content: site.tagline,
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle(),
+		description: CLINIC_TAGLINE,
+		path: "/",
+	});
 };
 
 export default function Index() {
 	return (
 		<>
+			<JsonLd data={[clinicJsonLd(), websiteJsonLd()]} />
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
 					<div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">

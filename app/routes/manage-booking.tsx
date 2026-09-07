@@ -35,6 +35,7 @@ import {
 	sendBookingCancelledEmail,
 	sendBookingRescheduledEmail,
 } from "~/utils/booking-email.server";
+import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 function formatBookingDate(dateIso: string): string {
 	const [year, month, day] = dateIso.split("-").map(Number);
@@ -52,14 +53,13 @@ const EMAIL_RE =
 	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: `Manage booking | ${site.name}` },
-		{
-			name: "description",
-			content:
-				"Look up your consultation with your email and booking reference to cancel or change the time.",
-		},
-	];
+	return buildPageMeta({
+		title: clinicPageTitle("Manage booking"),
+		description:
+			"Look up your Personalised Cancer Care consultation with your email and booking reference to cancel or change the time.",
+		path: "/manage-booking",
+		noIndex: true,
+	});
 };
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
