@@ -35,6 +35,10 @@ const SLOT_MINUTES = 60;
 /** Number of upcoming Fridays to offer for booking. */
 const AVAILABILITY_FRIDAYS = 4;
 
+/** Google Calendar event colour IDs (shared palette). */
+const CALENDAR_COLOR_PENDING = "6"; // tangerine — pending insurer auth
+const CALENDAR_COLOR_CONFIRMED = "7"; // peacock — confirmed
+
 /** Fixed Friday slots — kept short so the diary does not look over-available. */
 const BOOKABLE_SLOTS = [
 	{ hour: 10, minute: 30, label: "10:30" },
@@ -576,10 +580,12 @@ function managedBookingFromEvent(
 		parseDescriptionField(event.description, "Consultation type") ||
 		event.summary?.replace(/^PENDING AUTH —\s*/i, "").replace(/^Consultation —\s*/i, "") ||
 		"Consultation";
-	const pendingAuth =
-		event.status === "tentative" ||
-		Boolean(event.summary?.toUpperCase().includes("PENDING AUTH"));
 	const privateProps = event.extendedProperties?.private ?? {};
+	const pendingAuth =
+		privateProps.authStatus === "confirmed"
+			? false
+			: event.status === "tentative" ||
+				Boolean(event.summary?.toUpperCase().includes("PENDING AUTH"));
 	const stripeFromNotes =
 		event.description?.match(/Stripe session:\s*(cs_[a-zA-Z0-9_]+)/i)?.[1] ??
 		undefined;
@@ -742,6 +748,12 @@ export async function createBookingEvent(
 					notes: input.notes,
 				}),
 				status: input.status === "tentative" ? "tentative" : "confirmed",
+				// Pending insurance stands out in the clinic diary; no patient invite yet.
+				...(paymentMethod === "insurance" && input.status === "tentative"
+					? { colorId: CALENDAR_COLOR_PENDING }
+					: paymentMethod === "self-pay"
+						? { colorId: CALENDAR_COLOR_CONFIRMED }
+						: {}),
 				start: {
 					dateTime: start.toISOString(),
 					timeZone: config.timeZone,
@@ -750,7 +762,7 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				// Self-pay: invite the patient so Gmail updates/cancels natively.
+				// Self-pay only: invite the patient. Insurance stays clinic-only until auth is confirmed.
 				...(invitePatient
 					? {
 							attendees: [
@@ -1106,6 +1118,125 @@ export async function rescheduleBookingEvent(
 		...updated,
 		icsSequence: nextSequence,
 	};
+}
+
+/**
+ * Staff action: mark a pending insurance booking as authorisation-confirmed.
+ * Updates the clinic calendar colour/title/status and invites the patient.
+ */
+export async function confirmInsuranceBookingEvent(
+	config: BookingConfig,
+	input: { eventId: string; bookingRef: string },
+): Promise<ManagedBooking> {
+	const accessToken = await getAccessToken(config);
+	const existing = await fetchCalendarEvent(config, accessToken, input.eventId);
+	if (!existing) {
+		throw new Error("Booking not found.");
+	}
+	const managed = managedBookingFromEvent(existing, config.timeZone);
+	if (
+		!managed ||
+		normalizeBookingRef(managed.bookingRef) !==
+			normalizeBookingRef(input.bookingRef)
+	) {
+		throw new Error("Booking not found.");
+	}
+	if (!managed.pendingAuth && managed.paymentMethod !== "insurance") {
+		return managed;
+	}
+	if (!managed.pendingAuth) {
+		return managed;
+	}
+
+	const summary = (
+		existing.summary || `Consultation — ${managed.type}`
+	).replace(/^PENDING AUTH —\s*/i, "");
+	const nextSequence = managed.icsSequence + 1;
+	const privateProps: Record<string, string> = {
+		...(existing.extendedProperties?.private ?? {}),
+		bookingRef: managed.bookingRef,
+		patientEmail: managed.email,
+		paymentMethod: "insurance",
+		icsSequence: String(nextSequence),
+		authStatus: "confirmed",
+	};
+
+	const description = (existing.description ?? "")
+		.replace(
+			/^Notes:\s*STATUS:\s*PENDING[^\n]*/im,
+			"Notes: STATUS: CONFIRMED — insurer authorisation verified",
+		)
+		.replace(
+			/STATUS:\s*PENDING\s*—\s*do not see patient until authorisation code is verified/i,
+			"STATUS: CONFIRMED — insurer authorisation verified",
+		);
+
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
+		{
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				summary,
+				description,
+				status: "confirmed",
+				colorId: CALENDAR_COLOR_CONFIRMED,
+				attendees: [
+					{
+						email: managed.email,
+						displayName: managed.name,
+						responseStatus: "needsAction",
+					},
+				],
+				guestsCanInviteOthers: false,
+				guestsCanModify: false,
+				guestsCanSeeOtherGuests: false,
+				extendedProperties: { private: privateProps },
+			}),
+		},
+	);
+	const data = (await response.json()) as CalendarEventPayload;
+	if (!response.ok || !data.id) {
+		throw new Error(data.error?.message || "Could not confirm booking");
+	}
+	const updated = managedBookingFromEvent(data, config.timeZone);
+	if (!updated) {
+		throw new Error("Could not confirm booking");
+	}
+	return { ...updated, pendingAuth: false, status: "confirmed" };
+}
+
+export async function findBookingByRef(
+	config: BookingConfig,
+	bookingRefRaw: string,
+): Promise<ManagedBooking | null> {
+	assertUsableCalendarId(config.calendarId);
+	const bookingRef = normalizeBookingRef(bookingRefRaw);
+	if (!isValidBookingRef(bookingRef)) return null;
+
+	const accessToken = await getAccessToken(config);
+	const items = await listEventsByBookingRef(config, accessToken, bookingRef);
+	const matches: ManagedBooking[] = [];
+	for (const item of items) {
+		const listed = managedBookingFromEvent(item, config.timeZone);
+		if (!listed) continue;
+		if (normalizeBookingRef(listed.bookingRef) !== bookingRef) continue;
+		const full = await fetchCalendarEvent(config, accessToken, listed.eventId);
+		const managed = full
+			? managedBookingFromEvent(full, config.timeZone)
+			: listed;
+		if (!managed) continue;
+		if (normalizeBookingRef(managed.bookingRef) !== bookingRef) continue;
+		matches.push(managed);
+	}
+	if (matches.length === 0) return null;
+	matches.sort((a, b) =>
+		`${b.dateIso}T${b.timeLabel}`.localeCompare(`${a.dateIso}T${a.timeLabel}`),
+	);
+	return matches[0];
 }
 
 export class BookingConflictError extends Error {

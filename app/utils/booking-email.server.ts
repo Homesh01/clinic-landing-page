@@ -881,3 +881,86 @@ export async function sendBookingRescheduledEmail(
 		html,
 	});
 }
+
+/** Sent when the clinic confirms insurer authorisation for a pending booking. */
+export async function sendInsuranceBookingConfirmedEmail(
+	config: BookingConfig,
+	input: {
+		name: string;
+		email: string;
+		dateIso: string;
+		timeLabel: string;
+		type: string;
+		bookingRef: string;
+	},
+): Promise<void> {
+	const accessToken = await getAccessToken(config);
+	const { fromEmail, fromName } = resolveBookingSender(config);
+	const when = formatAppointmentDate(input.dateIso, config.timeZone);
+	const subject = `${CLINIC_BRAND}: appointment confirmed (${input.bookingRef})`;
+	const lead =
+		"Your insurer authorisation has been verified. Your consultation is now confirmed.";
+
+	const text = [
+		`Dear ${input.name},`,
+		"",
+		lead,
+		"",
+		`Booking reference: ${input.bookingRef}`,
+		`Date: ${when}`,
+		`Time: ${input.timeLabel} (UK time)`,
+		`Consultation: ${input.type}`,
+		"",
+		`To change or cancel, visit ${MANAGE_BOOKING_URL}.`,
+		"",
+		"Kind regards,",
+		CLINIC_BRAND,
+		fromEmail,
+	].join("\n");
+
+	const html = wrapBookingEmailHtml({
+		title: "Appointment confirmed",
+		statusPill: "&#10003; Confirmed",
+		heading: `Dear ${input.name},`,
+		leadHtml: escapeHtml(lead),
+		detailRowsHtml: [
+			detailRow({
+				icon: "&#128196;",
+				iconBg: COLORS.iconConsult,
+				label: "Booking reference",
+				valueHtml: escapeHtml(input.bookingRef),
+			}),
+			detailRow({
+				icon: "&#128197;",
+				iconBg: COLORS.iconCal,
+				label: "Date",
+				valueHtml: escapeHtml(when),
+			}),
+			detailRow({
+				icon: "&#128338;",
+				iconBg: COLORS.iconClock,
+				label: "Time",
+				valueHtml: `${escapeHtml(input.timeLabel)} (UK time)`,
+			}),
+			detailRow({
+				icon: "&#128203;",
+				iconBg: COLORS.iconConsult,
+				label: "Consultation",
+				valueHtml: escapeHtml(input.type),
+				last: true,
+			}),
+		].join(""),
+		noteHtml: `To change or cancel, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
+	});
+
+	await sendBookingMime(accessToken, {
+		to: input.email,
+		from: formatFromHeader(fromEmail, fromName),
+		replyTo: fromEmail,
+		bcc: config.bccEmail,
+		subject,
+		text,
+		html,
+	});
+}
