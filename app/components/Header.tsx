@@ -1,6 +1,8 @@
 import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { nav, site } from "~/data/content";
+import { nav } from "~/data/content";
+
+const BRAND = "Personalised Cancer Care";
 
 export function Header() {
 	const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ export function Header() {
 	const close = () => setOpen(false);
 
 	const linkClass = ({ isActive }: { isActive: boolean }) =>
-		`text-[1.1rem] tracking-wide transition-colors ${
+		`text-[1.05rem] tracking-wide transition-colors ${
 			isActive
 				? "font-semibold text-accent"
 				: "text-ink-soft hover:text-accent"
@@ -37,20 +39,37 @@ export function Header() {
 					: "border-transparent bg-white/70 backdrop-blur-sm"
 			}`}
 		>
-			<div className="mx-auto flex h-[4.5rem] w-full max-w-[100rem] items-center gap-4 px-3 sm:px-4 lg:px-5">
-				<div className="min-w-0 flex-1">
-					<NavLink to="/" className="group inline-block min-w-0" onClick={close}>
-						<span className="block font-display text-[1.75rem] leading-none tracking-tight text-ink transition-colors group-hover:text-accent">
-							{site.name}
-						</span>
-						<span className="mt-1 block truncate text-[0.75rem] uppercase tracking-[0.16em] text-ink-muted">
-							{site.title}
-						</span>
+			<div className="mx-auto flex w-full max-w-[100rem] items-center gap-4 px-3 py-1.5 sm:px-4 lg:px-5 lg:py-2">
+				<div className="flex min-w-0 flex-1 items-center">
+					<NavLink
+						to="/"
+						className="group inline-flex min-w-0 items-center leading-none"
+						onClick={close}
+						aria-label={BRAND}
+					>
+						{/* Compact monogram on the smallest screens */}
+						<img
+							src="/logo-mark.png"
+							alt=""
+							width={160}
+							height={111}
+							className="h-12 w-auto transition-opacity group-hover:opacity-90 sm:hidden"
+							decoding="async"
+						/>
+						{/* Full lockup from sm up */}
+						<img
+							src="/main-logo-1.png"
+							alt=""
+							width={320}
+							height={120}
+							className="hidden h-[3.75rem] w-auto max-w-[min(100%,22rem)] transition-opacity group-hover:opacity-90 sm:block lg:h-[4.25rem] lg:max-w-[25rem]"
+							decoding="async"
+						/>
 					</NavLink>
 				</div>
 
 				<nav
-					className="hidden shrink-0 items-center gap-5 2xl:gap-7 xl:flex"
+					className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-5 2xl:gap-7"
 					aria-label="Primary"
 				>
 					{nav.map((item) => (
@@ -65,17 +84,17 @@ export function Header() {
 					))}
 				</nav>
 
-				<div className="flex flex-1 items-center justify-end">
+				<div className="flex flex-1 items-center justify-end gap-3">
 					<NavLink
 						to="/book"
-						className="btn-primary hidden !px-4 !py-2.5 text-[1.05rem] whitespace-nowrap xl:inline-flex"
+						className="btn-primary hidden !px-4 !py-2.5 text-[1.05rem] whitespace-nowrap lg:inline-flex"
 					>
 						Book a consultation
 					</NavLink>
 
 					<button
 						type="button"
-						className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line text-ink xl:hidden"
+						className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line text-ink lg:hidden"
 						aria-expanded={open}
 						aria-controls="mobile-nav"
 						aria-label={open ? "Close menu" : "Open menu"}
@@ -105,7 +124,7 @@ export function Header() {
 
 			<div
 				id="mobile-nav"
-				className={`border-t border-line bg-white xl:hidden ${
+				className={`border-t border-line bg-white lg:hidden ${
 					open ? "block" : "hidden"
 				}`}
 			>
