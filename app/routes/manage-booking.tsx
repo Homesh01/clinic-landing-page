@@ -9,21 +9,19 @@ import { useEffect, useMemo, useState } from "react";
 import { PageHero } from "~/components/PageHero";
 import { site } from "~/data/content";
 import {
-	sendBookingCancelledEmail,
-	sendBookingRescheduledEmail,
-} from "~/utils/booking-email.server";
-import {
 	isValidBookingRef,
 	normalizeBookingRef,
 } from "~/utils/booking-ref";
 import {
-	BookingConflictError,
 	SELF_PAY_REFUND_MIN_HOURS,
+	isSelfPayRefundEligible,
+} from "~/utils/booking-refund";
+import {
+	BookingConflictError,
 	cancelBookingEvent,
 	findBookingByEmailAndRef,
 	getAvailableDays,
 	getBookingConfig,
-	isSelfPayRefundEligible,
 	rescheduleBookingEvent,
 } from "~/utils/google-calendar.server";
 import {
@@ -33,6 +31,10 @@ import {
 	resolvePaymentIntentForBooking,
 } from "~/utils/stripe.server";
 import { requireSiteAccess } from "~/utils/site-auth.server";
+import {
+	sendBookingCancelledEmail,
+	sendBookingRescheduledEmail,
+} from "~/utils/booking-email.server";
 
 function formatBookingDate(dateIso: string): string {
 	const [year, month, day] = dateIso.split("-").map(Number);
