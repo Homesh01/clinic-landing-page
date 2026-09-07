@@ -94,7 +94,6 @@ function calendarNotesForBooking(input: {
 	membershipNumber?: string;
 	authorisationCode?: string;
 	notes?: string;
-	stripeSessionId?: string;
 }): string {
 	const lines: string[] = [];
 	if (input.paymentMethod === "insurance") {
@@ -113,9 +112,6 @@ function calendarNotesForBooking(input: {
 		}
 	} else {
 		lines.push("Payment: Self-pay");
-		if (input.stripeSessionId) {
-			lines.push(`Stripe session: ${input.stripeSessionId}`);
-		}
 	}
 	if (input.notes?.trim()) lines.push(input.notes.trim());
 	return lines.join("\n");

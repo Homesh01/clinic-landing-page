@@ -155,7 +155,7 @@ function wrapBookingEmailHtml(input: {
 									${escapeHtml(CLINIC_BRAND)}
 								</div>
 								<div style="margin-top:6px;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${COLORS.inkMuted};font-weight:500;">
-									${escapeHtml(site.name)} · ${escapeHtml(site.title)}
+									Consultant oncology care
 								</div>
 							</a>
 						</td>
@@ -297,7 +297,7 @@ function buildPlainText(input: {
 			"If you have questions, reply to this email.",
 			"",
 			"Kind regards,",
-			`${CLINIC_BRAND} · ${site.name}`,
+			CLINIC_BRAND,
 			DEFAULT_FROM_EMAIL,
 		].join("\n");
 	}
@@ -321,7 +321,7 @@ function buildPlainText(input: {
 		`Book again: ${SITE_URL}/book`,
 		"",
 		"Kind regards,",
-		`${CLINIC_BRAND} · ${site.name}`,
+		CLINIC_BRAND,
 		DEFAULT_FROM_EMAIL,
 	].join("\n");
 }
@@ -343,7 +343,7 @@ function buildHtml(input: {
 	const paymentLabel = escapeHtml(input.paymentLabel);
 	const paymentValue = escapeHtml(input.paymentValue);
 	const siteName = escapeHtml(CLINIC_BRAND);
-	const siteTitle = escapeHtml(`${site.name} · ${site.title}`);
+	const siteTitle = "Consultant oncology care";
 	const locationName = escapeHtml(CLINIC_LOCATION.name);
 	const locationAddress = escapeHtml(CLINIC_LOCATION.address);
 	const bookingRef = input.bookingRef ? escapeHtml(input.bookingRef) : "";
@@ -719,8 +719,6 @@ export async function sendBookingCancelledEmail(
 				: input.refundStatus === "not_eligible"
 					? `Self-pay refunds are automatic only when you cancel at least ${refundMinHours} hours before the appointment. Please contact the clinic team if you need to discuss this payment.`
 					: null;
-	const calendarLine =
-		"If this appointment is on your Google Calendar from the clinic invite, it will be removed automatically. Otherwise remove it manually from your calendar app.";
 	const lead = `Your consultation with ${site.name} has been cancelled.`;
 
 	const text = [
@@ -734,12 +732,10 @@ export async function sendBookingCancelledEmail(
 		`Consultation: ${input.type}`,
 		...(refundLine ? ["", refundLine] : []),
 		"",
-		calendarLine,
-		"",
 		`If this was a mistake, you can book again at ${SITE_URL}/book.`,
 		"",
 		"Kind regards,",
-		`${CLINIC_BRAND} · ${site.name}`,
+		CLINIC_BRAND,
 		fromEmail,
 	].join("\n");
 
@@ -786,7 +782,7 @@ export async function sendBookingCancelledEmail(
 					]
 				: []),
 		].join(""),
-		noteHtml: escapeHtml(calendarLine),
+		noteHtml: `If this was a mistake, you can <a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};font-weight:600;">book again</a>.`,
 		primaryCta: { href: `${SITE_URL}/book`, label: "Book again" },
 	});
 
@@ -821,9 +817,6 @@ export async function sendBookingRescheduledEmail(
 	const statusLine = input.pendingAuth
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
-	const calendarLine = input.pendingAuth
-		? null
-		: "If this appointment is on your Google Calendar from the clinic invite, the time will update automatically. Otherwise update or replace it in your calendar app.";
 
 	const text = [
 		`Dear ${input.name},`,
@@ -834,12 +827,11 @@ export async function sendBookingRescheduledEmail(
 		`Date: ${when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
-		...(calendarLine ? ["", calendarLine] : []),
 		"",
 		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
 		"",
 		"Kind regards,",
-		`${CLINIC_BRAND} · ${site.name}`,
+		CLINIC_BRAND,
 		fromEmail,
 	].join("\n");
 
@@ -875,9 +867,7 @@ export async function sendBookingRescheduledEmail(
 				last: true,
 			}),
 		].join(""),
-		noteHtml: calendarLine
-			? `${escapeHtml(calendarLine)} To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
-			: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		noteHtml: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
 	});
 

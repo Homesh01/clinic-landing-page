@@ -547,13 +547,7 @@ export async function fulfillPaidCheckoutSession(input: {
 			paymentMethod: "self-pay",
 			stripeSessionId: session.id,
 			stripePaymentIntentId: paymentIntentId,
-			notes: [
-				booking.notes,
-				`Stripe session: ${session.id}`,
-				paymentIntentId ? `Stripe payment: ${paymentIntentId}` : null,
-			]
-				.filter(Boolean)
-				.join("\n"),
+			notes: booking.notes?.trim() || undefined,
 		});
 		await patchBookingPaymentDetails(calendarConfig, created.eventId, {
 			bookingRef: created.bookingRef,

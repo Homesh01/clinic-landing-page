@@ -455,14 +455,19 @@ export async function patchBookingPaymentDetails(
 	}
 
 	const description = existing.description ?? "";
-	const withSession =
-		input.stripeSessionId && !/Stripe session:/i.test(description)
-			? `${description.trim()}\nStripe session: ${input.stripeSessionId}`
-			: description;
-	const withPayment =
-		input.stripePaymentIntentId && !/Stripe payment:/i.test(withSession)
-			? `${withSession.trim()}\nStripe payment: ${input.stripePaymentIntentId}`
-			: withSession;
+	// Keep Stripe ids in private props only — not in patient-visible description.
+	const cleanedDescription = description
+		.split(/\n+/)
+		.map((line) => line.trim())
+		.filter(
+			(line) =>
+				line &&
+				!/^Stripe session:/i.test(line) &&
+				!/^Stripe payment:/i.test(line) &&
+				!/^Booked via clinic website\.?$/i.test(line) &&
+				!/^Notes:\s*Stripe /i.test(line),
+		)
+		.join("\n");
 
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
@@ -473,7 +478,7 @@ export async function patchBookingPaymentDetails(
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				description: withPayment,
+				description: cleanedDescription,
 				extendedProperties: { private: privateProps },
 			}),
 		},
@@ -615,6 +620,23 @@ function managedBookingFromEvent(
 	};
 }
 
+function sanitizePatientVisibleNotes(notes?: string): string | undefined {
+	if (!notes?.trim()) return undefined;
+	const cleaned = notes
+		.split(/\n+/)
+		.map((line) => line.trim())
+		.filter(
+			(line) =>
+				line &&
+				!/^Stripe session:/i.test(line) &&
+				!/^Stripe payment:/i.test(line) &&
+				!/^Booked via clinic website\.?$/i.test(line),
+		)
+		.join("\n")
+		.trim();
+	return cleaned || undefined;
+}
+
 function buildEventDescription(input: {
 	name: string;
 	email: string;
@@ -623,17 +645,14 @@ function buildEventDescription(input: {
 	bookingRef: string;
 	notes?: string;
 }): string {
+	const notes = sanitizePatientVisibleNotes(input.notes);
 	return [
 		`Booking ref: ${sanitizeCalendarLine(input.bookingRef)}`,
 		`Patient: ${sanitizeCalendarLine(input.name)}`,
 		`Email: ${sanitizeCalendarLine(input.email)}`,
 		`Phone: ${sanitizeCalendarLine(input.phone)}`,
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
-		input.notes?.trim()
-			? `Notes: ${sanitizeCalendarLine(input.notes.trim())}`
-			: null,
-		"",
-		"Booked via clinic website.",
+		notes ? `Notes: ${sanitizeCalendarLine(notes)}` : null,
 	]
 		.filter(Boolean)
 		.join("\n");
@@ -996,6 +1015,28 @@ export async function rescheduleBookingEvent(
 
 	// Move the same event in place so clinic + patient calendars update one entry
 	// (create+delete previously left both times on Google Calendar).
+	const cleanedDescription = buildEventDescription({
+		name: managed.name,
+		email: managed.email,
+		phone: managed.phone || "Not provided",
+		type: managed.type,
+		bookingRef: managed.bookingRef,
+		notes: sanitizePatientVisibleNotes(
+			parseDescriptionField(existing.description, "Notes") ||
+				existing.description
+					?.split(/\n+/)
+					.filter(
+						(line) =>
+							!/^(Booking ref|Patient|Email|Phone|Consultation type|Notes):/i.test(
+								line.trim(),
+							) &&
+							!/^Stripe (session|payment):/i.test(line.trim()) &&
+							!/^Booked via clinic website\.?$/i.test(line.trim()),
+					)
+					.join("\n"),
+		),
+	});
+
 	const patchResponse = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=${invitePatient ? "all" : "none"}`,
 		{
@@ -1013,6 +1054,7 @@ export async function rescheduleBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
+				description: cleanedDescription,
 				extendedProperties: { private: privateProps },
 				...(invitePatient
 					? {
