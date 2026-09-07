@@ -57,8 +57,12 @@ export function getBookingConfig(env: Env | undefined): BookingConfig | null {
 	const refreshToken = cleanEnv(env?.GOOGLE_REFRESH_TOKEN);
 	const calendarId = cleanEnv(env?.GOOGLE_CALENDAR_ID);
 	const timeZone = cleanEnv(env?.BOOKING_TIMEZONE) || "Europe/London";
-	const fromEmail = cleanEnv(env?.BOOKING_FROM_EMAIL);
-	const fromName = cleanEnv(env?.BOOKING_FROM_NAME);
+	const fromEmail =
+		cleanEnv(env?.BOOKING_FROM_EMAIL) ||
+		"bookings@personalisedcancercare.com";
+	const fromName =
+		cleanEnv(env?.BOOKING_FROM_NAME) ||
+		"Personalised Cancer Care Bookings";
 	const bccEmail = cleanEnv(env?.BOOKING_BCC_EMAIL);
 
 	if (!clientId || !clientSecret || !refreshToken || !calendarId) {

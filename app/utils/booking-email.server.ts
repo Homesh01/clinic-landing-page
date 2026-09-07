@@ -1,6 +1,6 @@
 import type { BookingConfig } from "~/utils/google-calendar.server";
 import { getAccessToken } from "~/utils/google-calendar.server";
-import { contact, site } from "~/data/content";
+import { site } from "~/data/content";
 
 export type BookingEmailInput = {
 	dateIso: string;
@@ -19,6 +19,9 @@ export type BookingEmailInput = {
 const SITE_URL = "https://personalisedcancercare.com";
 const SITE_HOST = "personalisedcancercare.com";
 const MANAGE_BOOKING_URL = `${SITE_URL}/manage-booking`;
+const CLINIC_BRAND = "Personalised Cancer Care";
+const DEFAULT_FROM_EMAIL = "bookings@personalisedcancercare.com";
+const DEFAULT_FROM_NAME = "Personalised Cancer Care Bookings";
 
 const CLINIC_LOCATION = {
 	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
@@ -91,6 +94,122 @@ function formatFromHeader(fromEmail: string, fromName?: string): string {
 	if (!fromName) return fromEmail;
 	const escaped = fromName.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 	return `"${escaped}" <${fromEmail}>`;
+}
+
+function resolveBookingSender(config: BookingConfig): {
+	fromEmail: string;
+	fromName: string;
+} {
+	return {
+		fromEmail: config.fromEmail?.trim() || DEFAULT_FROM_EMAIL,
+		fromName: config.fromName?.trim() || DEFAULT_FROM_NAME,
+	};
+}
+
+/** Shared branded shell for confirmation / change / cancellation emails. */
+function wrapBookingEmailHtml(input: {
+	title: string;
+	statusPill: string;
+	heading: string;
+	leadHtml: string;
+	detailRowsHtml: string;
+	noteHtml: string;
+	primaryCta?: { href: string; label: string };
+	secondaryCta?: { href: string; label: string };
+}): string {
+	const primary = input.primaryCta
+		? `<a href="${input.primaryCta.href}" style="display:inline-block;padding:13px 24px;background:${COLORS.accent};color:${COLORS.white};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">${escapeHtml(input.primaryCta.label)}</a>`
+		: "";
+	const secondary = input.secondaryCta
+		? `<a href="${input.secondaryCta.href}" style="display:inline-block;padding:12px 24px;border:1px solid ${COLORS.borderSoft};background:${COLORS.white};color:${COLORS.ink};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">${escapeHtml(input.secondaryCta.label)}</a>`
+		: "";
+	const ctaBlock =
+		primary || secondary
+			? `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						${primary ? `<td style="padding-right:12px;padding-bottom:10px;">${primary}</td>` : ""}
+						${secondary ? `<td style="padding-bottom:10px;">${secondary}</td>` : ""}
+					</tr>
+				</table>`
+			: "";
+
+	return `<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>${escapeHtml(input.title)}</title>
+</head>
+<body style="margin:0;padding:0;background:${COLORS.mist};">
+	<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:${COLORS.mist};">
+		<tr>
+			<td align="center" style="padding:32px 16px;">
+				<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;background:${COLORS.white};border-radius:6px;overflow:hidden;">
+					<tr>
+						<td style="height:6px;background:${COLORS.accent};font-size:0;line-height:0;">&nbsp;</td>
+					</tr>
+					<tr>
+						<td style="padding:32px 36px 26px;background:${COLORS.cream};border-bottom:1px solid ${COLORS.line};">
+							<a href="${SITE_URL}" style="text-decoration:none;display:block;">
+								<div style="font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.2;color:${COLORS.ink};font-weight:700;letter-spacing:-0.3px;">
+									${escapeHtml(CLINIC_BRAND)}
+								</div>
+								<div style="margin-top:6px;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${COLORS.inkMuted};font-weight:500;">
+									${escapeHtml(site.name)} · ${escapeHtml(site.title)}
+								</div>
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:36px 36px 40px;background:${COLORS.white};">
+							<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
+								<tr>
+									<td style="padding:9px 16px;border-radius:999px;background:${COLORS.accentSoft};font-family:Arial,Helvetica,sans-serif;font-size:12.5px;letter-spacing:0.8px;text-transform:uppercase;color:${COLORS.accentDeep};font-weight:700;">
+										${input.statusPill}
+									</td>
+								</tr>
+							</table>
+							<div style="font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:1.2;color:${COLORS.ink};font-weight:700;margin:0 0 16px;">
+								${escapeHtml(input.heading)}
+							</div>
+							<p style="margin:0 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:${COLORS.inkSoft};max-width:560px;">
+								${input.leadHtml}
+							</p>
+							<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:${COLORS.creamCard};border:1px solid ${COLORS.line};border-radius:8px;">
+								<tr>
+									<td style="padding:6px 26px;">
+										<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+											${input.detailRowsHtml}
+										</table>
+									</td>
+								</tr>
+							</table>
+							<p style="margin:26px 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:${COLORS.inkSoft};">
+								${input.noteHtml}
+							</p>
+							${ctaBlock}
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:26px 36px;background:${COLORS.cream};border-top:1px solid ${COLORS.line};">
+							<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+								<tr>
+									<td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:${COLORS.inkMuted};">
+										Reply to <a href="mailto:${DEFAULT_FROM_EMAIL}" style="color:${COLORS.accentDeep};text-decoration:none;font-weight:600;">${DEFAULT_FROM_EMAIL}</a>
+									</td>
+									<td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;">
+										<a href="${SITE_URL}" style="color:${COLORS.accentDeep};text-decoration:none;font-weight:600;">${SITE_HOST}</a>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>`;
 }
 
 function detailRow(input: {
@@ -178,9 +297,8 @@ function buildPlainText(input: {
 			"If you have questions, reply to this email.",
 			"",
 			"Kind regards,",
-			`${site.name} · ${site.title}`,
-			SITE_HOST,
-			contact.email,
+			`${CLINIC_BRAND} · ${site.name}`,
+			DEFAULT_FROM_EMAIL,
 		].join("\n");
 	}
 
@@ -203,9 +321,8 @@ function buildPlainText(input: {
 		`Book again: ${SITE_URL}/book`,
 		"",
 		"Kind regards,",
-		`${site.name} · ${site.title}`,
-		SITE_HOST,
-		contact.email,
+		`${CLINIC_BRAND} · ${site.name}`,
+		DEFAULT_FROM_EMAIL,
 	].join("\n");
 }
 
@@ -225,8 +342,8 @@ function buildHtml(input: {
 	const type = escapeHtml(input.type);
 	const paymentLabel = escapeHtml(input.paymentLabel);
 	const paymentValue = escapeHtml(input.paymentValue);
-	const siteName = escapeHtml(site.name);
-	const siteTitle = escapeHtml(site.title);
+	const siteName = escapeHtml(CLINIC_BRAND);
+	const siteTitle = escapeHtml(`${site.name} · ${site.title}`);
 	const locationName = escapeHtml(CLINIC_LOCATION.name);
 	const locationAddress = escapeHtml(CLINIC_LOCATION.address);
 	const bookingRef = input.bookingRef ? escapeHtml(input.bookingRef) : "";
@@ -381,7 +498,7 @@ function buildHtml(input: {
 							<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
 								<tr>
 									<td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:${COLORS.inkMuted};">
-										${siteName} &middot; ${siteTitle}
+										Reply to <a href="mailto:${DEFAULT_FROM_EMAIL}" style="color:${COLORS.accentDeep};text-decoration:none;font-weight:600;">${DEFAULT_FROM_EMAIL}</a>
 									</td>
 									<td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;">
 										<a href="${SITE_URL}" style="color:${COLORS.accentDeep};text-decoration:none;font-weight:600;">${SITE_HOST}</a>
@@ -506,8 +623,8 @@ export async function sendPatientBookingConfirmation(
 	input: BookingEmailInput,
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
+	const { fromEmail, fromName } = resolveBookingSender(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
-	const fromName = config.fromName || `${site.name} bookings`;
 
 	const isInsurance = input.paymentMethod === "insurance";
 	const paymentLabel = "Payment";
@@ -519,8 +636,8 @@ export async function sendPatientBookingConfirmation(
 		: "Payment: Self-pay (received).";
 
 	const subject = isInsurance
-		? `${site.name}: insurance booking pending authorisation`
-		: `${site.name}: consultation confirmed`;
+		? `${CLINIC_BRAND}: insurance booking pending authorisation`
+		: `${CLINIC_BRAND}: consultation confirmed`;
 	const text = buildPlainText({
 		name: input.name,
 		when,
@@ -540,27 +657,23 @@ export async function sendPatientBookingConfirmation(
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
 	});
-	const ics = undefined;
 
-	const baseMime = {
+	await sendBookingMime(accessToken, {
 		to: input.email,
-		replyTo: config.fromEmail,
+		from: formatFromHeader(fromEmail, fromName),
+		replyTo: fromEmail,
 		bcc: config.bccEmail,
 		subject,
 		text,
 		html,
-		ics,
-	};
-
-	await sendMimeWithFromFallback(accessToken, config, fromName, baseMime);
+	});
 }
 
-async function sendMimeWithFromFallback(
+async function sendBookingMime(
 	accessToken: string,
-	config: BookingConfig,
-	fromName: string,
-	baseMime: {
+	mime: {
 		to: string;
+		from: string;
 		replyTo?: string;
 		bcc?: string;
 		subject: string;
@@ -571,34 +684,7 @@ async function sendMimeWithFromFallback(
 		icsFilename?: string;
 	},
 ): Promise<void> {
-	try {
-		if (!config.fromEmail) {
-			throw new Error("BOOKING_FROM_EMAIL not set");
-		}
-		await gmailSend(
-			accessToken,
-			toBase64Url(
-				buildMimeMessage({
-					...baseMime,
-					from: formatFromHeader(config.fromEmail, fromName),
-				}),
-			),
-		);
-	} catch (error) {
-		console.error(
-			"Booking email with custom From failed; retrying as account default:",
-			error,
-		);
-		await gmailSend(
-			accessToken,
-			toBase64Url(
-				buildMimeMessage({
-					...baseMime,
-					from: undefined,
-				}),
-			),
-		);
-	}
+	await gmailSend(accessToken, toBase64Url(buildMimeMessage(mime)));
 }
 
 export async function sendBookingCancelledEmail(
@@ -621,9 +707,9 @@ export async function sendBookingCancelledEmail(
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
+	const { fromEmail, fromName } = resolveBookingSender(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
-	const fromName = config.fromName || `${site.name} bookings`;
-	const subject = `${site.name}: appointment cancelled (${input.bookingRef})`;
+	const subject = `${CLINIC_BRAND}: appointment cancelled (${input.bookingRef})`;
 	const refundMinHours = input.refundMinHours ?? 48;
 	const refundLine =
 		input.refundStatus === "refunded"
@@ -635,11 +721,12 @@ export async function sendBookingCancelledEmail(
 					: null;
 	const calendarLine =
 		"If this appointment is on your Google Calendar from the clinic invite, it will be removed automatically. Otherwise remove it manually from your calendar app.";
+	const lead = `Your consultation with ${site.name} has been cancelled.`;
 
 	const text = [
 		`Dear ${input.name},`,
 		"",
-		`Your consultation with ${site.name} has been cancelled.`,
+		lead,
 		"",
 		`Booking reference: ${input.bookingRef}`,
 		`Date: ${when}`,
@@ -652,19 +739,61 @@ export async function sendBookingCancelledEmail(
 		`If this was a mistake, you can book again at ${SITE_URL}/book.`,
 		"",
 		"Kind regards,",
-		`${site.name} · ${site.title}`,
-		contact.email,
+		`${CLINIC_BRAND} · ${site.name}`,
+		fromEmail,
 	].join("\n");
-	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Your consultation with ${escapeHtml(site.name)} has been cancelled.</p>
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)</p>
-${refundLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(refundLine)}</p>` : ""}
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${SITE_URL}/book" style="color:${COLORS.accentDeep};">Book again</a></p>`;
 
-	await sendMimeWithFromFallback(accessToken, config, fromName, {
+	const html = wrapBookingEmailHtml({
+		title: "Appointment cancelled",
+		statusPill: "Cancelled",
+		heading: `Dear ${input.name},`,
+		leadHtml: escapeHtml(lead),
+		detailRowsHtml: [
+			detailRow({
+				icon: "&#128196;",
+				iconBg: COLORS.iconConsult,
+				label: "Booking reference",
+				valueHtml: escapeHtml(input.bookingRef),
+			}),
+			detailRow({
+				icon: "&#128197;",
+				iconBg: COLORS.iconCal,
+				label: "Date",
+				valueHtml: escapeHtml(when),
+			}),
+			detailRow({
+				icon: "&#128338;",
+				iconBg: COLORS.iconClock,
+				label: "Time",
+				valueHtml: `${escapeHtml(input.timeLabel)} (UK time)`,
+			}),
+			detailRow({
+				icon: "&#128203;",
+				iconBg: COLORS.iconConsult,
+				label: "Consultation",
+				valueHtml: escapeHtml(input.type),
+				last: !refundLine,
+			}),
+			...(refundLine
+				? [
+						detailRow({
+							icon: "&#128179;",
+							iconBg: COLORS.iconPay,
+							label: "Refund",
+							valueHtml: escapeHtml(refundLine),
+							last: true,
+						}),
+					]
+				: []),
+		].join(""),
+		noteHtml: escapeHtml(calendarLine),
+		primaryCta: { href: `${SITE_URL}/book`, label: "Book again" },
+	});
+
+	await sendBookingMime(accessToken, {
 		to: input.email,
-		replyTo: config.fromEmail,
+		from: formatFromHeader(fromEmail, fromName),
+		replyTo: fromEmail,
 		bcc: config.bccEmail,
 		subject,
 		text,
@@ -686,15 +815,16 @@ export async function sendBookingRescheduledEmail(
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
+	const { fromEmail, fromName } = resolveBookingSender(config);
 	const when = formatAppointmentDate(input.dateIso, config.timeZone);
-	const fromName = config.fromName || `${site.name} bookings`;
-	const subject = `${site.name}: appointment updated (${input.bookingRef})`;
+	const subject = `${CLINIC_BRAND}: appointment updated (${input.bookingRef})`;
 	const statusLine = input.pendingAuth
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
 	const calendarLine = input.pendingAuth
 		? null
 		: "If this appointment is on your Google Calendar from the clinic invite, the time will update automatically. Otherwise update or replace it in your calendar app.";
+
 	const text = [
 		`Dear ${input.name},`,
 		"",
@@ -709,18 +839,52 @@ export async function sendBookingRescheduledEmail(
 		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
 		"",
 		"Kind regards,",
-		`${site.name} · ${site.title}`,
-		contact.email,
+		`${CLINIC_BRAND} · ${site.name}`,
+		fromEmail,
 	].join("\n");
-	const html = `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">Dear ${escapeHtml(input.name)},</p>
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(statusLine)}</p>
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.ink};"><strong>Booking reference:</strong> ${escapeHtml(input.bookingRef)}<br/><strong>Date:</strong> ${escapeHtml(when)}<br/><strong>Time:</strong> ${escapeHtml(input.timeLabel)} (UK time)<br/><strong>Consultation:</strong> ${escapeHtml(input.type)}</p>
-${calendarLine ? `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};">${escapeHtml(calendarLine)}</p>` : ""}
-<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${COLORS.inkSoft};"><a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};">Manage booking</a></p>`;
 
-	await sendMimeWithFromFallback(accessToken, config, fromName, {
+	const html = wrapBookingEmailHtml({
+		title: "Appointment updated",
+		statusPill: input.pendingAuth ? "Pending authorisation" : "Updated",
+		heading: `Dear ${input.name},`,
+		leadHtml: escapeHtml(statusLine),
+		detailRowsHtml: [
+			detailRow({
+				icon: "&#128196;",
+				iconBg: COLORS.iconConsult,
+				label: "Booking reference",
+				valueHtml: escapeHtml(input.bookingRef),
+			}),
+			detailRow({
+				icon: "&#128197;",
+				iconBg: COLORS.iconCal,
+				label: "Date",
+				valueHtml: escapeHtml(when),
+			}),
+			detailRow({
+				icon: "&#128338;",
+				iconBg: COLORS.iconClock,
+				label: "Time",
+				valueHtml: `${escapeHtml(input.timeLabel)} (UK time)`,
+			}),
+			detailRow({
+				icon: "&#128203;",
+				iconBg: COLORS.iconConsult,
+				label: "Consultation",
+				valueHtml: escapeHtml(input.type),
+				last: true,
+			}),
+		].join(""),
+		noteHtml: calendarLine
+			? `${escapeHtml(calendarLine)} To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
+			: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
+	});
+
+	await sendBookingMime(accessToken, {
 		to: input.email,
-		replyTo: config.fromEmail,
+		from: formatFromHeader(fromEmail, fromName),
+		replyTo: fromEmail,
 		bcc: config.bccEmail,
 		subject,
 		text,
