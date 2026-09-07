@@ -46,11 +46,11 @@ const EMAIL_RE =
 	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 const NAME_RE =
 	/^[\p{L}][\p{L}\p{M}'’.\-]*(?:[ ]+[\p{L}][\p{L}\p{M}'’.\-]*)+$/u;
-const PHONE_RE = /^\+?[0-9][0-9\s().\-]{6,24}$/;
+const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 
 const MAX_NAME = 80;
 const MAX_EMAIL = 120;
-const MAX_PHONE = 30;
+const MAX_PHONE = 20;
 const MAX_NOTES = 1000;
 const MAX_INSURER = 80;
 const MAX_MEMBERSHIP = 60;
@@ -129,12 +129,7 @@ export function validateBookingForm(input: {
 		errors.phone = "Please enter a contact number.";
 	} else if (phone.length > MAX_PHONE || !PHONE_RE.test(phone)) {
 		errors.phone =
-			"Please enter a valid phone number (digits, spaces, +, or brackets).";
-	} else {
-		const digitCount = phone.replace(/\D/g, "").length;
-		if (digitCount < 8 || digitCount > 15) {
-			errors.phone = "Phone number should contain 8 to 15 digits.";
-		}
+			"Please enter a valid phone number with country code (for example +44 7911 123456).";
 	}
 
 	if (!type || !isAllowedConsultationType(type)) {

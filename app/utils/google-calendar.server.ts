@@ -798,6 +798,7 @@ async function listEventsByBookingRef(
 	config: BookingConfig,
 	accessToken: string,
 	bookingRef: string,
+	patientEmail?: string,
 ): Promise<CalendarEventPayload[]> {
 	const timeMin = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
 	const timeMax = new Date(Date.now() + 120 * 24 * 60 * 60 * 1000).toISOString();
@@ -808,8 +809,15 @@ async function listEventsByBookingRef(
 		maxResults: "25",
 		timeMin,
 		timeMax,
-		privateExtendedProperty: `bookingRef=${bookingRef}`,
 	});
+	// Calendar API accepts repeated privateExtendedProperty as AND filters.
+	params.append("privateExtendedProperty", `bookingRef=${bookingRef}`);
+	if (patientEmail) {
+		params.append(
+			"privateExtendedProperty",
+			`patientEmail=${patientEmail.trim().toLowerCase()}`,
+		);
+	}
 
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?${params}`,
@@ -867,20 +875,27 @@ export async function findBookingByEmailAndRef(
 
 	const patientEmail = email.trim().toLowerCase();
 	const accessToken = await getAccessToken(config);
-	const items = await listEventsByBookingRef(config, accessToken, bookingRef);
+	const items = await listEventsByBookingRef(
+		config,
+		accessToken,
+		bookingRef,
+		patientEmail,
+	);
 
 	const matches: ManagedBooking[] = [];
 	for (const item of items) {
 		const listed = managedBookingFromEvent(item, config.timeZone);
 		if (!listed) continue;
 		if (listed.email !== patientEmail) continue;
-		if (listed.bookingRef !== bookingRef) continue;
+		if (normalizeBookingRef(listed.bookingRef) !== bookingRef) continue;
 		const full = await fetchCalendarEvent(config, accessToken, listed.eventId);
 		const managed = full
 			? managedBookingFromEvent(full, config.timeZone)
 			: listed;
 		if (!managed) continue;
 		if (managed.email !== patientEmail) continue;
+		// Re-check after full fetch — list payloads can be incomplete/stale.
+		if (normalizeBookingRef(managed.bookingRef) !== bookingRef) continue;
 		matches.push(managed);
 	}
 

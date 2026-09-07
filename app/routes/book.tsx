@@ -16,6 +16,13 @@ import { useEffect, useMemo, useRef, useState, type AnimationEvent, type ChangeE
 import { PageHero } from "~/components/PageHero";
 import { booking, contact, site } from "~/data/content";
 import {
+	DEFAULT_PHONE_COUNTRY_ISO,
+	PHONE_COUNTRIES,
+	findPhoneCountry,
+	formatInternationalPhone,
+	phoneCountryLabel,
+} from "~/data/phone-countries";
+import {
 	getAvailableDays,
 	getBookingConfig,
 	isSlotAvailable,
@@ -245,7 +252,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	const timeLabel = String(formData.get("time") ?? "");
 	const name = String(formData.get("name") ?? "");
 	const email = String(formData.get("email") ?? "");
-	const phone = String(formData.get("phone") ?? "");
+	const phoneCountryIso = String(formData.get("phoneCountry") ?? "").trim();
+	const phoneNational = String(formData.get("phone") ?? "");
+	const country = findPhoneCountry(phoneCountryIso);
+	const phone = country
+		? formatInternationalPhone(country.dial, phoneNational)
+		: "";
 	const type = String(formData.get("type") ?? "");
 	const paymentMethod = String(formData.get("paymentMethod") ?? "");
 	const insurer = String(formData.get("insurer") ?? "");
@@ -432,6 +444,9 @@ export default function BookPage() {
 	);
 	const [consultationType, setConsultationType] = useState<string>(
 		CONSULTATION_TYPES[0],
+	);
+	const [phoneCountryIso, setPhoneCountryIso] = useState(
+		DEFAULT_PHONE_COUNTRY_ISO,
 	);
 	const nameField = useEditableField<HTMLInputElement>();
 	const emailField = useEditableField<HTMLInputElement>();
@@ -827,32 +842,54 @@ export default function BookPage() {
 												</label>
 											</div>
 
-											<label className="block">
+											<div className="block">
 												<span className="mb-2 block text-sm font-semibold text-ink">
 													Phone
 												</span>
-												<input
-													required
-													type="tel"
-													name="phone"
-													autoComplete="tel"
-													inputMode="tel"
-													minLength={8}
-													maxLength={30}
-													ref={phoneField.ref}
-													value={phoneField.value}
-													onChange={phoneField.onChange}
-													onInput={phoneField.onInput}
-													onFocus={phoneField.onFocus}
-													onBlur={phoneField.onBlur}
-													onAnimationStart={phoneField.onAnimationStart}
-													className={fieldClass(Boolean(fieldErrors?.phone))}
-													placeholder="Contact number"
-													aria-invalid={Boolean(fieldErrors?.phone)}
-													aria-describedby={
-														fieldErrors?.phone ? "phone-error" : undefined
-													}
-												/>
+												<div className="flex gap-2">
+													<label className="sr-only" htmlFor="phone-country">
+														Country code
+													</label>
+													<select
+														id="phone-country"
+														name="phoneCountry"
+														required
+														value={phoneCountryIso}
+														onChange={(event) =>
+															setPhoneCountryIso(event.target.value)
+														}
+														className={`${fieldClass(Boolean(fieldErrors?.phone))} max-w-[11.5rem] shrink-0 sm:max-w-[14rem]`}
+														aria-invalid={Boolean(fieldErrors?.phone)}
+													>
+														{PHONE_COUNTRIES.map((country) => (
+															<option key={country.iso} value={country.iso}>
+																{phoneCountryLabel(country)}
+															</option>
+														))}
+													</select>
+													<input
+														required
+														type="tel"
+														name="phone"
+														autoComplete="tel-national"
+														inputMode="tel"
+														minLength={6}
+														maxLength={20}
+														ref={phoneField.ref}
+														value={phoneField.value}
+														onChange={phoneField.onChange}
+														onInput={phoneField.onInput}
+														onFocus={phoneField.onFocus}
+														onBlur={phoneField.onBlur}
+														onAnimationStart={phoneField.onAnimationStart}
+														className={`${fieldClass(Boolean(fieldErrors?.phone))} min-w-0 flex-1`}
+														placeholder="7911 123456"
+														aria-invalid={Boolean(fieldErrors?.phone)}
+														aria-describedby={
+															fieldErrors?.phone ? "phone-error" : undefined
+														}
+													/>
+												</div>
 												{fieldErrors?.phone ? (
 													<span
 														id="phone-error"
@@ -861,7 +898,7 @@ export default function BookPage() {
 														{fieldErrors.phone}
 													</span>
 												) : null}
-											</label>
+											</div>
 
 											<label className="block">
 												<span className="mb-2 block text-sm font-semibold text-ink">
