@@ -103,11 +103,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				ok: false as const,
 				intent,
 				error:
-					"Enter the email address used when booking and a valid booking reference (for example PCC-ABCD1234).",
+					"No upcoming booking matched that email and reference. Check the confirmation email, or contact the clinic team.",
 				email,
 				bookingRef,
 			},
-			{ status: 400 },
+			{ status: 404 },
 		);
 	}
 
