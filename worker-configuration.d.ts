@@ -11,6 +11,8 @@ interface Env {
 	BOOKING_FROM_EMAIL?: string;
 	BOOKING_FROM_NAME?: string;
 	BOOKING_BCC_EMAIL?: string;
+	CLINIC_STAFF_EMAILS?: string;
+	CLINIC_STAFF_COOKIE_SECRET?: string;
 	CLINIC_STAFF_PASSWORD?: string;
 	STRIPE_SECRET_KEY?: string;
 	STRIPE_WEBHOOK_SECRET?: string;

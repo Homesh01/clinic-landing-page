@@ -964,3 +964,51 @@ export async function sendInsuranceBookingConfirmedEmail(
 		html,
 	});
 }
+
+/** One-time staff sign-in link for /clinic (expires in minutes). */
+export async function sendClinicStaffMagicLinkEmail(
+	config: BookingConfig,
+	input: { email: string; magicLinkUrl: string; expiresMinutes: number },
+): Promise<void> {
+	const accessToken = await getAccessToken(config);
+	const { fromEmail, fromName } = resolveBookingSender(config);
+	const subject = `${CLINIC_BRAND}: clinic staff sign-in link`;
+	const lead = `Use this link to sign in to clinic booking tools. It expires in ${input.expiresMinutes} minutes and can only be used by authorised staff.`;
+
+	const text = [
+		"Clinic staff sign-in",
+		"",
+		lead,
+		"",
+		input.magicLinkUrl,
+		"",
+		"If you did not request this, you can ignore this email.",
+		"",
+		CLINIC_BRAND,
+	].join("\n");
+
+	const html = wrapBookingEmailHtml({
+		title: "Clinic staff sign-in",
+		statusPill: "Staff access",
+		heading: "Sign in to clinic tools",
+		leadHtml: escapeHtml(lead),
+		detailRowsHtml: detailRow({
+			icon: "&#128274;",
+			iconBg: COLORS.iconPay,
+			label: "Valid for",
+			valueHtml: `${input.expiresMinutes} minutes`,
+			last: true,
+		}),
+		noteHtml: "If you did not request this link, you can ignore this email.",
+		primaryCta: { href: input.magicLinkUrl, label: "Sign in to clinic tools" },
+	});
+
+	await sendBookingMime(accessToken, {
+		to: input.email,
+		from: formatFromHeader(fromEmail, fromName),
+		replyTo: fromEmail,
+		subject,
+		text,
+		html,
+	});
+}
