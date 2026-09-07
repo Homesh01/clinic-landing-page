@@ -20,8 +20,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.animate-fade-up,
-		.animate-fade-in {
+		.animate-fade-up {
 			animation: none;
 		}
 	}
@@ -69,12 +68,20 @@
 		@apply mt-0;
 	}
 
-	.text-gloss {
-		@apply text-ink-muted;
-	}
-
 	.headshot {
 		@apply aspect-[4/5] w-full object-cover object-top;
+	}
+
+	.section-title {
+		@apply font-display text-[1.65rem] leading-snug text-ink sm:text-[1.75rem];
+	}
+
+	.section-subtitle {
+		@apply font-display text-[1.4rem] leading-snug text-ink;
+	}
+
+	.panel {
+		@apply border border-line bg-cream/50 px-6 py-7;
 	}
 
 	.list-plain li {
@@ -101,20 +108,8 @@
 		@apply absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-white;
 	}
 
-	.btn-outline {
-		@apply inline-flex items-center justify-center gap-2 rounded-sm border border-accent px-5 py-2.5 text-[0.92rem] font-semibold text-accent transition hover:bg-accent-soft;
-	}
-
 	.tag-teal {
 		@apply inline-block mr-2 mt-3 rounded-sm bg-accent/10 px-2.5 py-1 text-xs font-medium tracking-wide text-accent;
-	}
-
-	.tag-green {
-		@apply inline-block mr-2 mt-3 rounded-sm bg-emerald-50 px-2.5 py-1 text-xs font-medium tracking-wide text-emerald-800;
-	}
-
-	.divider-line {
-		@apply h-px w-full bg-line;
 	}
 
 	.callout-banner {

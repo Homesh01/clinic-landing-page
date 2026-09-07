@@ -2,7 +2,7 @@ import type { MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
 import { BloodIcon, ThyroidIcon } from "~/components/ConditionIcons";
 import { CalloutBanner } from "~/components/CalloutBanner";
-import { conditions, conditionsPage, site } from "~/data/content";
+import { conditions, conditionsPage } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {

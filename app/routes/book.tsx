@@ -47,18 +47,7 @@ import {
 	retrieveCheckoutSession,
 } from "~/utils/stripe.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
-
-function formatBookingDate(dateIso: string): string {
-	const [year, month, day] = dateIso.split("-").map(Number);
-	const date = new Date(Date.UTC(year, month - 1, day, 12));
-	return new Intl.DateTimeFormat("en-GB", {
-		weekday: "long",
-		day: "numeric",
-		month: "long",
-		year: "numeric",
-		timeZone: "Europe/London",
-	}).format(date);
-}
+import { formatBookingDate } from "~/utils/format-date";
 
 /** Keeps browser autofill and later edits in sync with React state. */
 function useEditableField<T extends HTMLInputElement | HTMLTextAreaElement>(

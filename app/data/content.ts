@@ -1,8 +1,6 @@
 export const site = {
 	name: "Dr Karen Sayal",
 	title: "Consultant Clinical Oncologist",
-	tagline:
-		"Personalised cancer care for thyroid malignancies and radiotherapy for haematological cancers — informed by clinical expertise and translational AI.",
 	gmc: "7140353",
 	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
 	headshot: "/karen_sayal_image-nobg.png",
@@ -737,8 +735,4 @@ export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
 	note: "Times shown are free on the clinic calendar. Choose self-pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
-	fees: {
-		standard: "£350",
-		followUp: "£250",
-	},
 };

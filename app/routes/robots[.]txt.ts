@@ -13,6 +13,7 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
 		: `User-agent: *
 Allow: /
 Disallow: /login
+Disallow: /clinic
 Disallow: /manage-booking
 Disallow: /api/
 

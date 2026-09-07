@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { PageHero } from "~/components/PageHero";
-import { consultationsPage, services, site } from "~/data/content";
+import { consultationsPage, services } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
@@ -34,7 +34,7 @@ export default function ConsultationsPage() {
 									{String(index + 1).padStart(2, "0")}
 								</span>
 								<div>
-									<h2 className="font-display text-[1.65rem] text-ink">
+									<h2 className="section-title">
 										{service.title}
 									</h2>
 									<p className="mt-3 max-w-xl text-[0.97rem] leading-relaxed text-ink-soft">

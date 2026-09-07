@@ -26,6 +26,7 @@ import {
 	getClinicStaffSession,
 	isClinicStaffEmailConfigured,
 } from "~/utils/clinic-auth.server";
+import { formatBookingDate } from "~/utils/format-date";
 import {
 	BookingConflictError,
 	cancelBookingEvent,
@@ -43,18 +44,6 @@ import {
 	refundPaymentIntent,
 	resolvePaymentIntentForBooking,
 } from "~/utils/stripe.server";
-
-function formatBookingDate(dateIso: string): string {
-	const [year, month, day] = dateIso.split("-").map(Number);
-	const date = new Date(Date.UTC(year, month - 1, day, 12));
-	return new Intl.DateTimeFormat("en-GB", {
-		weekday: "long",
-		day: "numeric",
-		month: "long",
-		year: "numeric",
-		timeZone: "Europe/London",
-	}).format(date);
-}
 
 function paymentLabel(booking: {
 	paymentMethod: string;
@@ -90,8 +79,7 @@ function isPaidBooking(booking: {
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("Clinic booking tools"),
-		description:
-			"Staff tools to confirm insurance authorisation, change times, and cancel bookings.",
+		description: "Staff tools for clinic booking management.",
 		path: "/clinic",
 		noIndex: true,
 	});
@@ -590,7 +578,7 @@ export default function ClinicPage() {
 			<PageHero
 				eyebrow="Clinic"
 				title="Clinic booking tools"
-				summary="Staff sign-in by email. Confirm insurance authorisation, change times, or cancel bookings. For paid cancels you choose whether to refund."
+				summary="Staff sign-in by email."
 			/>
 
 			<section className="section-pad">

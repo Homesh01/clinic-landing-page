@@ -1,4 +1,4 @@
-import { createCookie, redirect } from "@remix-run/cloudflare";
+import { createCookie } from "@remix-run/cloudflare";
 
 const COOKIE_NAME = "clinic_staff";
 const MAGIC_LINK_TTL_MS = 10 * 60 * 1000;
@@ -191,15 +191,6 @@ export async function clearClinicStaffSessionHeaders(
 	const cookie = staffCookie(secret, request.url.startsWith("https:"));
 	headers.append("Set-Cookie", await cookie.serialize("", { maxAge: 0 }));
 	return headers;
-}
-
-export async function requireClinicStaff(
-	request: Request,
-	env: Env | undefined,
-): Promise<ClinicStaffSession> {
-	const session = await getClinicStaffSession(request, env);
-	if (session) return session;
-	throw redirect("/clinic");
 }
 
 export const CLINIC_MAGIC_LINK_MINUTES = 10;

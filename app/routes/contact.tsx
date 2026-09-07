@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { PageHero } from "~/components/PageHero";
-import { contact, contactPage, fees, locations, site } from "~/data/content";
+import { contact, contactPage, fees, locations } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
@@ -20,7 +20,7 @@ function LocationBlock({
 }) {
 	return (
 		<>
-			<h2 className="font-display text-[1.45rem] leading-snug text-ink">
+			<h2 className="section-subtitle">
 				{location.name}
 			</h2>
 			<address className="mt-2.5 text-[0.97rem] not-italic leading-relaxed text-ink-soft">
@@ -51,7 +51,7 @@ export default function ContactPage() {
 				summary="Appointments are available across central London clinics. Self-pay fees are listed below; insurance bookings need an authorisation code and are confirmed after verification."
 			/>
 
-			<section className="pt-8 sm:pt-10 pb-16 sm:pb-24">
+			<section className="content-section">
 				<div className="site-container">
 					<div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-x-16">
 						<div>
@@ -85,7 +85,7 @@ export default function ContactPage() {
 								id="fees"
 								className="scroll-mt-28 border-t border-line py-7"
 							>
-								<p className="text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-accent">
+								<p className="eyebrow">
 									Fees &amp; insurance
 								</p>
 								<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">

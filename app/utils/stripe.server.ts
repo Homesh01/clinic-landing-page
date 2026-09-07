@@ -199,21 +199,6 @@ export async function retrieveCheckoutSession(
 	);
 }
 
-export async function refundPaidCheckoutSession(
-	stripe: StripeConfig,
-	sessionId: string,
-): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
-	const session = await retrieveCheckoutSession(stripe, sessionId);
-	const paymentIntentId =
-		typeof session.payment_intent === "string"
-			? session.payment_intent
-			: session.payment_intent?.id;
-	if (!paymentIntentId) {
-		throw new Error("Paid session is missing a payment to refund.");
-	}
-	return refundPaymentIntent(stripe, paymentIntentId);
-}
-
 export async function refundPaymentIntent(
 	stripe: StripeConfig,
 	paymentIntentId: string,

@@ -24,7 +24,7 @@ export default function FaqPage() {
 				summary={faqPage.lede}
 			/>
 
-			<section className="content-section pt-5 sm:pt-5">
+			<section className="content-section">
 				<div className="site-container">
 					<FaqAccordion groups={faqPage.groups} />
 				</div>

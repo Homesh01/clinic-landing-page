@@ -66,20 +66,6 @@ export async function createSiteAccessHeaders(
 	return headers;
 }
 
-export async function clearSiteAccessHeaders(
-	request: Request,
-	env: Env | undefined,
-	password: string,
-): Promise<Headers> {
-	const cookie = accessCookie(
-		getCookieSecret(env, password),
-		request.url.startsWith("https:"),
-	);
-	const headers = new Headers();
-	headers.append("Set-Cookie", await cookie.serialize("", { maxAge: 0 }));
-	return headers;
-}
-
 export async function requireSiteAccess(
 	request: Request,
 	env: Env | undefined,

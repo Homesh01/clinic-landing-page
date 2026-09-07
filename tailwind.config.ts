@@ -56,14 +56,9 @@ export default {
 					from: { opacity: "0", transform: "translateY(1.25rem)" },
 					to: { opacity: "1", transform: "translateY(0)" },
 				},
-				"fade-in": {
-					from: { opacity: "0" },
-					to: { opacity: "1" },
-				},
 			},
 			animation: {
 				"fade-up": "fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
-				"fade-in": "fade-in 1.1s ease both",
 			},
 		},
 	},

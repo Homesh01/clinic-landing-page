@@ -3,13 +3,7 @@ import {
 	isValidBookingRef,
 	normalizeBookingRef,
 } from "~/utils/booking-ref";
-import {
-	SELF_PAY_REFUND_MIN_HOURS,
-	isSelfPayRefundEligible,
-	zonedDateTimeToUtc,
-} from "~/utils/booking-refund";
-
-export { SELF_PAY_REFUND_MIN_HOURS, isSelfPayRefundEligible, zonedDateTimeToUtc };
+import { zonedDateTimeToUtc } from "~/utils/booking-refund";
 
 export type BookingConfig = {
 	clientId: string;

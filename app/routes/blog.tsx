@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useState } from "react";
 import { PageHero } from "~/components/PageHero";
-import { type BlogPost, blog, blogPosts, site } from "~/data/content";
+import { type BlogPost, blog, blogPosts } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {

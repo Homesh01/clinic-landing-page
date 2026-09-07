@@ -61,7 +61,7 @@ function FaqAccordionItem({
 				aria-controls={panelId}
 				onClick={() => onToggle(id)}
 			>
-				<h2 className="font-display text-[1.45rem] leading-snug text-ink">
+				<h2 className="section-subtitle">
 					{item.question}
 				</h2>
 				<ChevronIcon open={isOpen} />
@@ -102,9 +102,7 @@ export function FaqAccordion({ groups }: { groups: readonly FaqGroup[] }) {
 		<>
 			{groups.map((group) => (
 				<div key={group.title} className="mt-10 first:mt-0">
-					<p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-						{group.title}
-					</p>
+					<p className="eyebrow">{group.title}</p>
 					<ul className="mt-5 list-none p-0">
 						{group.items.map((item) => {
 							const id = `${group.title}::${item.question}`;

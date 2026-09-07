@@ -7,7 +7,6 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from "@remix-
 import { json } from "@remix-run/cloudflare";
 import { useEffect, useMemo, useState } from "react";
 import { PageHero } from "~/components/PageHero";
-import { site } from "~/data/content";
 import {
 	isValidBookingRef,
 	normalizeBookingRef,
@@ -36,18 +35,7 @@ import {
 	sendBookingRescheduledEmail,
 } from "~/utils/booking-email.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
-
-function formatBookingDate(dateIso: string): string {
-	const [year, month, day] = dateIso.split("-").map(Number);
-	const date = new Date(Date.UTC(year, month - 1, day, 12));
-	return new Intl.DateTimeFormat("en-GB", {
-		weekday: "long",
-		day: "numeric",
-		month: "long",
-		year: "numeric",
-		timeZone: "Europe/London",
-	}).format(date);
-}
+import { formatBookingDate } from "~/utils/format-date";
 
 const EMAIL_RE =
 	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;

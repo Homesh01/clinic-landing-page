@@ -190,18 +190,3 @@ export function faqPageJsonLd() {
 		about: { "@id": `${SITE_ORIGIN}/#clinic` },
 	};
 }
-
-export function breadcrumbJsonLd(
-	crumbs: readonly { name: string; path: string }[],
-) {
-	return {
-		"@context": "https://schema.org",
-		"@type": "BreadcrumbList",
-		itemListElement: crumbs.map((crumb, index) => ({
-			"@type": "ListItem",
-			position: index + 1,
-			name: crumb.name,
-			item: absoluteUrl(crumb.path),
-		})),
-	};
-}

@@ -88,7 +88,7 @@ export default function ConferencesPage() {
 					{visibleGroups.map((group) => (
 						<div key={group.year} className="mt-11 first:mt-10">
 							<div className="flex items-baseline gap-4">
-								<h2 className="font-display text-[1.75rem] text-accent">
+								<h2 className="section-title text-accent">
 									{group.year}
 								</h2>
 								{filter === "all" && conferenceYearLabels[group.year] ? (
@@ -119,7 +119,7 @@ export default function ConferencesPage() {
 											) : null}
 										</div>
 										<div>
-											<h3 className="font-display text-[1.4rem] leading-snug text-ink">
+											<h3 className="section-subtitle">
 												{entry.title}
 											</h3>
 											<RichText
