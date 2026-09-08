@@ -1,3 +1,9 @@
+import {
+	APPOINTMENT_FORMATS,
+	isAppointmentFormat,
+	type AppointmentFormat,
+} from "~/utils/clinic-location";
+
 const CONSULTATION_TYPES = [
 	"New Patient Consultation",
 	"Second Opinion",
@@ -12,6 +18,9 @@ export { CONSULTATION_TYPES };
 export const PAYMENT_METHODS = ["self-pay", "insurance"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
+export type { AppointmentFormat };
+export { APPOINTMENT_FORMATS };
+
 export type BookingFieldErrors = {
 	date?: string;
 	time?: string;
@@ -19,6 +28,7 @@ export type BookingFieldErrors = {
 	email?: string;
 	phone?: string;
 	type?: string;
+	appointmentFormat?: string;
 	paymentMethod?: string;
 	insurer?: string;
 	membershipNumber?: string;
@@ -33,6 +43,7 @@ export type ValidatedBookingInput = {
 	email: string;
 	phone: string;
 	type: ConsultationType;
+	appointmentFormat: AppointmentFormat;
 	paymentMethod: PaymentMethod;
 	insurer?: string;
 	membershipNumber?: string;
@@ -78,6 +89,7 @@ export function validateBookingForm(input: {
 	email: string;
 	phone: string;
 	type: string;
+	appointmentFormat: string;
 	paymentMethod: string;
 	insurer: string;
 	membershipNumber: string;
@@ -95,6 +107,7 @@ export function validateBookingForm(input: {
 	const email = cleanText(input.email).toLowerCase();
 	const phone = cleanText(input.phone);
 	const type = cleanText(input.type);
+	let appointmentFormat = cleanText(input.appointmentFormat);
 	const paymentMethod = cleanText(input.paymentMethod);
 	const insurer = cleanText(input.insurer);
 	const membershipNumber = cleanText(input.membershipNumber);
@@ -134,6 +147,16 @@ export function validateBookingForm(input: {
 
 	if (!type || !isAllowedConsultationType(type)) {
 		errors.type = "Please choose a consultation type.";
+	}
+
+	// Virtual consultation type always means a remote appointment.
+	if (type === "Virtual Consultation") {
+		appointmentFormat = "virtual";
+	}
+
+	if (!appointmentFormat || !isAppointmentFormat(appointmentFormat)) {
+		errors.appointmentFormat =
+			"Please choose an in-person or virtual appointment.";
 	}
 
 	if (!paymentMethod || !isAllowedPaymentMethod(paymentMethod)) {
@@ -182,6 +205,7 @@ export function validateBookingForm(input: {
 			email,
 			phone,
 			type: type as ConsultationType,
+			appointmentFormat: appointmentFormat as AppointmentFormat,
 			paymentMethod: paymentMethod as PaymentMethod,
 			insurer: paymentMethod === "insurance" ? insurer : undefined,
 			membershipNumber:

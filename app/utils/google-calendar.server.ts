@@ -359,6 +359,7 @@ export type CreateBookingInput = {
 	/** Patient-facing booking reference (generated if omitted). */
 	bookingRef?: string;
 	paymentMethod?: "self-pay" | "insurance";
+	appointmentFormat?: "in-person" | "virtual";
 	stripeSessionId?: string;
 	stripePaymentIntentId?: string;
 	/** Insurance bookings stay tentative until the authorisation code is verified. */
@@ -378,6 +379,7 @@ export type ManagedBooking = {
 	status: "confirmed" | "tentative" | "cancelled";
 	pendingAuth: boolean;
 	paymentMethod: "self-pay" | "insurance" | "unknown";
+	appointmentFormat: "in-person" | "virtual" | "unknown";
 	stripeSessionId?: string;
 	stripePaymentIntentId?: string;
 	icsSequence: number;
@@ -601,6 +603,15 @@ function managedBookingFromEvent(
 				: pendingAuth
 					? "insurance"
 					: "unknown";
+	const formatRaw =
+		privateProps.appointmentFormat?.trim() ||
+		parseDescriptionField(event.description, "Format").toLowerCase();
+	const appointmentFormat: ManagedBooking["appointmentFormat"] =
+		formatRaw === "virtual" || formatRaw === "in-person"
+			? formatRaw
+			: type.toLowerCase().includes("virtual")
+				? "virtual"
+				: "unknown";
 
 	return {
 		eventId: event.id,
@@ -614,6 +625,7 @@ function managedBookingFromEvent(
 		status: event.status === "tentative" ? "tentative" : "confirmed",
 		pendingAuth,
 		paymentMethod,
+		appointmentFormat,
 		stripeSessionId,
 		stripePaymentIntentId,
 		icsSequence: Number.parseInt(privateProps.icsSequence ?? "0", 10) || 0,
@@ -644,17 +656,31 @@ function buildEventDescription(input: {
 	type: string;
 	bookingRef: string;
 	notes?: string;
+	appointmentFormat?: "in-person" | "virtual";
 }): string {
 	const notes = sanitizePatientVisibleNotes(input.notes);
 	const manageUrl = `https://personalisedcancercare.com/manage-booking`;
+	const format =
+		input.appointmentFormat === "virtual"
+			? "Virtual"
+			: input.appointmentFormat === "in-person"
+				? "In person"
+				: null;
+	const location =
+		input.appointmentFormat === "virtual"
+			? "Virtual consultation (no clinic attendance)"
+			: input.appointmentFormat === "in-person"
+				? "HCA UK at University College Hospital — 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
+				: null;
 	return [
 		`Booking ref: ${sanitizeCalendarLine(input.bookingRef)}`,
 		`Patient: ${sanitizeCalendarLine(input.name)}`,
 		`Email: ${sanitizeCalendarLine(input.email)}`,
 		`Phone: ${sanitizeCalendarLine(input.phone)}`,
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
+		format ? `Format: ${format}` : null,
+		location ? `Location: ${sanitizeCalendarLine(location)}` : null,
 		notes ? `Notes: ${sanitizeCalendarLine(notes)}` : null,
-		// Patients change bookings via Manage booking (no Google guest invite / Propose a new time).
 		`To change or cancel, use Manage booking: ${manageUrl} (booking ref ${sanitizeCalendarLine(input.bookingRef)}).`,
 	]
 		.filter(Boolean)
@@ -717,6 +743,12 @@ export async function createBookingEvent(
 		paymentMethod,
 		icsSequence: "0",
 	};
+	if (
+		input.appointmentFormat === "virtual" ||
+		input.appointmentFormat === "in-person"
+	) {
+		privateProps.appointmentFormat = input.appointmentFormat;
+	}
 	if (input.stripeSessionId?.trim()) {
 		privateProps.stripeSessionId = input.stripeSessionId.trim();
 	}
@@ -744,7 +776,14 @@ export async function createBookingEvent(
 					type: input.type,
 					bookingRef,
 					notes: input.notes,
+					appointmentFormat: input.appointmentFormat,
 				}),
+				location:
+					input.appointmentFormat === "virtual"
+						? "Virtual consultation"
+						: input.appointmentFormat === "in-person"
+							? "HCA UK at University College Hospital, 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
+							: undefined,
 				status: input.status === "tentative" ? "tentative" : "confirmed",
 				...(paymentMethod === "insurance" && input.status === "tentative"
 					? { colorId: CALENDAR_COLOR_PENDING }
@@ -1012,6 +1051,12 @@ export async function rescheduleBookingEvent(
 		paymentMethod,
 		icsSequence: String(nextSequence),
 	};
+	if (
+		managed.appointmentFormat === "virtual" ||
+		managed.appointmentFormat === "in-person"
+	) {
+		privateProps.appointmentFormat = managed.appointmentFormat;
+	}
 	if (managed.stripeSessionId) {
 		privateProps.stripeSessionId = managed.stripeSessionId;
 	}
@@ -1026,13 +1071,17 @@ export async function rescheduleBookingEvent(
 		phone: managed.phone || "Not provided",
 		type: managed.type,
 		bookingRef: managed.bookingRef,
+		appointmentFormat:
+			managed.appointmentFormat === "unknown"
+				? undefined
+				: managed.appointmentFormat,
 		notes: sanitizePatientVisibleNotes(
 			parseDescriptionField(existing.description, "Notes") ||
 				existing.description
 					?.split(/\n+/)
 					.filter(
 						(line) =>
-							!/^(Booking ref|Patient|Email|Phone|Consultation type|Notes):/i.test(
+							!/^(Booking ref|Patient|Email|Phone|Consultation type|Format|Location|Notes):/i.test(
 								line.trim(),
 							) &&
 							!/^Stripe (session|payment):/i.test(line.trim()) &&
@@ -1061,6 +1110,12 @@ export async function rescheduleBookingEvent(
 					timeZone: config.timeZone,
 				},
 				description: cleanedDescription,
+				location:
+					managed.appointmentFormat === "virtual"
+						? "Virtual consultation"
+						: managed.appointmentFormat === "in-person"
+							? "HCA UK at University College Hospital, 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
+							: undefined,
 				extendedProperties: { private: privateProps },
 				// Clear any legacy Google guest invites.
 				attendees: [],

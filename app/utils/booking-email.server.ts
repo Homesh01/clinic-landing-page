@@ -1,6 +1,12 @@
 import type { BookingConfig } from "~/utils/google-calendar.server";
 import { getAccessToken } from "~/utils/google-calendar.server";
 import { zonedDateTimeToUtc } from "~/utils/booking-refund";
+import {
+	appointmentFormatLabel,
+	IN_PERSON_CLINIC,
+	inPersonLocationSingleLine,
+	type AppointmentFormat,
+} from "~/utils/clinic-location";
 import { site } from "~/data/content";
 
 export type BookingEmailInput = {
@@ -12,6 +18,7 @@ export type BookingEmailInput = {
 	type: string;
 	notes?: string;
 	paymentMethod?: "self-pay" | "insurance";
+	appointmentFormat?: AppointmentFormat;
 	insurer?: string;
 	authorisationCode?: string;
 	bookingRef?: string;
@@ -25,10 +32,10 @@ const DEFAULT_FROM_EMAIL = "bookings@personalisedcancercare.com";
 const DEFAULT_FROM_NAME = "Personalised Cancer Care Bookings";
 
 const CLINIC_LOCATION = {
-	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
+	name: IN_PERSON_CLINIC.name,
 	url: "https://www.hcahealthcare.co.uk/facilities/hca-uk-at-university-college-hospital",
-	address: "5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG",
-	mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
+	address: IN_PERSON_CLINIC.addressLines.join(", "),
+	mapsUrl: IN_PERSON_CLINIC.mapsUrl,
 } as const;
 
 const COLORS = {
@@ -145,6 +152,7 @@ function buildGoogleCalendarUrl(input: {
 	type: string;
 	bookingRef?: string;
 	name: string;
+	appointmentFormat?: AppointmentFormat;
 }): string | null {
 	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
 	if (!window) return null;
@@ -152,6 +160,9 @@ function buildGoogleCalendarUrl(input: {
 	const details = [
 		input.bookingRef ? `Booking reference: ${input.bookingRef}` : null,
 		`Patient: ${input.name}`,
+		input.appointmentFormat
+			? `Format: ${appointmentFormatLabel(input.appointmentFormat)}`
+			: null,
 		`To change or cancel: ${MANAGE_BOOKING_URL}`,
 	]
 		.filter(Boolean)
@@ -161,7 +172,10 @@ function buildGoogleCalendarUrl(input: {
 		text: title,
 		dates: `${formatIcsUtc(window.start)}/${formatIcsUtc(window.end)}`,
 		details,
-		location: `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`,
+		location:
+			input.appointmentFormat === "virtual"
+				? "Virtual consultation"
+				: inPersonLocationSingleLine(),
 	});
 	return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
@@ -176,20 +190,30 @@ function buildConsultationIcs(input: {
 	bookingRef: string;
 	fromEmail: string;
 	sequence?: number;
-	method?: "PUBLISH" | "CANCEL";
+	method?: "PUBLISH" | "REQUEST" | "CANCEL";
+	appointmentFormat?: AppointmentFormat;
 }): string | null {
 	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
 	if (!window) return null;
-	const method = input.method ?? "PUBLISH";
+	const method = input.method ?? "REQUEST";
 	const sequence = input.sequence ?? 0;
 	const uid = `booking-${input.bookingRef.toLowerCase()}@${SITE_HOST}`;
 	const summary = `Consultation — ${input.type}`;
 	const description = [
 		`Booking reference: ${input.bookingRef}`,
 		`Patient: ${input.name}`,
+		input.appointmentFormat
+			? `Format: ${appointmentFormatLabel(input.appointmentFormat)}`
+			: null,
 		`To change or cancel: ${MANAGE_BOOKING_URL}`,
-	].join("\n");
+	]
+		.filter(Boolean)
+		.join("\n");
 	const status = method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
+	const location =
+		input.appointmentFormat === "virtual"
+			? "Virtual consultation"
+			: inPersonLocationSingleLine();
 
 	return [
 		"BEGIN:VCALENDAR",
@@ -205,7 +229,7 @@ function buildConsultationIcs(input: {
 		`DTEND:${formatIcsUtc(window.end)}`,
 		`SUMMARY:${icsEscape(summary)}`,
 		`DESCRIPTION:${icsEscape(description)}`,
-		`LOCATION:${icsEscape(`${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`)}`,
+		`LOCATION:${icsEscape(location)}`,
 		`ORGANIZER;CN=${icsEscape(CLINIC_BRAND)}:mailto:${input.fromEmail}`,
 		`ATTENDEE;CN=${icsEscape(input.name)};ROLE=REQ-PARTICIPANT:mailto:${input.email}`,
 		`STATUS:${status}`,
