@@ -337,6 +337,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				await sendPatientBookingConfirmation(config, {
 					...booking,
 					bookingRef: created.bookingRef,
+					meetLink: created.meetLink,
 				});
 			} catch (emailError) {
 				emailSent = false;

@@ -333,6 +333,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						booking.appointmentFormat === "unknown"
 							? undefined
 							: booking.appointmentFormat,
+					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
 				console.error("Reschedule confirmation email error:", emailError);

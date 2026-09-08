@@ -573,6 +573,7 @@ export async function fulfillPaidCheckoutSession(input: {
 				...booking,
 				paymentMethod: "self-pay",
 				bookingRef: created.bookingRef,
+				meetLink: created.meetLink,
 			});
 		} catch (emailError) {
 			emailSent = false;

@@ -282,6 +282,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						booking.appointmentFormat === "unknown"
 							? undefined
 							: booking.appointmentFormat,
+					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
 				console.error("Insurance confirm email error:", emailError);
@@ -343,6 +344,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						booking.appointmentFormat === "unknown"
 							? undefined
 							: booking.appointmentFormat,
+					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
 				console.error("Clinic reschedule email error:", emailError);

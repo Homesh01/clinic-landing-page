@@ -375,7 +375,9 @@ function buildPlainText(input: {
 					"Location: Virtual consultation",
 					...(input.meetLink
 						? [`Google Meet: ${input.meetLink}`]
-						: ["Google Meet link will follow with your confirmation."]),
+						: input.pending
+							? ["Google Meet link will follow with your confirmation."]
+							: []),
 				]
 			: input.appointmentFormat === "in-person"
 				? [`Location: ${CLINIC_LOCATION.name}`, CLINIC_LOCATION.address]
