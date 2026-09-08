@@ -277,6 +277,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					timeLabel: booking.timeLabel,
 					type: booking.type,
 					bookingRef: booking.bookingRef,
+					icsSequence: booking.icsSequence,
 				});
 			} catch (emailError) {
 				console.error("Insurance confirm email error:", emailError);
@@ -683,8 +684,8 @@ export default function ClinicPage() {
 							</p>
 							{!confirmed.alreadyConfirmed ? (
 								<p className="mt-3 text-ink-soft">
-									Calendar updated, patient invited, and confirmation email
-									sent.
+									Calendar updated and confirmation email sent (with calendar
+									file).
 								</p>
 							) : null}
 							<p className="mt-6">
@@ -706,8 +707,8 @@ export default function ClinicPage() {
 							</p>
 							{rescheduled.pendingAuth ? (
 								<p className="mt-3 text-ink-soft">
-									Still pending insurer authorisation — no patient calendar
-									invite until confirmed.
+									Still pending insurer authorisation — confirmation calendar
+									file is sent once authorisation is confirmed.
 								</p>
 							) : null}
 							<p className="mt-6">
@@ -844,8 +845,8 @@ export default function ClinicPage() {
 											</h3>
 											<p className="mt-3 text-ink-soft">
 												Marks the booking confirmed, updates calendar colour,
-												and sends the patient a confirmation email plus calendar
-												invite.
+												and sends the patient a confirmation email with a
+												calendar file.
 											</p>
 											<Form method="post" className="mt-6 space-y-4">
 												<input type="hidden" name="intent" value="confirm" />

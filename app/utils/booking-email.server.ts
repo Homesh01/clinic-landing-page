@@ -28,7 +28,7 @@ const CLINIC_LOCATION = {
 	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
 	url: "https://www.hcahealthcare.co.uk/facilities/hca-uk-at-university-college-hospital",
 	address: "5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG",
-	mapsUrl: "https://maps.google.com/?q=51.523115436389844,-0.1356995398324203",
+	mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
 } as const;
 
 const COLORS = {
@@ -960,7 +960,7 @@ export async function sendBookingCancelledEmail(
 		email: input.email,
 		bookingRef: input.bookingRef,
 		fromEmail,
-		sequence: input.icsSequence ?? 1,
+		sequence: (input.icsSequence ?? 0) + 1,
 		method: "CANCEL",
 	});
 
@@ -1002,6 +1002,39 @@ export async function sendBookingRescheduledEmail(
 	const statusLine = input.pendingAuth
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
+	const sequence = input.icsSequence ?? 1;
+	const googleCalendarUrl = input.pendingAuth
+		? null
+		: buildGoogleCalendarUrl({
+				dateIso: input.dateIso,
+				timeLabel: input.timeLabel,
+				timeZone: config.timeZone,
+				type: input.type,
+				bookingRef: input.bookingRef,
+				name: input.name,
+			});
+	const ics = input.pendingAuth
+		? null
+		: buildConsultationIcs({
+				dateIso: input.dateIso,
+				timeLabel: input.timeLabel,
+				timeZone: config.timeZone,
+				type: input.type,
+				name: input.name,
+				email: input.email,
+				bookingRef: input.bookingRef,
+				fromEmail,
+				sequence,
+			});
+	const calendarLines = ics
+		? [
+				"",
+				"To update your calendar, open the attached consultation.ics file (this replaces the previous time).",
+				...(googleCalendarUrl
+					? [`Or add the new time in Google Calendar: ${googleCalendarUrl}`]
+					: []),
+			]
+		: [];
 
 	const text = [
 		`Dear ${input.name},`,
@@ -1012,6 +1045,7 @@ export async function sendBookingRescheduledEmail(
 		`Date: ${when}`,
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
+		...calendarLines,
 		"",
 		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
 		"",
@@ -1052,8 +1086,13 @@ export async function sendBookingRescheduledEmail(
 				last: true,
 			}),
 		].join(""),
-		noteHtml: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		noteHtml: ics
+			? `Open the attached <strong>consultation.ics</strong> to update your calendar with the new time. To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
+			: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
+		secondaryCta: googleCalendarUrl
+			? { href: googleCalendarUrl, label: "Add to Google Calendar" }
+			: undefined,
 	});
 
 	await sendBookingMime(accessToken, {
@@ -1064,6 +1103,13 @@ export async function sendBookingRescheduledEmail(
 		subject,
 		text,
 		html,
+		...(ics
+			? {
+					ics,
+					icsMethod: "PUBLISH" as const,
+					icsFilename: "consultation.ics",
+				}
+			: {}),
 	});
 }
 
@@ -1077,6 +1123,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		timeLabel: string;
 		type: string;
 		bookingRef: string;
+		icsSequence?: number;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
@@ -1085,6 +1132,26 @@ export async function sendInsuranceBookingConfirmedEmail(
 	const subject = `${CLINIC_BRAND}: appointment confirmed (${input.bookingRef})`;
 	const lead =
 		"Your insurer authorisation has been verified. Your consultation is now confirmed.";
+	const sequence = input.icsSequence ?? 1;
+	const googleCalendarUrl = buildGoogleCalendarUrl({
+		dateIso: input.dateIso,
+		timeLabel: input.timeLabel,
+		timeZone: config.timeZone,
+		type: input.type,
+		bookingRef: input.bookingRef,
+		name: input.name,
+	});
+	const ics = buildConsultationIcs({
+		dateIso: input.dateIso,
+		timeLabel: input.timeLabel,
+		timeZone: config.timeZone,
+		type: input.type,
+		name: input.name,
+		email: input.email,
+		bookingRef: input.bookingRef,
+		fromEmail,
+		sequence,
+	});
 
 	const text = [
 		`Dear ${input.name},`,
@@ -1096,6 +1163,13 @@ export async function sendInsuranceBookingConfirmedEmail(
 		`Time: ${input.timeLabel} (UK time)`,
 		`Consultation: ${input.type}`,
 		"",
+		...(googleCalendarUrl
+			? [
+					`Add to Google Calendar: ${googleCalendarUrl}`,
+					"Apple Calendar / Outlook: open the attached consultation.ics file.",
+					"",
+				]
+			: []),
 		`To change or cancel, visit ${MANAGE_BOOKING_URL}.`,
 		"",
 		"Kind regards,",
@@ -1135,8 +1209,11 @@ export async function sendInsuranceBookingConfirmedEmail(
 				last: true,
 			}),
 		].join(""),
-		noteHtml: `To change or cancel, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		noteHtml: `A calendar file is attached. To change or cancel, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
+		secondaryCta: googleCalendarUrl
+			? { href: googleCalendarUrl, label: "Add to Google Calendar" }
+			: undefined,
 	});
 
 	await sendBookingMime(accessToken, {
@@ -1147,6 +1224,13 @@ export async function sendInsuranceBookingConfirmedEmail(
 		subject,
 		text,
 		html,
+		...(ics
+			? {
+					ics,
+					icsMethod: "PUBLISH" as const,
+					icsFilename: "consultation.ics",
+				}
+			: {}),
 	});
 }
 
