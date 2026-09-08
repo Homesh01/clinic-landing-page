@@ -1,5 +1,6 @@
 import type { BookingConfig } from "~/utils/google-calendar.server";
 import { getAccessToken } from "~/utils/google-calendar.server";
+import { zonedDateTimeToUtc } from "~/utils/booking-refund";
 import { site } from "~/data/content";
 
 export type BookingEmailInput = {
@@ -27,7 +28,7 @@ const CLINIC_LOCATION = {
 	name: "HCA UK at University College Hospital, part of HCA Healthcare UK",
 	url: "https://www.hcahealthcare.co.uk/facilities/hca-uk-at-university-college-hospital",
 	address: "5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG",
-	mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
+	mapsUrl: "https://maps.google.com/?q=51.523115436389844,-0.1356995398324203",
 } as const;
 
 const COLORS = {
@@ -104,6 +105,115 @@ function resolveBookingSender(config: BookingConfig): {
 		fromEmail: config.fromEmail?.trim() || DEFAULT_FROM_EMAIL,
 		fromName: config.fromName?.trim() || DEFAULT_FROM_NAME,
 	};
+}
+
+const SLOT_MINUTES = 60;
+
+function icsEscape(value: string): string {
+	return value
+		.replace(/\\/g, "\\\\")
+		.replace(/;/g, "\\;")
+		.replace(/,/g, "\\,")
+		.replace(/\r?\n/g, "\\n");
+}
+
+function formatIcsUtc(date: Date): string {
+	return date
+		.toISOString()
+		.replace(/[-:]/g, "")
+		.replace(/\.\d{3}Z$/, "Z");
+}
+
+function appointmentWindow(
+	dateIso: string,
+	timeLabel: string,
+	timeZone: string,
+): { start: Date; end: Date } | null {
+	const [hourText, minuteText] = timeLabel.split(":");
+	const hour = Number(hourText);
+	const minute = Number(minuteText);
+	if (Number.isNaN(hour) || Number.isNaN(minute)) return null;
+	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
+	const end = new Date(start.getTime() + SLOT_MINUTES * 60 * 1000);
+	return { start, end };
+}
+
+function buildGoogleCalendarUrl(input: {
+	dateIso: string;
+	timeLabel: string;
+	timeZone: string;
+	type: string;
+	bookingRef?: string;
+	name: string;
+}): string | null {
+	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
+	if (!window) return null;
+	const title = `Consultation — ${input.type}`;
+	const details = [
+		input.bookingRef ? `Booking reference: ${input.bookingRef}` : null,
+		`Patient: ${input.name}`,
+		`To change or cancel: ${MANAGE_BOOKING_URL}`,
+	]
+		.filter(Boolean)
+		.join("\n");
+	const params = new URLSearchParams({
+		action: "TEMPLATE",
+		text: title,
+		dates: `${formatIcsUtc(window.start)}/${formatIcsUtc(window.end)}`,
+		details,
+		location: `${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`,
+	});
+	return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function buildConsultationIcs(input: {
+	dateIso: string;
+	timeLabel: string;
+	timeZone: string;
+	type: string;
+	name: string;
+	email: string;
+	bookingRef: string;
+	fromEmail: string;
+	sequence?: number;
+	method?: "PUBLISH" | "CANCEL";
+}): string | null {
+	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
+	if (!window) return null;
+	const method = input.method ?? "PUBLISH";
+	const sequence = input.sequence ?? 0;
+	const uid = `booking-${input.bookingRef.toLowerCase()}@${SITE_HOST}`;
+	const summary = `Consultation — ${input.type}`;
+	const description = [
+		`Booking reference: ${input.bookingRef}`,
+		`Patient: ${input.name}`,
+		`To change or cancel: ${MANAGE_BOOKING_URL}`,
+	].join("\n");
+	const status = method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
+
+	return [
+		"BEGIN:VCALENDAR",
+		"VERSION:2.0",
+		"PRODID:-//Personalised Cancer Care//Bookings//EN",
+		"CALSCALE:GREGORIAN",
+		`METHOD:${method}`,
+		"BEGIN:VEVENT",
+		`UID:${uid}`,
+		`SEQUENCE:${sequence}`,
+		`DTSTAMP:${formatIcsUtc(new Date())}`,
+		`DTSTART:${formatIcsUtc(window.start)}`,
+		`DTEND:${formatIcsUtc(window.end)}`,
+		`SUMMARY:${icsEscape(summary)}`,
+		`DESCRIPTION:${icsEscape(description)}`,
+		`LOCATION:${icsEscape(`${CLINIC_LOCATION.name}, ${CLINIC_LOCATION.address}`)}`,
+		`ORGANIZER;CN=${icsEscape(CLINIC_BRAND)}:mailto:${input.fromEmail}`,
+		`ATTENDEE;CN=${icsEscape(input.name)};ROLE=REQ-PARTICIPANT:mailto:${input.email}`,
+		`STATUS:${status}`,
+		"TRANSP:OPAQUE",
+		"END:VEVENT",
+		"END:VCALENDAR",
+		"",
+	].join("\r\n");
 }
 
 /** Shared branded shell for confirmation / change / cancellation emails. */
@@ -256,6 +366,7 @@ function buildPlainText(input: {
 	paymentLine: string;
 	pending: boolean;
 	bookingRef?: string;
+	googleCalendarUrl?: string | null;
 }): string {
 	const refLines = input.bookingRef
 		? [`Booking reference: ${input.bookingRef}`, ""]
@@ -274,6 +385,14 @@ function buildPlainText(input: {
 				"To change or cancel your appointment, simply reply to this email.",
 				"",
 			];
+	const calendarLines =
+		!input.pending && input.googleCalendarUrl
+			? [
+					`Add to Google Calendar: ${input.googleCalendarUrl}`,
+					"Apple Calendar / Outlook: open the attached consultation.ics file.",
+					"",
+				]
+			: [];
 
 	if (input.pending) {
 		return [
@@ -314,11 +433,12 @@ function buildPlainText(input: {
 		input.paymentLine,
 		`Location: ${CLINIC_LOCATION.name}`,
 		CLINIC_LOCATION.address,
-		`Maps: ${CLINIC_LOCATION.mapsUrl}`,
 		"",
+		...calendarLines,
 		...manageLines,
 		`Website: ${SITE_URL}`,
-		`Book again: ${SITE_URL}/book`,
+		"",
+		"If you have questions, reply to this email.",
 		"",
 		"Kind regards,",
 		CLINIC_BRAND,
@@ -335,6 +455,7 @@ function buildHtml(input: {
 	paymentValue: string;
 	pending: boolean;
 	bookingRef?: string;
+	googleCalendarUrl?: string | null;
 }): string {
 	const name = escapeHtml(input.name);
 	const when = escapeHtml(input.when);
@@ -368,7 +489,11 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.${
+					input.googleCalendarUrl
+						? ` A calendar file is also attached — or use <strong>Add to Google Calendar</strong> below.`
+						: ""
+				}`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -481,9 +606,15 @@ function buildHtml(input: {
 										</a>
 									</td>
 									${
-										pending
-											? ""
-											: `<td style="padding-bottom:8px;">
+										!pending && input.googleCalendarUrl
+											? `<td style="padding-bottom:8px;">
+										<a href="${escapeHtml(input.googleCalendarUrl)}" style="display:inline-block;padding:12px 24px;border:1px solid ${COLORS.borderSoft};background:${COLORS.white};color:${COLORS.ink};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">
+											Add to Google Calendar
+										</a>
+									</td>`
+											: pending
+												? ""
+												: `<td style="padding-bottom:8px;">
 										<a href="${SITE_URL}/book" style="display:inline-block;padding:12px 24px;border:1px solid ${COLORS.borderSoft};background:${COLORS.white};color:${COLORS.ink};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;border-radius:3px;">
 											Book again
 										</a>
@@ -635,6 +766,31 @@ export async function sendPatientBookingConfirmation(
 		? `Payment: Private medical insurance${input.insurer ? ` (${input.insurer})` : ""}. Pending authorisation check.`
 		: "Payment: Self-pay (received).";
 
+	const googleCalendarUrl = isInsurance
+		? null
+		: buildGoogleCalendarUrl({
+				dateIso: input.dateIso,
+				timeLabel: input.timeLabel,
+				timeZone: config.timeZone,
+				type: input.type,
+				bookingRef: input.bookingRef,
+				name: input.name,
+			});
+	const ics =
+		!isInsurance && input.bookingRef
+			? buildConsultationIcs({
+					dateIso: input.dateIso,
+					timeLabel: input.timeLabel,
+					timeZone: config.timeZone,
+					type: input.type,
+					name: input.name,
+					email: input.email,
+					bookingRef: input.bookingRef,
+					fromEmail,
+					sequence: 0,
+				})
+			: null;
+
 	const subject = isInsurance
 		? `${CLINIC_BRAND}: insurance booking pending authorisation`
 		: `${CLINIC_BRAND}: consultation confirmed`;
@@ -646,6 +802,7 @@ export async function sendPatientBookingConfirmation(
 		paymentLine,
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
+		googleCalendarUrl,
 	});
 	const html = buildHtml({
 		name: input.name,
@@ -656,6 +813,7 @@ export async function sendPatientBookingConfirmation(
 		paymentValue,
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
+		googleCalendarUrl,
 	});
 
 	await sendBookingMime(accessToken, {
@@ -666,6 +824,13 @@ export async function sendPatientBookingConfirmation(
 		subject,
 		text,
 		html,
+		...(ics
+			? {
+					ics,
+					icsMethod: "PUBLISH" as const,
+					icsFilename: "consultation.ics",
+				}
+			: {}),
 	});
 }
 
@@ -786,6 +951,19 @@ export async function sendBookingCancelledEmail(
 		primaryCta: { href: `${SITE_URL}/book`, label: "Book again" },
 	});
 
+	const ics = buildConsultationIcs({
+		dateIso: input.dateIso,
+		timeLabel: input.timeLabel,
+		timeZone: config.timeZone,
+		type: input.type,
+		name: input.name,
+		email: input.email,
+		bookingRef: input.bookingRef,
+		fromEmail,
+		sequence: input.icsSequence ?? 1,
+		method: "CANCEL",
+	});
+
 	await sendBookingMime(accessToken, {
 		to: input.email,
 		from: formatFromHeader(fromEmail, fromName),
@@ -794,6 +972,13 @@ export async function sendBookingCancelledEmail(
 		subject,
 		text,
 		html,
+		...(ics
+			? {
+					ics,
+					icsMethod: "CANCEL" as const,
+					icsFilename: "consultation-cancelled.ics",
+				}
+			: {}),
 	});
 }
 

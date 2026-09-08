@@ -654,7 +654,7 @@ function buildEventDescription(input: {
 		`Phone: ${sanitizeCalendarLine(input.phone)}`,
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
 		notes ? `Notes: ${sanitizeCalendarLine(notes)}` : null,
-		// Google Calendar always shows "Propose a new time" on invites; steer patients here instead.
+		// Patients change bookings via Manage booking (no Google guest invite / Propose a new time).
 		`To change or cancel, use Manage booking: ${manageUrl} (booking ref ${sanitizeCalendarLine(input.bookingRef)}).`,
 	]
 		.filter(Boolean)
@@ -711,7 +711,6 @@ export async function createBookingEvent(
 	const paymentMethod =
 		input.paymentMethod ??
 		(input.status === "tentative" ? "insurance" : "self-pay");
-	const invitePatient = paymentMethod === "self-pay";
 	const privateProps: Record<string, string> = {
 		bookingRef,
 		patientEmail: email,
@@ -725,8 +724,10 @@ export async function createBookingEvent(
 		privateProps.stripePaymentIntentId = input.stripePaymentIntentId.trim();
 	}
 
+	// Clinic diary only — patients are notified via branded email + ICS (no Google
+	// guest invite, so Gmail does not show Propose a new time).
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=${invitePatient ? "all" : "none"}`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
 		{
 			method: "POST",
 			headers: {
@@ -745,7 +746,6 @@ export async function createBookingEvent(
 					notes: input.notes,
 				}),
 				status: input.status === "tentative" ? "tentative" : "confirmed",
-				// Pending insurance stands out in the clinic diary; no patient invite yet.
 				...(paymentMethod === "insurance" && input.status === "tentative"
 					? { colorId: CALENDAR_COLOR_PENDING }
 					: paymentMethod === "self-pay"
@@ -759,21 +759,6 @@ export async function createBookingEvent(
 					dateTime: end.toISOString(),
 					timeZone: config.timeZone,
 				},
-				// Self-pay only: invite the patient. Insurance stays clinic-only until auth is confirmed.
-				...(invitePatient
-					? {
-							attendees: [
-								{
-									email,
-									displayName: input.name,
-									responseStatus: "needsAction",
-								},
-							],
-							guestsCanInviteOthers: false,
-							guestsCanModify: false,
-							guestsCanSeeOtherGuests: false,
-						}
-					: {}),
 				extendedProperties: {
 					private: privateProps,
 				},
@@ -848,16 +833,14 @@ async function deleteSiblingBookingEvents(
 	accessToken: string,
 	bookingRef: string,
 	keepEventId: string,
-	options?: { notifyAttendees?: boolean },
 ): Promise<void> {
-	const notify = options?.notifyAttendees !== false;
 	const items = await listEventsByBookingRef(config, accessToken, bookingRef);
 	for (const item of items) {
 		if (!item.id || item.id === keepEventId || item.status === "cancelled") {
 			continue;
 		}
 		const response = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(item.id)}?sendUpdates=${notify ? "all" : "none"}`,
+			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(item.id)}?sendUpdates=none`,
 			{
 				method: "DELETE",
 				headers: { Authorization: `Bearer ${accessToken}` },
@@ -944,7 +927,7 @@ export async function cancelBookingEvent(
 	}
 
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
 		{
 			method: "DELETE",
 			headers: { Authorization: `Bearer ${accessToken}` },
@@ -1021,7 +1004,6 @@ export async function rescheduleBookingEvent(
 				? "insurance"
 				: "self-pay"
 			: managed.paymentMethod;
-	const invitePatient = paymentMethod === "self-pay";
 	const nextSequence = managed.icsSequence + 1;
 	const privateProps: Record<string, string> = {
 		...(existing.extendedProperties?.private ?? {}),
@@ -1037,8 +1019,7 @@ export async function rescheduleBookingEvent(
 		privateProps.stripePaymentIntentId = managed.stripePaymentIntentId;
 	}
 
-	// Move the same event in place so clinic + patient calendars update one entry
-	// (create+delete previously left both times on Google Calendar).
+	// Move the same clinic event in place (patient notified via branded email + ICS).
 	const cleanedDescription = buildEventDescription({
 		name: managed.name,
 		email: managed.email,
@@ -1055,14 +1036,15 @@ export async function rescheduleBookingEvent(
 								line.trim(),
 							) &&
 							!/^Stripe (session|payment):/i.test(line.trim()) &&
-							!/^Booked via clinic website\.?$/i.test(line.trim()),
+							!/^Booked via clinic website\.?$/i.test(line.trim()) &&
+							!/^To change or cancel,/i.test(line.trim()),
 					)
 					.join("\n"),
 		),
 	});
 
 	const patchResponse = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=${invitePatient ? "all" : "none"}`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
 		{
 			method: "PATCH",
 			headers: {
@@ -1080,17 +1062,8 @@ export async function rescheduleBookingEvent(
 				},
 				description: cleanedDescription,
 				extendedProperties: { private: privateProps },
-				...(invitePatient
-					? {
-							attendees: [
-								{
-									email: managed.email,
-									displayName: managed.name,
-									responseStatus: "needsAction",
-								},
-							],
-						}
-					: {}),
+				// Clear any legacy Google guest invites.
+				attendees: [],
 			}),
 		},
 	);
@@ -1104,7 +1077,6 @@ export async function rescheduleBookingEvent(
 		accessToken,
 		managed.bookingRef,
 		input.eventId,
-		{ notifyAttendees: invitePatient },
 	);
 
 	const updated = managedBookingFromEvent(patched, config.timeZone);
@@ -1119,7 +1091,7 @@ export async function rescheduleBookingEvent(
 
 /**
  * Staff action: mark a pending insurance booking as authorisation-confirmed.
- * Updates the clinic calendar colour/title/status and invites the patient.
+ * Updates the clinic calendar colour/title/status (patient email is sent separately).
  */
 export async function confirmInsuranceBookingEvent(
 	config: BookingConfig,
@@ -1169,7 +1141,7 @@ export async function confirmInsuranceBookingEvent(
 		);
 
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=all`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
 		{
 			method: "PATCH",
 			headers: {
@@ -1181,16 +1153,7 @@ export async function confirmInsuranceBookingEvent(
 				description,
 				status: "confirmed",
 				colorId: CALENDAR_COLOR_CONFIRMED,
-				attendees: [
-					{
-						email: managed.email,
-						displayName: managed.name,
-						responseStatus: "needsAction",
-					},
-				],
-				guestsCanInviteOthers: false,
-				guestsCanModify: false,
-				guestsCanSeeOtherGuests: false,
+				attendees: [],
 				extendedProperties: { private: privateProps },
 			}),
 		},
