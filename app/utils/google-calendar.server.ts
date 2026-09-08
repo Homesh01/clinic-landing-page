@@ -646,6 +646,7 @@ function buildEventDescription(input: {
 	notes?: string;
 }): string {
 	const notes = sanitizePatientVisibleNotes(input.notes);
+	const manageUrl = `https://personalisedcancercare.com/manage-booking`;
 	return [
 		`Booking ref: ${sanitizeCalendarLine(input.bookingRef)}`,
 		`Patient: ${sanitizeCalendarLine(input.name)}`,
@@ -653,6 +654,8 @@ function buildEventDescription(input: {
 		`Phone: ${sanitizeCalendarLine(input.phone)}`,
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
 		notes ? `Notes: ${sanitizeCalendarLine(notes)}` : null,
+		// Google Calendar always shows "Propose a new time" on invites; steer patients here instead.
+		`To change or cancel, use Manage booking: ${manageUrl} (booking ref ${sanitizeCalendarLine(input.bookingRef)}).`,
 	]
 		.filter(Boolean)
 		.join("\n");
