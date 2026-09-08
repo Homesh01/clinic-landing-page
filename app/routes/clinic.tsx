@@ -278,6 +278,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					type: booking.type,
 					bookingRef: booking.bookingRef,
 					icsSequence: booking.icsSequence,
+					appointmentFormat:
+						booking.appointmentFormat === "unknown"
+							? undefined
+							: booking.appointmentFormat,
 				});
 			} catch (emailError) {
 				console.error("Insurance confirm email error:", emailError);
@@ -335,6 +339,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					bookingRef: booking.bookingRef,
 					pendingAuth: booking.pendingAuth,
 					icsSequence: booking.icsSequence,
+					appointmentFormat:
+						booking.appointmentFormat === "unknown"
+							? undefined
+							: booking.appointmentFormat,
 				});
 			} catch (emailError) {
 				console.error("Clinic reschedule email error:", emailError);

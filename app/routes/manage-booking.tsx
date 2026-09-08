@@ -329,6 +329,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					bookingRef: booking.bookingRef,
 					pendingAuth: booking.pendingAuth,
 					icsSequence: booking.icsSequence,
+					appointmentFormat:
+						booking.appointmentFormat === "unknown"
+							? undefined
+							: booking.appointmentFormat,
 				});
 			} catch (emailError) {
 				console.error("Reschedule confirmation email error:", emailError);

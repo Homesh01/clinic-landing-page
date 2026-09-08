@@ -116,6 +116,7 @@ function bookingToMetadata(
 		email: input.email.slice(0, 500),
 		phone: input.phone.slice(0, 500),
 		type: input.type.slice(0, 500),
+		appointmentFormat: input.appointmentFormat,
 		paymentMethod: "self-pay",
 		notes: (input.notes ?? "").slice(0, 500),
 		bookingRef: input.bookingRef.slice(0, 32),
@@ -131,6 +132,14 @@ function metadataToBooking(
 		return null;
 	}
 
+	const appointmentFormat =
+		metadata.appointmentFormat === "virtual" ||
+		metadata.appointmentFormat === "in-person"
+			? metadata.appointmentFormat
+			: metadata.type === "Virtual Consultation"
+				? "virtual"
+				: "in-person";
+
 	return {
 		dateIso: metadata.dateIso,
 		timeLabel: metadata.timeLabel,
@@ -138,6 +147,7 @@ function metadataToBooking(
 		email: metadata.email,
 		phone: metadata.phone,
 		type: metadata.type as ValidatedBookingInput["type"],
+		appointmentFormat,
 		paymentMethod: "self-pay",
 		notes: metadata.notes?.trim() ? metadata.notes.trim() : undefined,
 		bookingRef: metadata.bookingRef?.trim() || undefined,

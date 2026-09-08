@@ -31,10 +31,12 @@ import {
 } from "~/utils/google-calendar.server";
 import {
 	CONSULTATION_TYPES,
+	type AppointmentFormat,
 	type BookingFieldErrors,
 	type PaymentMethod,
 	validateBookingForm,
 } from "~/utils/booking-validation";
+import { IN_PERSON_CLINIC } from "~/utils/clinic-location";
 import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import { generateBookingRef } from "~/utils/booking-ref";
 import { requireSiteAccess } from "~/utils/site-auth.server";
@@ -248,6 +250,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		? formatInternationalPhone(country.dial, phoneNational)
 		: "";
 	const type = String(formData.get("type") ?? "");
+	const appointmentFormat = String(formData.get("appointmentFormat") ?? "");
 	const paymentMethod = String(formData.get("paymentMethod") ?? "");
 	const insurer = String(formData.get("insurer") ?? "");
 	const membershipNumber = String(formData.get("membershipNumber") ?? "");
@@ -279,6 +282,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		email,
 		phone,
 		type,
+		appointmentFormat,
 		paymentMethod,
 		insurer,
 		membershipNumber,
@@ -434,6 +438,8 @@ export default function BookPage() {
 	const [consultationType, setConsultationType] = useState<string>(
 		CONSULTATION_TYPES[0],
 	);
+	const [appointmentFormat, setAppointmentFormat] =
+		useState<AppointmentFormat | null>(null);
 	const [phoneCountryIso, setPhoneCountryIso] = useState(
 		DEFAULT_PHONE_COUNTRY_ISO,
 	);
@@ -478,6 +484,16 @@ export default function BookPage() {
 			: fees.standard;
 	const isInsurance = paymentMethod === "insurance";
 	const isSelfPay = paymentMethod === "self-pay";
+	const formatLockedVirtual = consultationType === "Virtual Consultation";
+	const effectiveFormat: AppointmentFormat | null = formatLockedVirtual
+		? "virtual"
+		: appointmentFormat;
+
+	useEffect(() => {
+		if (formatLockedVirtual) {
+			setAppointmentFormat("virtual");
+		}
+	}, [formatLockedVirtual]);
 
 	function fieldClass(hasError: boolean) {
 		return hasError
@@ -934,6 +950,84 @@ export default function BookPage() {
 												) : null}
 											</label>
 
+											<div>
+												<p className="mb-2 text-sm font-semibold text-ink">
+													Appointment format
+												</p>
+												<input
+													type="hidden"
+													name="appointmentFormat"
+													value={effectiveFormat ?? ""}
+												/>
+												<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+													{(
+														[
+															{
+																value: "in-person" as const,
+																label: "In person",
+																hint: `${IN_PERSON_CLINIC.addressLines[0]}, Huntley Street`,
+															},
+															{
+																value: "virtual" as const,
+																label: "Virtual",
+																hint: "Online video consultation",
+															},
+														] as const
+													).map((option) => {
+														const active = effectiveFormat === option.value;
+														const disabled =
+															formatLockedVirtual &&
+															option.value === "in-person";
+														return (
+															<button
+																key={option.value}
+																type="button"
+																disabled={disabled}
+																onClick={() =>
+																	setAppointmentFormat(option.value)
+																}
+																className={`rounded-sm border px-4 py-3 text-left transition ${
+																	active
+																		? "border-accent bg-accent-soft text-accent-deep"
+																		: disabled
+																			? "cursor-not-allowed border-line bg-mist/60 text-ink-muted"
+																			: "border-line bg-white text-ink hover:border-accent/40"
+																}`}
+															>
+																<span className="block text-sm font-semibold">
+																	{option.label}
+																</span>
+																<span
+																	className={`mt-1 block text-xs ${
+																		active
+																			? "text-accent-deep/80"
+																			: "text-ink-muted"
+																	}`}
+																>
+																	{option.hint}
+																</span>
+															</button>
+														);
+													})}
+												</div>
+												{formatLockedVirtual ? (
+													<p className="mt-1.5 text-sm text-ink-muted">
+														Virtual Consultation is held online.
+													</p>
+												) : effectiveFormat === "in-person" ? (
+													<p className="mt-1.5 text-sm text-ink-muted">
+														In-person appointments are at{" "}
+														{IN_PERSON_CLINIC.name} (
+														{IN_PERSON_CLINIC.addressLines.join(", ")}).
+													</p>
+												) : null}
+												{fieldErrors?.appointmentFormat ? (
+													<span className="mt-1.5 block text-sm text-red-700">
+														{fieldErrors.appointmentFormat}
+													</span>
+												) : null}
+											</div>
+
 											{isInsurance ? (
 												<div className="space-y-5">
 													<div className="grid gap-5 sm:grid-cols-2">
@@ -1078,6 +1172,7 @@ export default function BookPage() {
 													!selectedDay ||
 													!selectedSlot ||
 													!paymentMethod ||
+													!effectiveFormat ||
 													submitting
 												}
 											>
