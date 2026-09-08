@@ -162,9 +162,7 @@ function buildConsultationIcs(input: {
 }): string | null {
 	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
 	if (!window) return null;
-	// PUBLISH (not REQUEST): patients get a calendar file without Gmail’s invite
-	// RSVP UI (“Yes / No / Maybe” / “Propose a new time”).
-	const method = input.method ?? "PUBLISH";
+	const method = input.method ?? "REQUEST";
 	const sequence = input.sequence ?? 0;
 	const uid = `booking-${input.bookingRef.toLowerCase()}@${SITE_HOST}`;
 	const summary = `Consultation — ${input.type}`;
@@ -185,6 +183,12 @@ function buildConsultationIcs(input: {
 		(input.appointmentFormat === "virtual"
 			? "Virtual consultation (Google Meet)"
 			: inPersonLocationSingleLine());
+	// ATTENDEE is required for Google Calendar to treat REQUEST/CANCEL as an
+	// invitation update (same UID + higher SEQUENCE replaces the old time).
+	const attendee =
+		method === "PUBLISH"
+			? null
+			: `ATTENDEE;CN=${icsEscape(input.name)};ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:${input.email}`;
 
 	return [
 		"BEGIN:VCALENDAR",
@@ -203,6 +207,7 @@ function buildConsultationIcs(input: {
 		`LOCATION:${icsEscape(location)}`,
 		...(input.meetLink ? [`URL:${input.meetLink}`] : []),
 		`ORGANIZER;CN=${icsEscape(CLINIC_BRAND)}:mailto:${input.fromEmail}`,
+		...(attendee ? [attendee] : []),
 		`STATUS:${status}`,
 		"TRANSP:OPAQUE",
 		"END:VEVENT",
@@ -681,11 +686,25 @@ function buildMimeMessage(input: {
 	ics?: string;
 	icsMethod?: "PUBLISH" | "REQUEST" | "CANCEL";
 	icsFilename?: string;
+	icsAttachments?: {
+		content: string;
+		method: "PUBLISH" | "REQUEST" | "CANCEL";
+		filename: string;
+	}[];
 }): string {
 	const mixedBoundary = `pcc_mix_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 	const altBoundary = `pcc_alt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-	const icsMethod = input.icsMethod ?? "PUBLISH";
-	const icsFilename = input.icsFilename ?? "consultation.ics";
+	const attachments =
+		input.icsAttachments ??
+		(input.ics
+			? [
+					{
+						content: input.ics,
+						method: input.icsMethod ?? "REQUEST",
+						filename: input.icsFilename ?? "consultation.ics",
+					},
+				]
+			: []);
 
 	const alternativeParts = [
 		`--${altBoundary}`,
@@ -703,7 +722,7 @@ function buildMimeMessage(input: {
 		`--${altBoundary}--`,
 	];
 
-	if (!input.ics) {
+	if (attachments.length === 0) {
 		return [
 			...(input.from ? [`From: ${input.from}`] : []),
 			`To: ${input.to}`,
@@ -717,6 +736,18 @@ function buildMimeMessage(input: {
 			"",
 		].join("\r\n");
 	}
+
+	const icsParts = attachments.flatMap((attachment) => [
+		`--${mixedBoundary}`,
+		attachment.method === "PUBLISH"
+			? `Content-Type: application/ics; charset="UTF-8"; name="${attachment.filename}"`
+			: `Content-Type: text/calendar; charset="UTF-8"; method=${attachment.method}; name="${attachment.filename}"`,
+		"Content-Transfer-Encoding: base64",
+		`Content-Disposition: attachment; filename="${attachment.filename}"`,
+		"",
+		toBase64Wrapped(attachment.content),
+		"",
+	]);
 
 	return [
 		...(input.from ? [`From: ${input.from}`] : []),
@@ -732,15 +763,7 @@ function buildMimeMessage(input: {
 		"",
 		...alternativeParts,
 		"",
-		`--${mixedBoundary}`,
-		icsMethod === "CANCEL"
-			? `Content-Type: text/calendar; charset="UTF-8"; method=CANCEL; name="${icsFilename}"`
-			: `Content-Type: application/ics; charset="UTF-8"; name="${icsFilename}"`,
-		"Content-Transfer-Encoding: base64",
-		`Content-Disposition: attachment; filename="${icsFilename}"`,
-		"",
-		toBase64Wrapped(input.ics),
-		"",
+		...icsParts,
 		`--${mixedBoundary}--`,
 		"",
 	].join("\r\n");
@@ -805,7 +828,7 @@ export async function sendPatientBookingConfirmation(
 					bookingRef: input.bookingRef,
 					fromEmail,
 					sequence: 0,
-					method: "PUBLISH",
+					method: "REQUEST",
 					appointmentFormat: input.appointmentFormat,
 					meetLink: input.meetLink,
 				})
@@ -849,7 +872,7 @@ export async function sendPatientBookingConfirmation(
 		...(ics
 			? {
 					ics,
-					icsMethod: "PUBLISH" as const,
+					icsMethod: "REQUEST" as const,
 					icsFilename: "consultation.ics",
 				}
 			: {}),
@@ -869,6 +892,11 @@ async function sendBookingMime(
 		ics?: string;
 		icsMethod?: "PUBLISH" | "REQUEST" | "CANCEL";
 		icsFilename?: string;
+		icsAttachments?: {
+			content: string;
+			method: "PUBLISH" | "REQUEST" | "CANCEL";
+			filename: string;
+		}[];
 	},
 ): Promise<void> {
 	await gmailSend(accessToken, toBase64Url(buildMimeMessage(mime)));
@@ -1011,6 +1039,8 @@ export async function sendBookingRescheduledEmail(
 		email: string;
 		dateIso: string;
 		timeLabel: string;
+		previousDateIso: string;
+		previousTimeLabel: string;
 		type: string;
 		bookingRef: string;
 		pendingAuth?: boolean;
@@ -1026,29 +1056,43 @@ export async function sendBookingRescheduledEmail(
 	const statusLine = input.pendingAuth
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
-	const sequence = input.icsSequence ?? 1;
+	// Final SEQUENCE after reschedule (cancel = sequence-1, update = sequence).
+	const updateSequence = input.icsSequence ?? 2;
+	const cancelSequence = Math.max(1, updateSequence - 1);
 	const meetLink = input.meetLink?.trim() || undefined;
-	const ics = input.pendingAuth
+	const sharedIcs = {
+		timeZone: config.timeZone,
+		type: input.type,
+		name: input.name,
+		email: input.email,
+		bookingRef: input.bookingRef,
+		fromEmail,
+		appointmentFormat: input.appointmentFormat,
+		meetLink,
+	};
+	const cancelIcs = input.pendingAuth
 		? null
 		: buildConsultationIcs({
+				...sharedIcs,
+				dateIso: input.previousDateIso,
+				timeLabel: input.previousTimeLabel,
+				sequence: cancelSequence,
+				method: "CANCEL",
+			});
+	const updateIcs = input.pendingAuth
+		? null
+		: buildConsultationIcs({
+				...sharedIcs,
 				dateIso: input.dateIso,
 				timeLabel: input.timeLabel,
-				timeZone: config.timeZone,
-				type: input.type,
-				name: input.name,
-				email: input.email,
-				bookingRef: input.bookingRef,
-				fromEmail,
-				sequence,
-				method: "PUBLISH",
-				appointmentFormat: input.appointmentFormat,
-				meetLink,
+				sequence: updateSequence,
+				method: "REQUEST",
 			});
-	const calendarLines = ics
+	const calendarLines = updateIcs
 		? [
 				"",
-				"To update your calendar, open the attached consultation.ics file — it uses the same booking ID and should replace the previous time.",
-				"If you still see the old time (for example after using Add to Google Calendar before), delete that older entry.",
+				"This email updates your calendar invitation to the new time (same booking). Accept the update so the old time is replaced — do not keep both.",
+				"If an older duplicate remains from a previous calendar file, delete that older entry.",
 			]
 		: [];
 	const meetLines = meetLink ? [`Google Meet: ${meetLink}`] : [];
@@ -1133,11 +1177,32 @@ export async function sendBookingRescheduledEmail(
 					]
 				: []),
 		].join(""),
-		noteHtml: ics
-			? `Open the attached <strong>consultation.ics</strong> to update your calendar with the new time (same booking — replaces the previous event when supported). If an old Google Calendar entry remains from a previous “Add to calendar” click, delete that older one. To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
+		noteHtml: updateIcs
+			? `Accept the calendar update in this email so Google Calendar <strong>replaces</strong> the previous time (same booking — do not keep both). If an older duplicate remains, delete that older entry. To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
 			: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
 	});
+
+	const icsAttachments = [
+		...(cancelIcs
+			? [
+					{
+						content: cancelIcs,
+						method: "CANCEL" as const,
+						filename: "consultation-previous-cancelled.ics",
+					},
+				]
+			: []),
+		...(updateIcs
+			? [
+					{
+						content: updateIcs,
+						method: "REQUEST" as const,
+						filename: "consultation.ics",
+					},
+				]
+			: []),
+	];
 
 	await sendBookingMime(accessToken, {
 		to: input.email,
@@ -1147,13 +1212,7 @@ export async function sendBookingRescheduledEmail(
 		subject,
 		text,
 		html,
-		...(ics
-			? {
-					ics,
-					icsMethod: "PUBLISH" as const,
-					icsFilename: "consultation.ics",
-				}
-			: {}),
+		...(icsAttachments.length > 0 ? { icsAttachments } : {}),
 	});
 }
 
@@ -1190,7 +1249,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		bookingRef: input.bookingRef,
 		fromEmail,
 		sequence,
-		method: "PUBLISH",
+		method: "REQUEST",
 		appointmentFormat: input.appointmentFormat,
 		meetLink,
 	});
@@ -1209,7 +1268,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 			: []),
 		...(meetLink ? [`Google Meet: ${meetLink}`] : []),
 		"",
-		"Add to your calendar: open the attached consultation.ics file.",
+		"Add to your calendar: accept the calendar invitation in this email, or open the attached consultation.ics file.",
 		"",
 		`To change or cancel, visit ${MANAGE_BOOKING_URL}.`,
 		"",
@@ -1291,7 +1350,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		...(ics
 			? {
 					ics,
-					icsMethod: "PUBLISH" as const,
+					icsMethod: "REQUEST" as const,
 					icsFilename: "consultation.ics",
 				}
 			: {}),

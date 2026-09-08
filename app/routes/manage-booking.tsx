@@ -312,6 +312,26 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				);
 			}
 
+			const existing = await findBookingByEmailAndRef(
+				config,
+				email,
+				bookingRef,
+			);
+			if (!existing || existing.eventId !== eventId) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error: "No upcoming booking matched that reference.",
+						email,
+						bookingRef,
+					},
+					{ status: 404 },
+				);
+			}
+
+			const previousDateIso = existing.dateIso;
+			const previousTimeLabel = existing.timeLabel;
 			const booking = await rescheduleBookingEvent(config, {
 				eventId,
 				email,
@@ -325,6 +345,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					email: booking.email,
 					dateIso: booking.dateIso,
 					timeLabel: booking.timeLabel,
+					previousDateIso,
+					previousTimeLabel,
 					type: booking.type,
 					bookingRef: booking.bookingRef,
 					pendingAuth: booking.pendingAuth,

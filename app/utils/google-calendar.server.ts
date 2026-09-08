@@ -1192,7 +1192,7 @@ export async function rescheduleBookingEvent(
 				? "insurance"
 				: "self-pay"
 			: managed.paymentMethod;
-	const nextSequence = managed.icsSequence + 1;
+	const nextSequence = managed.icsSequence + 2;
 	const privateProps: Record<string, string> = {
 		...(existing.extendedProperties?.private ?? {}),
 		bookingRef: managed.bookingRef,

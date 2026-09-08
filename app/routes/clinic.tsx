@@ -323,6 +323,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				);
 			}
 
+			const previousDateIso = existing.dateIso;
+			const previousTimeLabel = existing.timeLabel;
 			const booking = await rescheduleBookingEvent(config, {
 				eventId,
 				email: existing.email,
@@ -336,6 +338,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					email: booking.email,
 					dateIso: booking.dateIso,
 					timeLabel: booking.timeLabel,
+					previousDateIso,
+					previousTimeLabel,
 					type: booking.type,
 					bookingRef: booking.bookingRef,
 					pendingAuth: booking.pendingAuth,
