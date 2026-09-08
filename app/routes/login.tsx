@@ -5,7 +5,6 @@ import type {
 } from "@remix-run/cloudflare";
 import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import { json, redirect } from "@remix-run/cloudflare";
-import { site } from "~/data/content";
 import {
 	createSiteAccessHeaders,
 	getSitePassword,
@@ -91,9 +90,9 @@ export default function LoginPage() {
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-mist to-white px-5 py-16">
 			<div className="w-full max-w-md">
-				<p className="font-display text-2xl text-ink">{site.name}</p>
+				<p className="font-display text-2xl text-ink">Personalised Cancer Care</p>
 				<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
-					{site.title}
+					Consultant oncology care
 				</p>
 				<p className="eyebrow mt-8">Private preview</p>
 				<p className="mt-4 text-ink-soft">
