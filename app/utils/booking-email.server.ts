@@ -162,7 +162,9 @@ function buildConsultationIcs(input: {
 }): string | null {
 	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
 	if (!window) return null;
-	const method = input.method ?? "REQUEST";
+	// PUBLISH (not REQUEST): patients get a calendar file without Gmail’s invite
+	// RSVP UI (“Yes / No / Maybe” / “Propose a new time”).
+	const method = input.method ?? "PUBLISH";
 	const sequence = input.sequence ?? 0;
 	const uid = `booking-${input.bookingRef.toLowerCase()}@${SITE_HOST}`;
 	const summary = `Consultation — ${input.type}`;
@@ -201,7 +203,6 @@ function buildConsultationIcs(input: {
 		`LOCATION:${icsEscape(location)}`,
 		...(input.meetLink ? [`URL:${input.meetLink}`] : []),
 		`ORGANIZER;CN=${icsEscape(CLINIC_BRAND)}:mailto:${input.fromEmail}`,
-		`ATTENDEE;CN=${icsEscape(input.name)};ROLE=REQ-PARTICIPANT:mailto:${input.email}`,
 		`STATUS:${status}`,
 		"TRANSP:OPAQUE",
 		"END:VEVENT",
@@ -732,7 +733,9 @@ function buildMimeMessage(input: {
 		...alternativeParts,
 		"",
 		`--${mixedBoundary}`,
-		`Content-Type: text/calendar; charset="UTF-8"; method=${icsMethod}; name="${icsFilename}"`,
+		icsMethod === "CANCEL"
+			? `Content-Type: text/calendar; charset="UTF-8"; method=CANCEL; name="${icsFilename}"`
+			: `Content-Type: application/ics; charset="UTF-8"; name="${icsFilename}"`,
 		"Content-Transfer-Encoding: base64",
 		`Content-Disposition: attachment; filename="${icsFilename}"`,
 		"",
@@ -802,7 +805,7 @@ export async function sendPatientBookingConfirmation(
 					bookingRef: input.bookingRef,
 					fromEmail,
 					sequence: 0,
-					method: "REQUEST",
+					method: "PUBLISH",
 					appointmentFormat: input.appointmentFormat,
 					meetLink: input.meetLink,
 				})
@@ -846,7 +849,7 @@ export async function sendPatientBookingConfirmation(
 		...(ics
 			? {
 					ics,
-					icsMethod: "REQUEST" as const,
+					icsMethod: "PUBLISH" as const,
 					icsFilename: "consultation.ics",
 				}
 			: {}),
@@ -1037,7 +1040,7 @@ export async function sendBookingRescheduledEmail(
 				bookingRef: input.bookingRef,
 				fromEmail,
 				sequence,
-				method: "REQUEST",
+				method: "PUBLISH",
 				appointmentFormat: input.appointmentFormat,
 				meetLink,
 			});
@@ -1147,7 +1150,7 @@ export async function sendBookingRescheduledEmail(
 		...(ics
 			? {
 					ics,
-					icsMethod: "REQUEST" as const,
+					icsMethod: "PUBLISH" as const,
 					icsFilename: "consultation.ics",
 				}
 			: {}),
@@ -1187,7 +1190,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		bookingRef: input.bookingRef,
 		fromEmail,
 		sequence,
-		method: "REQUEST",
+		method: "PUBLISH",
 		appointmentFormat: input.appointmentFormat,
 		meetLink,
 	});
@@ -1288,7 +1291,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		...(ics
 			? {
 					ics,
-					icsMethod: "REQUEST" as const,
+					icsMethod: "PUBLISH" as const,
 					icsFilename: "consultation.ics",
 				}
 			: {}),
