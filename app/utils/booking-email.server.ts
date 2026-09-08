@@ -19,6 +19,7 @@ export type BookingEmailInput = {
 	notes?: string;
 	paymentMethod?: "self-pay" | "insurance";
 	appointmentFormat?: AppointmentFormat;
+	meetLink?: string;
 	insurer?: string;
 	authorisationCode?: string;
 	bookingRef?: string;
@@ -157,6 +158,7 @@ function buildConsultationIcs(input: {
 	sequence?: number;
 	method?: "PUBLISH" | "REQUEST" | "CANCEL";
 	appointmentFormat?: AppointmentFormat;
+	meetLink?: string;
 }): string | null {
 	const window = appointmentWindow(input.dateIso, input.timeLabel, input.timeZone);
 	if (!window) return null;
@@ -170,15 +172,17 @@ function buildConsultationIcs(input: {
 		input.appointmentFormat
 			? `Format: ${appointmentFormatLabel(input.appointmentFormat)}`
 			: null,
+		input.meetLink ? `Google Meet: ${input.meetLink}` : null,
 		`To change or cancel: ${MANAGE_BOOKING_URL}`,
 	]
 		.filter(Boolean)
 		.join("\n");
 	const status = method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
 	const location =
-		input.appointmentFormat === "virtual"
-			? "Virtual consultation"
-			: inPersonLocationSingleLine();
+		input.meetLink ||
+		(input.appointmentFormat === "virtual"
+			? "Virtual consultation (Google Meet)"
+			: inPersonLocationSingleLine());
 
 	return [
 		"BEGIN:VCALENDAR",
@@ -195,6 +199,7 @@ function buildConsultationIcs(input: {
 		`SUMMARY:${icsEscape(summary)}`,
 		`DESCRIPTION:${icsEscape(description)}`,
 		`LOCATION:${icsEscape(location)}`,
+		...(input.meetLink ? [`URL:${input.meetLink}`] : []),
 		`ORGANIZER;CN=${icsEscape(CLINIC_BRAND)}:mailto:${input.fromEmail}`,
 		`ATTENDEE;CN=${icsEscape(input.name)};ROLE=REQ-PARTICIPANT:mailto:${input.email}`,
 		`STATUS:${status}`,
@@ -356,6 +361,7 @@ function buildPlainText(input: {
 	pending: boolean;
 	bookingRef?: string;
 	appointmentFormat?: AppointmentFormat;
+	meetLink?: string;
 }): string {
 	const refLines = input.bookingRef
 		? [`Booking reference: ${input.bookingRef}`, ""]
@@ -365,7 +371,12 @@ function buildPlainText(input: {
 		: null;
 	const locationLines =
 		input.appointmentFormat === "virtual"
-			? ["Location: Virtual consultation"]
+			? [
+					"Location: Virtual consultation",
+					...(input.meetLink
+						? [`Google Meet: ${input.meetLink}`]
+						: ["Google Meet link will follow with your confirmation."]),
+				]
 			: input.appointmentFormat === "in-person"
 				? [`Location: ${CLINIC_LOCATION.name}`, CLINIC_LOCATION.address]
 				: [`Location: ${CLINIC_LOCATION.name}`, CLINIC_LOCATION.address];
@@ -453,6 +464,7 @@ function buildHtml(input: {
 	pending: boolean;
 	bookingRef?: string;
 	appointmentFormat?: AppointmentFormat;
+	meetLink?: string;
 }): string {
 	const name = escapeHtml(input.name);
 	const when = escapeHtml(input.when);
@@ -470,9 +482,21 @@ function buildHtml(input: {
 	const formatLabel = input.appointmentFormat
 		? escapeHtml(appointmentFormatLabel(input.appointmentFormat))
 		: "";
+	const meetLink = input.meetLink?.trim() || "";
+	const meetHref = meetLink ? escapeHtml(meetLink) : "";
 
 	const locationSub = isVirtual
-		? ""
+		? meetLink
+			? `
+		<div style="margin-top:8px;">
+			<a href="${meetHref}" style="font-size:13.5px;font-weight:600;color:${COLORS.accentDeep};text-decoration:underline;">
+				Join Google Meet
+			</a>
+		</div>`
+			: `
+		<div style="font-size:14.5px;color:${COLORS.inkSoft};font-weight:400;margin-top:4px;line-height:1.5;">
+			Google Meet link will follow with your confirmation.
+		</div>`
 		: `
 		<div style="font-size:14.5px;color:${COLORS.inkSoft};font-weight:400;margin-top:4px;line-height:1.5;">
 			${locationAddress}
@@ -517,9 +541,11 @@ function buildHtml(input: {
 	const locationRow = detailRow({
 		icon: "&#128205;",
 		iconBg: COLORS.iconPin,
-		label: "Location",
+		label: isVirtual ? "Video link" : "Location",
 		valueHtml: isVirtual
-			? "Virtual consultation"
+			? meetLink
+				? `<a href="${meetHref}" style="color:${COLORS.ink};text-decoration:none;font-weight:700;">Google Meet</a>`
+				: "Virtual consultation"
 			: `<a href="${CLINIC_LOCATION.url}" style="color:${COLORS.ink};text-decoration:none;font-weight:700;">${locationName}</a>`,
 		subHtml: locationSub,
 		last: true,
@@ -776,6 +802,7 @@ export async function sendPatientBookingConfirmation(
 					sequence: 0,
 					method: "REQUEST",
 					appointmentFormat: input.appointmentFormat,
+					meetLink: input.meetLink,
 				})
 			: null;
 
@@ -791,6 +818,7 @@ export async function sendPatientBookingConfirmation(
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
 		appointmentFormat: input.appointmentFormat,
+		meetLink: input.meetLink,
 	});
 	const html = buildHtml({
 		name: input.name,
@@ -802,6 +830,7 @@ export async function sendPatientBookingConfirmation(
 		pending: isInsurance,
 		bookingRef: input.bookingRef,
 		appointmentFormat: input.appointmentFormat,
+		meetLink: input.meetLink,
 	});
 
 	await sendBookingMime(accessToken, {
@@ -982,6 +1011,7 @@ export async function sendBookingRescheduledEmail(
 		pendingAuth?: boolean;
 		icsSequence?: number;
 		appointmentFormat?: AppointmentFormat;
+		meetLink?: string;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
@@ -992,6 +1022,7 @@ export async function sendBookingRescheduledEmail(
 		? "Your requested time has been updated. The appointment remains pending until we verify your insurer authorisation code."
 		: "Your consultation time has been updated. The details are below.";
 	const sequence = input.icsSequence ?? 1;
+	const meetLink = input.meetLink?.trim() || undefined;
 	const ics = input.pendingAuth
 		? null
 		: buildConsultationIcs({
@@ -1006,6 +1037,7 @@ export async function sendBookingRescheduledEmail(
 				sequence,
 				method: "REQUEST",
 				appointmentFormat: input.appointmentFormat,
+				meetLink,
 			});
 	const calendarLines = ics
 		? [
@@ -1014,6 +1046,7 @@ export async function sendBookingRescheduledEmail(
 				"If you still see the old time (for example after using Add to Google Calendar before), delete that older entry.",
 			]
 		: [];
+	const meetLines = meetLink ? [`Google Meet: ${meetLink}`] : [];
 
 	const text = [
 		`Dear ${input.name},`,
@@ -1027,6 +1060,7 @@ export async function sendBookingRescheduledEmail(
 		...(input.appointmentFormat
 			? [`Format: ${appointmentFormatLabel(input.appointmentFormat)}`]
 			: []),
+		...meetLines,
 		...calendarLines,
 		"",
 		`To change or cancel again, visit ${MANAGE_BOOKING_URL}.`,
@@ -1036,6 +1070,8 @@ export async function sendBookingRescheduledEmail(
 		fromEmail,
 	].join("\n");
 
+	const hasFormat = Boolean(input.appointmentFormat);
+	const hasMeet = Boolean(meetLink);
 	const html = wrapBookingEmailHtml({
 		title: "Appointment updated",
 		statusPill: input.pendingAuth ? "Pending authorisation" : "Updated",
@@ -1065,7 +1101,7 @@ export async function sendBookingRescheduledEmail(
 				iconBg: COLORS.iconConsult,
 				label: "Consultation",
 				valueHtml: escapeHtml(input.type),
-				last: !input.appointmentFormat,
+				last: !hasFormat && !hasMeet,
 			}),
 			...(input.appointmentFormat
 				? [
@@ -1076,6 +1112,17 @@ export async function sendBookingRescheduledEmail(
 							valueHtml: escapeHtml(
 								appointmentFormatLabel(input.appointmentFormat),
 							),
+							last: !hasMeet,
+						}),
+					]
+				: []),
+			...(meetLink
+				? [
+						detailRow({
+							icon: "&#128250;",
+							iconBg: COLORS.iconPin,
+							label: "Video link",
+							valueHtml: `<a href="${escapeHtml(meetLink)}" style="color:${COLORS.ink};text-decoration:none;font-weight:700;">Join Google Meet</a>`,
 							last: true,
 						}),
 					]
@@ -1117,6 +1164,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		bookingRef: string;
 		icsSequence?: number;
 		appointmentFormat?: AppointmentFormat;
+		meetLink?: string;
 	},
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
@@ -1126,6 +1174,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 	const lead =
 		"Your insurer authorisation has been verified. Your consultation is now confirmed.";
 	const sequence = input.icsSequence ?? 1;
+	const meetLink = input.meetLink?.trim() || undefined;
 	const ics = buildConsultationIcs({
 		dateIso: input.dateIso,
 		timeLabel: input.timeLabel,
@@ -1138,6 +1187,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		sequence,
 		method: "REQUEST",
 		appointmentFormat: input.appointmentFormat,
+		meetLink,
 	});
 
 	const text = [
@@ -1152,6 +1202,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 		...(input.appointmentFormat
 			? [`Format: ${appointmentFormatLabel(input.appointmentFormat)}`]
 			: []),
+		...(meetLink ? [`Google Meet: ${meetLink}`] : []),
 		"",
 		"Add to your calendar: open the attached consultation.ics file.",
 		"",
@@ -1162,6 +1213,8 @@ export async function sendInsuranceBookingConfirmedEmail(
 		fromEmail,
 	].join("\n");
 
+	const hasFormat = Boolean(input.appointmentFormat);
+	const hasMeet = Boolean(meetLink);
 	const html = wrapBookingEmailHtml({
 		title: "Appointment confirmed",
 		statusPill: "&#10003; Confirmed",
@@ -1191,7 +1244,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 				iconBg: COLORS.iconConsult,
 				label: "Consultation",
 				valueHtml: escapeHtml(input.type),
-				last: !input.appointmentFormat,
+				last: !hasFormat && !hasMeet,
 			}),
 			...(input.appointmentFormat
 				? [
@@ -1202,6 +1255,17 @@ export async function sendInsuranceBookingConfirmedEmail(
 							valueHtml: escapeHtml(
 								appointmentFormatLabel(input.appointmentFormat),
 							),
+							last: !hasMeet,
+						}),
+					]
+				: []),
+			...(meetLink
+				? [
+						detailRow({
+							icon: "&#128250;",
+							iconBg: COLORS.iconPin,
+							label: "Video link",
+							valueHtml: `<a href="${escapeHtml(meetLink)}" style="color:${COLORS.ink};text-decoration:none;font-weight:700;">Join Google Meet</a>`,
 							last: true,
 						}),
 					]

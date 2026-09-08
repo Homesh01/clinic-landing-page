@@ -380,6 +380,7 @@ export type ManagedBooking = {
 	pendingAuth: boolean;
 	paymentMethod: "self-pay" | "insurance" | "unknown";
 	appointmentFormat: "in-person" | "virtual" | "unknown";
+	meetLink?: string;
 	stripeSessionId?: string;
 	stripePaymentIntentId?: string;
 	icsSequence: number;
@@ -388,17 +389,31 @@ export type ManagedBooking = {
 type CalendarEventPayload = {
 	id?: string;
 	htmlLink?: string;
+	hangoutLink?: string;
 	status?: string;
 	summary?: string;
 	description?: string;
 	start?: { dateTime?: string; timeZone?: string };
 	end?: { dateTime?: string; timeZone?: string };
 	attendees?: { email?: string; displayName?: string }[];
+	conferenceData?: {
+		entryPoints?: { entryPointType?: string; uri?: string }[];
+		createRequest?: { status?: { statusCode?: string } };
+	};
 	extendedProperties?: {
 		private?: Record<string, string>;
 	};
 	error?: { message?: string; code?: number; errors?: { reason?: string }[] };
 };
+
+function extractMeetLink(event: CalendarEventPayload): string | undefined {
+	const fromHangout = event.hangoutLink?.trim();
+	if (fromHangout) return fromHangout;
+	const video = event.conferenceData?.entryPoints?.find(
+		(entry) => entry.entryPointType === "video" && entry.uri,
+	);
+	return video?.uri?.trim() || undefined;
+}
 
 function sanitizeCalendarLine(value: string): string {
 	return value.replace(/[\r\n]+/g, " ").trim();
@@ -612,6 +627,11 @@ function managedBookingFromEvent(
 			: type.toLowerCase().includes("virtual")
 				? "virtual"
 				: "unknown";
+	const meetLink =
+		privateProps.meetLink?.trim() ||
+		parseDescriptionField(event.description, "Google Meet") ||
+		extractMeetLink(event) ||
+		undefined;
 
 	return {
 		eventId: event.id,
@@ -626,6 +646,7 @@ function managedBookingFromEvent(
 		pendingAuth,
 		paymentMethod,
 		appointmentFormat,
+		meetLink,
 		stripeSessionId,
 		stripePaymentIntentId,
 		icsSequence: Number.parseInt(privateProps.icsSequence ?? "0", 10) || 0,
@@ -657,6 +678,7 @@ function buildEventDescription(input: {
 	bookingRef: string;
 	notes?: string;
 	appointmentFormat?: "in-person" | "virtual";
+	meetLink?: string;
 }): string {
 	const notes = sanitizePatientVisibleNotes(input.notes);
 	const manageUrl = `https://personalisedcancercare.com/manage-booking`;
@@ -668,7 +690,7 @@ function buildEventDescription(input: {
 				: null;
 	const location =
 		input.appointmentFormat === "virtual"
-			? "Virtual consultation (no clinic attendance)"
+			? "Virtual consultation (Google Meet)"
 			: input.appointmentFormat === "in-person"
 				? "HCA UK at University College Hospital — 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
 				: null;
@@ -680,11 +702,83 @@ function buildEventDescription(input: {
 		`Consultation type: ${sanitizeCalendarLine(input.type)}`,
 		format ? `Format: ${format}` : null,
 		location ? `Location: ${sanitizeCalendarLine(location)}` : null,
+		input.meetLink
+			? `Google Meet: ${sanitizeCalendarLine(input.meetLink)}`
+			: null,
 		notes ? `Notes: ${sanitizeCalendarLine(notes)}` : null,
 		`To change or cancel, use Manage booking: ${manageUrl} (booking ref ${sanitizeCalendarLine(input.bookingRef)}).`,
 	]
 		.filter(Boolean)
 		.join("\n");
+}
+
+async function persistMeetLinkOnEvent(
+	config: BookingConfig,
+	accessToken: string,
+	eventId: string,
+	input: {
+		name: string;
+		email: string;
+		phone: string;
+		type: string;
+		bookingRef: string;
+		notes?: string;
+		appointmentFormat?: "in-person" | "virtual";
+		meetLink: string;
+		privateProps: Record<string, string>;
+	},
+): Promise<CalendarEventPayload | null> {
+	const privateProps = {
+		...input.privateProps,
+		meetLink: input.meetLink,
+	};
+	const response = await fetch(
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+		{
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				description: buildEventDescription({
+					name: input.name,
+					email: input.email,
+					phone: input.phone,
+					type: input.type,
+					bookingRef: input.bookingRef,
+					notes: input.notes,
+					appointmentFormat: input.appointmentFormat,
+					meetLink: input.meetLink,
+				}),
+				location: input.meetLink,
+				extendedProperties: { private: privateProps },
+			}),
+		},
+	);
+	const data = (await response.json()) as CalendarEventPayload;
+	if (!response.ok || !data.id) {
+		console.error(
+			"Could not persist Google Meet link on calendar event:",
+			data.error?.message,
+		);
+		return null;
+	}
+	return data;
+}
+
+async function resolveMeetLinkAfterCreate(
+	config: BookingConfig,
+	accessToken: string,
+	event: CalendarEventPayload,
+): Promise<string | undefined> {
+	let meetLink = extractMeetLink(event);
+	if (meetLink) return meetLink;
+	if (!event.id) return undefined;
+	// Meet links are usually immediate; briefly retry if Google still provisioning.
+	await new Promise((resolve) => setTimeout(resolve, 400));
+	const refreshed = await fetchCalendarEvent(config, accessToken, event.id);
+	return refreshed ? extractMeetLink(refreshed) : undefined;
 }
 
 export async function createBookingEvent(
@@ -694,10 +788,12 @@ export async function createBookingEvent(
 	eventId: string;
 	bookingRef: string;
 	htmlLink?: string;
+	meetLink?: string;
 	alreadyExisted?: boolean;
 }> {
 	const accessToken = await getAccessToken(config);
 	const bookingRef = input.bookingRef?.trim() || generateBookingRef();
+	const isVirtual = input.appointmentFormat === "virtual";
 
 	if (input.eventId) {
 		const existing = await fetchCalendarEvent(
@@ -711,6 +807,7 @@ export async function createBookingEvent(
 				eventId: existing.id,
 				bookingRef: managed?.bookingRef || bookingRef,
 				htmlLink: existing.htmlLink,
+				meetLink: managed?.meetLink,
 				alreadyExisted: true,
 			};
 		}
@@ -756,10 +853,15 @@ export async function createBookingEvent(
 		privateProps.stripePaymentIntentId = input.stripePaymentIntentId.trim();
 	}
 
+	const createQuery = new URLSearchParams({ sendUpdates: "none" });
+	if (isVirtual) {
+		createQuery.set("conferenceDataVersion", "1");
+	}
+
 	// Clinic diary only — patients are notified via branded email + ICS (no Google
 	// guest invite, so Gmail does not show Propose a new time).
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?sendUpdates=none`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?${createQuery}`,
 		{
 			method: "POST",
 			headers: {
@@ -780,7 +882,7 @@ export async function createBookingEvent(
 				}),
 				location:
 					input.appointmentFormat === "virtual"
-						? "Virtual consultation"
+						? "Virtual consultation (Google Meet)"
 						: input.appointmentFormat === "in-person"
 							? "HCA UK at University College Hospital, 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
 							: undefined,
@@ -802,6 +904,16 @@ export async function createBookingEvent(
 					private: privateProps,
 				},
 				transparency: "opaque",
+				...(isVirtual
+					? {
+							conferenceData: {
+								createRequest: {
+									requestId: `meet-${bookingRef.toLowerCase()}-${crypto.randomUUID().slice(0, 8)}`,
+									conferenceSolutionKey: { type: "hangoutsMeet" },
+								},
+							},
+						}
+					: {}),
 			}),
 		},
 	);
@@ -810,7 +922,20 @@ export async function createBookingEvent(
 
 	if (response.status === 409 || data.error?.errors?.[0]?.reason === "duplicate") {
 		if (input.eventId) {
-			return { eventId: input.eventId, bookingRef, alreadyExisted: true };
+			const existing = await fetchCalendarEvent(
+				config,
+				accessToken,
+				input.eventId,
+			);
+			const managed = existing
+				? managedBookingFromEvent(existing, config.timeZone)
+				: null;
+			return {
+				eventId: input.eventId,
+				bookingRef: managed?.bookingRef || bookingRef,
+				meetLink: managed?.meetLink,
+				alreadyExisted: true,
+			};
 		}
 		throw new BookingConflictError();
 	}
@@ -819,10 +944,34 @@ export async function createBookingEvent(
 		throw new Error(data.error?.message || "Could not create calendar event");
 	}
 
+	let meetLink: string | undefined;
+	if (isVirtual) {
+		meetLink = await resolveMeetLinkAfterCreate(config, accessToken, data);
+		if (meetLink) {
+			await persistMeetLinkOnEvent(config, accessToken, data.id, {
+				name: input.name,
+				email,
+				phone: input.phone,
+				type: input.type,
+				bookingRef,
+				notes: input.notes,
+				appointmentFormat: input.appointmentFormat,
+				meetLink,
+				privateProps,
+			});
+		} else {
+			console.error(
+				"Virtual booking created without a Google Meet link:",
+				data.id,
+			);
+		}
+	}
+
 	return {
 		eventId: data.id,
 		bookingRef,
 		htmlLink: data.htmlLink,
+		meetLink,
 		alreadyExisted: false,
 	};
 }
@@ -1057,6 +1206,9 @@ export async function rescheduleBookingEvent(
 	) {
 		privateProps.appointmentFormat = managed.appointmentFormat;
 	}
+	if (managed.meetLink) {
+		privateProps.meetLink = managed.meetLink;
+	}
 	if (managed.stripeSessionId) {
 		privateProps.stripeSessionId = managed.stripeSessionId;
 	}
@@ -1075,13 +1227,14 @@ export async function rescheduleBookingEvent(
 			managed.appointmentFormat === "unknown"
 				? undefined
 				: managed.appointmentFormat,
+		meetLink: managed.meetLink,
 		notes: sanitizePatientVisibleNotes(
 			parseDescriptionField(existing.description, "Notes") ||
 				existing.description
 					?.split(/\n+/)
 					.filter(
 						(line) =>
-							!/^(Booking ref|Patient|Email|Phone|Consultation type|Format|Location|Notes):/i.test(
+							!/^(Booking ref|Patient|Email|Phone|Consultation type|Format|Location|Google Meet|Notes):/i.test(
 								line.trim(),
 							) &&
 							!/^Stripe (session|payment):/i.test(line.trim()) &&
@@ -1111,11 +1264,12 @@ export async function rescheduleBookingEvent(
 				},
 				description: cleanedDescription,
 				location:
-					managed.appointmentFormat === "virtual"
-						? "Virtual consultation"
+					managed.meetLink ||
+					(managed.appointmentFormat === "virtual"
+						? "Virtual consultation (Google Meet)"
 						: managed.appointmentFormat === "in-person"
 							? "HCA UK at University College Hospital, 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
-							: undefined,
+							: undefined),
 				extendedProperties: { private: privateProps },
 				// Clear any legacy Google guest invites.
 				attendees: [],
@@ -1184,8 +1338,14 @@ export async function confirmInsuranceBookingEvent(
 		icsSequence: String(nextSequence),
 		authStatus: "confirmed",
 	};
+	if (
+		managed.appointmentFormat === "virtual" ||
+		managed.appointmentFormat === "in-person"
+	) {
+		privateProps.appointmentFormat = managed.appointmentFormat;
+	}
 
-	const description = (existing.description ?? "")
+	let description = (existing.description ?? "")
 		.replace(
 			/^Notes:\s*STATUS:\s*PENDING[^\n]*/im,
 			"Notes: STATUS: CONFIRMED — insurer authorisation verified",
@@ -1195,8 +1355,15 @@ export async function confirmInsuranceBookingEvent(
 			"STATUS: CONFIRMED — insurer authorisation verified",
 		);
 
+	const needsMeet =
+		managed.appointmentFormat === "virtual" && !managed.meetLink;
+	const confirmQuery = new URLSearchParams({ sendUpdates: "none" });
+	if (needsMeet) {
+		confirmQuery.set("conferenceDataVersion", "1");
+	}
+
 	const response = await fetch(
-		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?sendUpdates=none`,
+		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events/${encodeURIComponent(input.eventId)}?${confirmQuery}`,
 		{
 			method: "PATCH",
 			headers: {
@@ -1210,6 +1377,16 @@ export async function confirmInsuranceBookingEvent(
 				colorId: CALENDAR_COLOR_CONFIRMED,
 				attendees: [],
 				extendedProperties: { private: privateProps },
+				...(needsMeet
+					? {
+							conferenceData: {
+								createRequest: {
+									requestId: `meet-${managed.bookingRef.toLowerCase()}-${crypto.randomUUID().slice(0, 8)}`,
+									conferenceSolutionKey: { type: "hangoutsMeet" },
+								},
+							},
+						}
+					: {}),
 			}),
 		},
 	);
@@ -1217,11 +1394,61 @@ export async function confirmInsuranceBookingEvent(
 	if (!response.ok || !data.id) {
 		throw new Error(data.error?.message || "Could not confirm booking");
 	}
+
+	let meetLink = managed.meetLink || extractMeetLink(data);
+	if (needsMeet && !meetLink) {
+		meetLink = await resolveMeetLinkAfterCreate(config, accessToken, data);
+	}
+	if (meetLink && meetLink !== managed.meetLink) {
+		privateProps.meetLink = meetLink;
+		const withMeet = await persistMeetLinkOnEvent(
+			config,
+			accessToken,
+			data.id,
+			{
+				name: managed.name,
+				email: managed.email,
+				phone: managed.phone || "Not provided",
+				type: managed.type,
+				bookingRef: managed.bookingRef,
+				appointmentFormat:
+					managed.appointmentFormat === "unknown"
+						? undefined
+						: managed.appointmentFormat,
+				meetLink,
+				privateProps,
+				notes: sanitizePatientVisibleNotes(
+					parseDescriptionField(description, "Notes") || undefined,
+				),
+			},
+		);
+		if (withMeet) {
+			const updated = managedBookingFromEvent(withMeet, config.timeZone);
+			if (updated) {
+				return {
+					...updated,
+					pendingAuth: false,
+					status: "confirmed",
+					meetLink,
+					icsSequence: nextSequence,
+				};
+			}
+		}
+	} else if (meetLink) {
+		privateProps.meetLink = meetLink;
+	}
+
 	const updated = managedBookingFromEvent(data, config.timeZone);
 	if (!updated) {
 		throw new Error("Could not confirm booking");
 	}
-	return { ...updated, pendingAuth: false, status: "confirmed" };
+	return {
+		...updated,
+		pendingAuth: false,
+		status: "confirmed",
+		meetLink: meetLink || updated.meetLink,
+		icsSequence: nextSequence,
+	};
 }
 
 export async function findBookingByRef(
