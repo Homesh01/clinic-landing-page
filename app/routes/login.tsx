@@ -94,10 +94,10 @@ export default function LoginPage() {
 				<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
 					Consultant oncology care
 				</p>
-				<p className="eyebrow mt-8">Private preview</p>
+				<p className="eyebrow mt-8">Under construction</p>
 				<p className="mt-4 text-ink-soft">
-					This site is password protected while content is being finalised.
-					Enter the access password to continue.
+					This site is password protected. Enter the access password to
+					continue.
 				</p>
 
 				<Form method="post" className="mt-8 space-y-5">
