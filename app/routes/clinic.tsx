@@ -1031,7 +1031,7 @@ export default function ClinicPage() {
 											<p className="mt-3 text-ink-soft">
 												Removes the appointment from the clinic calendar and
 												emails the patient. Staff are not limited by the
-												48-hour patient refund window.
+												48-hour patient cancel/change window.
 											</p>
 											<Form method="post" className="mt-6 space-y-4">
 												<input type="hidden" name="intent" value="cancel" />

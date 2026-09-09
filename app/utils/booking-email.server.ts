@@ -394,7 +394,7 @@ function buildPlainText(input: {
 				...(input.pending
 					? []
 					: [
-							"Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund.",
+							"Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund).",
 						]),
 				"",
 			]
@@ -524,7 +524,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations at least 48 hours before the appointment receive an automatic full refund. A <strong>consultation.ics</strong> file is attached — open it to add this appointment to your calendar.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund). A <strong>consultation.ics</strong> file is attached — open it to add this appointment to your calendar.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -932,7 +932,7 @@ export async function sendBookingCancelledEmail(
 			: input.refundStatus === "already_refunded"
 				? "This payment had already been refunded."
 				: input.refundStatus === "not_eligible"
-					? `Self-pay refunds are automatic only when you cancel at least ${refundMinHours} hours before the appointment. Please contact the clinic team if you need to discuss this payment.`
+					? `Self-pay bookings cannot be cancelled online within ${refundMinHours} hours of the appointment. Please contact the clinic team if you need to discuss this payment.`
 					: null;
 	const lead = `Your consultation with ${site.name} has been cancelled.`;
 

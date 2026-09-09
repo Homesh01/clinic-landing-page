@@ -13,7 +13,7 @@ import {
 } from "~/utils/booking-ref";
 import {
 	SELF_PAY_REFUND_MIN_HOURS,
-	isSelfPayRefundEligible,
+	isSelfPayChangeAllowed,
 } from "~/utils/booking-refund";
 import {
 	BookingConflictError,
@@ -172,7 +172,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			let refundStatus:
 				| "none"
 				| "refunded"
-				| "not_eligible"
 				| "already_refunded" = "none";
 			let refundAmountLabel: string | undefined;
 
@@ -182,14 +181,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				!existing.stripePaymentIntentId;
 
 			if (!isInsuranceOnly) {
-				const eligible = isSelfPayRefundEligible(
+				const eligible = isSelfPayChangeAllowed(
 					existing.dateIso,
 					existing.timeLabel,
 					config.timeZone,
 				);
 				if (!eligible) {
-					refundStatus = "not_eligible";
-				} else {
+					return json(
+						{
+							ok: false as const,
+							intent,
+							error: `Self-pay bookings cannot be cancelled online within ${SELF_PAY_REFUND_MIN_HOURS} hours of the appointment. Please contact the clinic team.`,
+							email,
+							bookingRef,
+						},
+						{ status: 403 },
+					);
+				}
+
+				{
 					const stripe = getStripeConfig(context.cloudflare.env);
 					if (!stripe) {
 						return json(
@@ -332,6 +342,30 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 			const previousDateIso = existing.dateIso;
 			const previousTimeLabel = existing.timeLabel;
+			const isInsuranceOnly =
+				existing.paymentMethod === "insurance" &&
+				!existing.stripeSessionId &&
+				!existing.stripePaymentIntentId;
+			if (
+				!isInsuranceOnly &&
+				!isSelfPayChangeAllowed(
+					existing.dateIso,
+					existing.timeLabel,
+					config.timeZone,
+				)
+			) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error: `Self-pay bookings cannot be changed online within ${SELF_PAY_REFUND_MIN_HOURS} hours of the appointment. Please contact the clinic team.`,
+						email,
+						bookingRef,
+					},
+					{ status: 403 },
+				);
+			}
+
 			const booking = await rescheduleBookingEvent(config, {
 				eventId,
 				email,
@@ -436,9 +470,10 @@ export default function ManageBookingPage() {
 			Boolean(booking.stripeSessionId) ||
 			Boolean(booking.stripePaymentIntentId) ||
 			booking.paymentMethod === "unknown");
-	const refundEligible =
-		canAutoRefund &&
-		isSelfPayRefundEligible(booking.dateIso, booking.timeLabel, timeZone);
+	const changeAllowed =
+		booking == null ||
+		!canAutoRefund ||
+		isSelfPayChangeAllowed(booking.dateIso, booking.timeLabel, timeZone);
 
 	const [selectedDay, setSelectedDay] = useState("");
 	const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -493,9 +528,7 @@ export default function ManageBookingPage() {
 								{cancelled.refundStatus === "refunded" ||
 								cancelled.refundStatus === "already_refunded"
 									? "Cancelled — refund started"
-									: cancelled.refundStatus === "not_eligible"
-										? "Cancelled — no automatic refund"
-										: "Your appointment has been cancelled"}
+									: "Your appointment has been cancelled"}
 							</h2>
 							<p className="mt-3 text-ink-soft">
 								{formatBookingDate(cancelled.booking.dateIso)} at{" "}
@@ -514,12 +547,6 @@ export default function ManageBookingPage() {
 							) : cancelled.refundStatus === "already_refunded" ? (
 								<p className="mt-3 font-semibold text-ink">
 									This payment had already been refunded in Stripe.
-								</p>
-							) : cancelled.refundStatus === "not_eligible" ? (
-								<p className="mt-3 font-semibold text-ink">
-									No automatic refund: cancellations must be at least{" "}
-									{refundMinHours} hours before the appointment. Contact the
-									clinic team if you need to discuss the payment.
 								</p>
 							) : null}
 							<p className="mt-4 text-ink-soft">
@@ -599,30 +626,41 @@ export default function ManageBookingPage() {
 							</div>
 
 							{mode === "choose" ? (
-								<div className="flex flex-wrap gap-3">
-									<button
-										type="button"
-										className="btn-primary"
-										onClick={() => setMode("change")}
-									>
-										Change time
-									</button>
-									<button
-										type="button"
-										className="border border-line bg-white px-5 py-3 text-[0.95rem] font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
-										onClick={() => setMode("cancel")}
-									>
-										Cancel appointment
-									</button>
-									<button
-										type="button"
-										className="px-2 py-3 text-[0.95rem] text-ink-muted underline-offset-4 hover:text-ink hover:underline"
-										onClick={() => {
-											window.location.assign("/manage-booking");
-										}}
-									>
-										Look up a different booking
-									</button>
+								<div className="space-y-4">
+									{!changeAllowed ? (
+										<p className="text-[0.97rem] text-ink-soft">
+											Self-pay bookings cannot be cancelled or changed online
+											within {refundMinHours} hours of the appointment. Please
+											contact the clinic team if you need help.
+										</p>
+									) : null}
+									<div className="flex flex-wrap gap-3">
+										<button
+											type="button"
+											className="btn-primary disabled:opacity-50"
+											disabled={!changeAllowed}
+											onClick={() => setMode("change")}
+										>
+											Change time
+										</button>
+										<button
+											type="button"
+											className="border border-line bg-white px-5 py-3 text-[0.95rem] font-semibold text-ink transition-colors hover:border-accent hover:text-accent disabled:opacity-50"
+											disabled={!changeAllowed}
+											onClick={() => setMode("cancel")}
+										>
+											Cancel appointment
+										</button>
+										<button
+											type="button"
+											className="px-2 py-3 text-[0.95rem] text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+											onClick={() => {
+												window.location.assign("/manage-booking");
+											}}
+										>
+											Look up a different booking
+										</button>
+									</div>
 								</div>
 							) : null}
 
@@ -634,22 +672,12 @@ export default function ManageBookingPage() {
 									<p className="mt-3 text-ink-soft">
 										This removes the appointment from the clinic calendar.
 										{canAutoRefund ? (
-											refundEligible ? (
-												<>
-													{" "}
-													Because you are cancelling at least {refundMinHours}{" "}
-													hours before the appointment, a full Stripe refund will
-													be started automatically.
-												</>
-											) : (
-												<>
-													{" "}
-													Automatic self-pay refunds are only available at least{" "}
-													{refundMinHours} hours before the appointment. Within
-													that window, please contact the clinic team about the
-													payment.
-												</>
-											)
+											<>
+												{" "}
+												Because you are cancelling at least {refundMinHours}{" "}
+												hours before the appointment, a full Stripe refund will
+												be started automatically.
+											</>
 										) : null}
 									</p>
 									<div className="mt-6 flex flex-wrap gap-3">

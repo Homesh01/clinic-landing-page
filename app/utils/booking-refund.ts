@@ -1,4 +1,4 @@
-/** Full self-pay refund only if cancelled at least this many hours before the appointment. */
+/** Self-pay patients may cancel/change online (with full refund on cancel) only if at least this many hours before the appointment. */
 export const SELF_PAY_REFUND_MIN_HOURS = 48;
 
 /** Build RFC3339 instant for a wall-clock time in the given IANA timezone. */
@@ -41,4 +41,14 @@ export function isSelfPayRefundEligible(
 	const start = zonedDateTimeToUtc(dateIso, hour, minute, timeZone);
 	const minMs = SELF_PAY_REFUND_MIN_HOURS * 60 * 60 * 1000;
 	return start.getTime() - now.getTime() >= minMs;
+}
+
+/** Same window as refund: self-pay online cancel/reschedule only when outside the late window. */
+export function isSelfPayChangeAllowed(
+	dateIso: string,
+	timeLabel: string,
+	timeZone: string,
+	now: Date = new Date(),
+): boolean {
+	return isSelfPayRefundEligible(dateIso, timeLabel, timeZone, now);
 }
