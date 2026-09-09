@@ -48,7 +48,7 @@ export default function ContactPage() {
 			<PageHero
 				eyebrow="Contact &amp; Locations"
 				title="Reach the clinic team"
-				summary="Appointments are available across central London clinics. Self-pay fees are listed below; insurance bookings need an authorisation code and are confirmed after verification."
+				summary="Appointments are available across central London clinics. UK self-pay fees are listed below; insurance bookings need an authorisation code and are confirmed after verification."
 			/>
 
 			<section className="content-section">
@@ -89,7 +89,11 @@ export default function ContactPage() {
 									Fees &amp; insurance
 								</p>
 								<p className="mt-2.5 text-[0.97rem] leading-relaxed text-ink-soft">
-									{fees.intro}
+									For{" "}
+									<strong className="font-semibold text-ink">
+										UK patients
+									</strong>
+									, {fees.intro}
 								</p>
 								<ul className="mt-4 space-y-2 text-[0.97rem] text-ink">
 									{fees.selfPay.map((item) => (
@@ -106,6 +110,19 @@ export default function ContactPage() {
 								</ul>
 								<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-muted">
 									{fees.insurers}
+								</p>
+								<p className="mt-4 text-[0.97rem] leading-relaxed text-ink-soft">
+									<strong className="font-semibold text-ink">
+										International patients
+									</strong>{" "}
+									{fees.international}{" "}
+									<a
+										href={`mailto:${contact.email}`}
+										className="font-medium text-ink transition-colors hover:text-accent"
+									>
+										{contact.email}
+									</a>{" "}
+									{fees.internationalAfter}
 								</p>
 							</div>
 						</div>

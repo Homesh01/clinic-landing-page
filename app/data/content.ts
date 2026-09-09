@@ -682,9 +682,13 @@ export const blog = {
 
 export const fees = {
 	intro:
-		"Dr Sayal accepts patients funded through private medical insurance as well as self-funding patients. Self-pay consultation fees are payable when you book online.",
+		"Dr Sayal accepts those funded through private medical insurance as well as self-funding patients. Self-pay consultation fees below apply to UK patients and are payable when you book online.",
 	insurers:
 		"If you are using private medical insurance, you will need an authorisation code from your insurer before the appointment can be confirmed. The clinic checks the code, then bills your insurer.",
+	international:
+		"should contact the clinic team directly at",
+	internationalAfter:
+		"to discuss costs for private consultations and treatment options.",
 	selfPay: [
 		{ label: "New Patient Consultation", amount: "£350" },
 		{ label: "Second Opinion", amount: "£350" },
