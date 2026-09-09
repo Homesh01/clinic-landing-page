@@ -177,7 +177,7 @@ export async function createBookingCheckoutSession(input: {
 		"line_items[0][price_data][currency]": "gbp",
 		"line_items[0][price_data][unit_amount]": String(amount),
 		"line_items[0][price_data][product_data][name]": `Consultation — ${input.booking.type}`,
-		"line_items[0][price_data][product_data][description]": `${site.name} · ${input.booking.dateIso} ${input.booking.timeLabel} (UK)`,
+		"line_items[0][price_data][product_data][description]": `${site.name} · ${input.booking.dateIso} ${input.booking.timeLabel} (UK time)`,
 		"payment_intent_data[description]": `${site.name} consultation (${input.booking.type})`,
 	};
 

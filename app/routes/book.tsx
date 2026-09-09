@@ -534,6 +534,7 @@ export default function BookPage() {
 											<strong className="font-semibold text-ink">
 												{confirmed.timeLabel}
 											</strong>{" "}
+											(UK time){" "}
 											is pending until we verify your insurer authorisation
 											code. The clinic team will confirm the appointment once
 											that check is complete — please do not attend until you
@@ -551,8 +552,8 @@ export default function BookPage() {
 											at{" "}
 											<strong className="font-semibold text-ink">
 												{confirmed.timeLabel}
-											</strong>
-											. Payment was received.
+											</strong>{" "}
+											(UK time). Payment was received.
 											{confirmed.emailSent
 												? " A confirmation email has been sent to the address you provided."
 												: " We could not send the confirmation email automatically — please contact the clinic if you need written confirmation."}{" "}
@@ -667,7 +668,7 @@ export default function BookPage() {
 										</div>
 
 										<div className="mt-10">
-											<p className="eyebrow">Available times (GMT)</p>
+											<p className="eyebrow">Available times (UK time)</p>
 											<div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
 												{selectedDaySlots.map((time) => {
 													const active = selectedSlot === time;

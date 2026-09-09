@@ -694,7 +694,8 @@ export default function ClinicPage() {
 							<p className="mt-3 text-ink-soft">
 								{confirmed.booking.name} ·{" "}
 								{formatBookingDate(confirmed.booking.dateIso)} at{" "}
-								{confirmed.booking.timeLabel} ({confirmed.booking.bookingRef})
+								{confirmed.booking.timeLabel} (UK time) (
+								{confirmed.booking.bookingRef})
 							</p>
 							{!confirmed.alreadyConfirmed ? (
 								<p className="mt-3 text-ink-soft">
@@ -717,7 +718,7 @@ export default function ClinicPage() {
 							<p className="mt-3 text-ink-soft">
 								{rescheduled.name} is now booked for{" "}
 								{formatBookingDate(rescheduled.dateIso)} at{" "}
-								{rescheduled.timeLabel} ({rescheduled.bookingRef}).
+								{rescheduled.timeLabel} (UK time) ({rescheduled.bookingRef}).
 							</p>
 							{rescheduled.pendingAuth ? (
 								<p className="mt-3 text-ink-soft">
@@ -743,7 +744,8 @@ export default function ClinicPage() {
 							<p className="mt-3 text-ink-soft">
 								{cancelled.booking.name} ·{" "}
 								{formatBookingDate(cancelled.booking.dateIso)} at{" "}
-								{cancelled.booking.timeLabel} ({cancelled.booking.bookingRef})
+								{cancelled.booking.timeLabel} (UK time) (
+								{cancelled.booking.bookingRef})
 							</p>
 							{cancelled.refundStatus === "refunded" ? (
 								<p className="mt-3 text-ink-soft">
@@ -803,7 +805,7 @@ export default function ClinicPage() {
 										</h2>
 										<p className="mt-3 text-ink-soft">
 											{formatBookingDate(booking.dateIso)} at{" "}
-											{booking.timeLabel}
+											{booking.timeLabel} (UK time)
 											<br />
 											{booking.email}
 											<br />
@@ -976,7 +978,7 @@ export default function ClinicPage() {
 
 													<div>
 														<p className="text-sm font-semibold text-ink">
-															Time
+															Time (UK time)
 														</p>
 														<div className="mt-3 flex flex-wrap gap-2">
 															{selectedDaySlots.map((time) => (

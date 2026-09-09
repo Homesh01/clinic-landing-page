@@ -532,7 +532,8 @@ export default function ManageBookingPage() {
 							</h2>
 							<p className="mt-3 text-ink-soft">
 								{formatBookingDate(cancelled.booking.dateIso)} at{" "}
-								{cancelled.booking.timeLabel} ({cancelled.booking.bookingRef}) is
+								{cancelled.booking.timeLabel} (UK time) (
+								{cancelled.booking.bookingRef}) is
 								no longer booked.
 							</p>
 							{cancelled.refundStatus === "refunded" ? (
@@ -569,8 +570,8 @@ export default function ManageBookingPage() {
 								at{" "}
 								<strong className="font-semibold text-ink">
 									{rescheduled.timeLabel}
-								</strong>
-								. Reference: {rescheduled.bookingRef}.
+								</strong>{" "}
+								(UK time). Reference: {rescheduled.bookingRef}.
 							</p>
 							{rescheduled.pendingAuth ? (
 								<p className="mt-3 text-ink-soft">
@@ -773,7 +774,9 @@ export default function ManageBookingPage() {
 											</div>
 
 											<div>
-												<p className="text-sm font-semibold text-ink">Time</p>
+												<p className="text-sm font-semibold text-ink">
+													Time (UK time)
+												</p>
 												<div className="mt-3 flex flex-wrap gap-2">
 													{selectedDaySlots.map((time) => (
 														<button
