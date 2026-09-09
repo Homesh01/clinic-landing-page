@@ -510,7 +510,7 @@ export default function BookPage() {
 				summary={booking.intro}
 			/>
 
-			<section className="section-pad">
+			<section className="pt-8 pb-20 sm:pt-10 sm:pb-28">
 				<div className="site-container grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
 					<div>
 						{success && confirmed ? (
@@ -588,13 +588,6 @@ export default function BookPage() {
 						) : (
 							<>
 								<p className="text-sm text-ink-muted">{booking.note}</p>
-								<p className="mt-2 text-sm text-ink-muted">
-									Self-pay fees: New Patient, Second Opinion and Virtual{" "}
-									{fees.standard}; Follow-up / Monitoring {fees.followUp}{" "}
-									(payable when you book). Insurance bookings need an
-									authorisation code and stay pending until the clinic verifies
-									it.
-								</p>
 
 								{checkoutCancelled ? (
 									<p
@@ -1099,10 +1092,7 @@ export default function BookPage() {
 
 													<label className="block">
 														<span className="mb-2 block text-sm font-semibold text-ink">
-															Membership / policy number{" "}
-															<span className="font-normal text-ink-muted">
-																(optional)
-															</span>
+															Membership / policy number
 														</span>
 														<input
 															type="text"
@@ -1134,8 +1124,7 @@ export default function BookPage() {
 													<p className="text-sm text-ink-muted">
 														Ask your insurer for an authorisation code before
 														booking. We verify the code before confirming your
-														appointment, and share it with the hospital for
-														facility billing.
+														appointment.
 													</p>
 												</div>
 											) : null}
@@ -1182,7 +1171,7 @@ export default function BookPage() {
 														? "Booking…"
 														: "Redirecting to payment…"
 														: isInsurance
-														? "Submit insurance request"
+														? "Submit request"
 														: isSelfPay
 															? "Pay and book"
 															: "Choose a payment method"}

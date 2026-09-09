@@ -733,6 +733,6 @@ export const contact = {
 
 export const booking = {
 	intro:
-		"Booking an appointment with Dr Sayal is simple — choose an available time below, or contact the secretary directly.",
+		"Booking an appointment with Dr Sayal is simple. Choose an available time below via our secure form.",
 	note: "Times shown are free on the clinic calendar. Choose self-pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
 };
