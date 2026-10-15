@@ -740,3 +740,181 @@ export const booking = {
 		"Booking an appointment with Dr Sayal is simple. Choose an available time below via our secure form.",
 	note: "Times shown are free on the clinic calendar. Choose self-pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
 };
+
+export const privacyNotice = {
+	title: "Patient Privacy Notice",
+	lede:
+		"This notice explains how Personalised Cancer Care Ltd handles personal information in connection with private oncology consultations and related care.",
+	lastUpdated: "15 October 2026",
+	company: {
+		legalName: "Personalised Cancer Care Ltd",
+		companyNumber: "17430677",
+		registeredOffice: "3 Foley Street, London W1W 6DN",
+	},
+	formBlurbBefore:
+		"Your privacy: Personalised Cancer Care Ltd uses the information you provide to respond to your enquiry and, where appropriate, arrange your care. Please read our",
+	formBlurbAfter: "to understand how we handle your information.",
+	emailSentenceBefore:
+		"You can read how Personalised Cancer Care Ltd handles your personal information in our",
+	emailSentenceAfter: ".",
+	path: "/patient-privacy-notice",
+	sections: [
+		{
+			heading: "1. Who we are",
+			paragraphs: [
+				"Personalised Cancer Care Ltd (“PCC”, “we”, “us” or “our”) provides private oncology services.",
+				"PCC maintains its own records relating to patients who contact us or receive services from us.",
+				"PCC is responsible for personal information that it processes as an independent data controller. Other healthcare organisations involved in your care, including hospitals, may act as separate data controllers for the information they hold.",
+			],
+		},
+		{
+			heading: "2. What information we collect",
+			paragraphs: [
+				"Depending on your circumstances, we may collect and use:",
+			],
+			bullets: [
+				"Your name, date of birth and contact details.",
+				"Appointment details and correspondence.",
+				"Medical history, diagnoses, treatment plans, test results and other relevant clinical information.",
+				"Information received from or shared with healthcare professionals involved in your care.",
+				"Insurance, invoicing and payment information.",
+				"Information you provide when contacting us through our website, email or telephone.",
+			],
+			closing: [
+				"Health information is particularly sensitive and receives additional protection under data-protection law.",
+			],
+		},
+		{
+			heading: "3. Why we use your information",
+			paragraphs: [
+				"We use personal information where necessary to:",
+			],
+			bullets: [
+				"Respond to enquiries and arrange appointments.",
+				"Assess your clinical needs and provide oncology consultations and related care.",
+				"Maintain appropriate clinical records.",
+				"Communicate with hospitals, GPs and other healthcare professionals involved in your care.",
+				"Arrange clinically appropriate investigations or referrals.",
+				"Issue invoices, liaise with insurers and administer payments.",
+				"Meet applicable professional, legal and regulatory obligations.",
+				"Maintain the security and effective operation of our services.",
+			],
+			closing: [
+				"We do not rely on your agreement to this privacy notice as consent for all these activities.",
+			],
+		},
+		{
+			heading: "4. Our lawful bases for processing",
+			paragraphs: [
+				"Under UK GDPR, we must have a lawful basis for using your personal information. Health information also requires an additional condition because it is special-category data.",
+				"Depending on the activity, our lawful bases may include:",
+				"Article 6 UK GDPR — Contract: where processing is necessary to provide services requested by you; Legal obligation: where we must retain or disclose information to comply with applicable law; Legitimate interests: where necessary for proportionate business administration, security or related activities, subject to your rights; Consent: where a particular activity genuinely requires your consent.",
+				"Article 9 UK GDPR — Healthcare: processing necessary for medical diagnosis, the provision of healthcare or treatment, or management of healthcare services, subject to applicable professional confidentiality safeguards.",
+				"Other lawful bases or conditions may apply in specific circumstances.",
+			],
+		},
+		{
+			heading: "5. Who we share information with",
+			paragraphs: [
+				"Where appropriate and lawful, we may share relevant information with:",
+			],
+			bullets: [
+				"Hospitals and healthcare organisations involved in your care, including HCA Healthcare UK and, where applicable, UCLH.",
+				"Your GP, referring clinician and other treating healthcare professionals.",
+				"Diagnostic laboratories and specialist testing providers, where investigations are arranged.",
+				"Health insurers and payment administrators, where necessary for authorisation, invoicing or payment.",
+				"Professional advisers, regulators or public authorities where disclosure is legally required or otherwise justified.",
+				"Technology and administrative service providers acting on our behalf.",
+			],
+			closing: [
+				"We limit disclosures to information relevant to the purpose.",
+				"Hospitals and laboratories may have their own privacy notices and may act as independent data controllers.",
+			],
+		},
+		{
+			heading: "6. How we store and protect your information",
+			paragraphs: [
+				"PCC uses Google Workspace, including Gmail, Calendar and Drive, for aspects of patient correspondence, scheduling, administration and record-keeping.",
+				"Google provides services to PCC under contractual data-processing terms. We use account authentication, access controls and other appropriate security measures to protect information.",
+				"Access to patient information is restricted according to professional and administrative responsibilities.",
+				"No electronic system can be guaranteed completely secure, but we take reasonable steps to protect information against unauthorised access, loss and misuse.",
+			],
+		},
+		{
+			heading: "7. International transfers",
+			paragraphs: [
+				"Some technology providers, including Google, may process information outside the United Kingdom.",
+				"Where personal information is transferred to a country without applicable UK adequacy protection, we rely on appropriate safeguards where required, such as contractual transfer mechanisms recognised under UK data-protection law.",
+				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses.",
+				"You may contact us for further information about the safeguards relevant to your information.",
+			],
+		},
+		{
+			heading: "8. How long we keep information",
+			paragraphs: [
+				"We retain personal information only for as long as necessary for the purposes for which it was collected, including clinical, professional, legal and regulatory requirements.",
+				"Clinical records may need to be retained for substantially longer than routine administrative correspondence.",
+				"When information is no longer required, we will securely delete it or otherwise dispose of it appropriately.",
+			],
+		},
+		{
+			heading: "9. Your data-protection rights",
+			paragraphs: [
+				"Depending on the circumstances, you may have the right to:",
+			],
+			bullets: [
+				"Request access to your personal information.",
+				"Ask us to correct inaccurate information.",
+				"Request erasure of information where applicable.",
+				"Request restriction of processing.",
+				"Object to certain processing.",
+				"Request data portability where applicable.",
+				"Withdraw consent where processing is based on consent.",
+			],
+			closing: [
+				"These rights are not absolute. For example, we may need to retain clinical records to meet professional or legal obligations.",
+				"To exercise your rights, contact us using the details above.",
+				"We will respond in accordance with applicable data-protection law.",
+			],
+		},
+		{
+			heading: "10. Where information comes from",
+			paragraphs: [
+				"We may receive information directly from you or, where appropriate, from your GP, referring clinician, hospital, insurer or another healthcare professional involved in your care.",
+				"Where required, we will provide additional information about the source and use of personal data obtained indirectly.",
+			],
+		},
+		{
+			heading: "11. Specialist diagnostic testing",
+			paragraphs: [
+				"Where clinically appropriate, PCC may arrange investigations through external diagnostic laboratories.",
+				"This can involve sharing relevant clinical information and, where applicable, biological samples with the laboratory.",
+				"We will provide additional information where necessary about the particular test, the laboratory's responsibilities and any associated data processing.",
+			],
+		},
+		{
+			heading: "12. Research and other secondary uses",
+			paragraphs: [
+				"Information collected for your care is not automatically authorised for unrelated research or commercial use.",
+				"PCC will not begin a new secondary use of identifiable patient information without first establishing the necessary legal basis, confidentiality permissions, safeguards and transparency arrangements.",
+				"Where a proposed activity requires additional information or consent, this will be addressed separately.",
+			],
+		},
+		{
+			heading: "13. Complaints",
+			paragraphs: [
+				"If you have concerns about how PCC handles your personal information, please contact us first so that we can investigate.",
+				"You also have the right to complain to the Information Commissioner's Office (ICO).",
+				"ICO website: https://ico.org.uk/make-a-complaint/",
+				"ICO telephone: 0303 123 1113",
+			],
+		},
+		{
+			heading: "14. Changes to this notice",
+			paragraphs: [
+				"We may update this notice when our services, systems or legal obligations change.",
+				"The latest version will be available on our website, with the date of the most recent update shown above.",
+			],
+		},
+	],
+} as const;

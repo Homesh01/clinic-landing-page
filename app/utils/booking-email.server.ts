@@ -7,7 +7,7 @@ import {
 	inPersonLocationSingleLine,
 	type AppointmentFormat,
 } from "~/utils/clinic-location";
-import { site } from "~/data/content";
+import { privacyNotice, site } from "~/data/content";
 
 export type BookingEmailInput = {
 	dateIso: string;
@@ -28,6 +28,7 @@ export type BookingEmailInput = {
 const SITE_URL = "https://personalisedcancercare.com";
 const SITE_HOST = "personalisedcancercare.com";
 const MANAGE_BOOKING_URL = `${SITE_URL}/manage-booking`;
+const PRIVACY_NOTICE_URL = `${SITE_URL}${privacyNotice.path}`;
 const CLINIC_BRAND = "Personalised Cancer Care";
 const DEFAULT_FROM_EMAIL = "bookings@personalisedcancercare.com";
 const DEFAULT_FROM_NAME = "Personalised Cancer Care Bookings";
@@ -86,6 +87,9 @@ function escapeHtml(value: string): string {
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#39;");
 }
+
+const PRIVACY_EMAIL_PLAIN = `${privacyNotice.emailSentenceBefore} Patient Privacy Notice (${PRIVACY_NOTICE_URL})${privacyNotice.emailSentenceAfter}`;
+const PRIVACY_EMAIL_HTML = `${escapeHtml(privacyNotice.emailSentenceBefore)} <a href="${PRIVACY_NOTICE_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Patient Privacy Notice</a>${escapeHtml(privacyNotice.emailSentenceAfter)}`;
 
 function formatAppointmentDate(dateIso: string, timeZone: string): string {
 	const [year, month, day] = dateIso.split("-").map(Number);
@@ -429,6 +433,8 @@ function buildPlainText(input: {
 			...manageLines,
 			`Website: ${SITE_URL}`,
 			"",
+			PRIVACY_EMAIL_PLAIN,
+			"",
 			"If you have questions, reply to this email.",
 			"",
 			"Kind regards,",
@@ -453,6 +459,8 @@ function buildPlainText(input: {
 		...calendarLines,
 		...manageLines,
 		`Website: ${SITE_URL}`,
+		"",
+		PRIVACY_EMAIL_PLAIN,
 		"",
 		"If you have questions, reply to this email.",
 		"",
@@ -639,8 +647,12 @@ function buildHtml(input: {
 								</tr>
 							</table>
 
-							<p style="margin:26px 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:${COLORS.inkSoft};">
+							<p style="margin:26px 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:${COLORS.inkSoft};">
 								${noteHtml}
+							</p>
+
+							<p style="margin:0 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:${COLORS.inkSoft};">
+								${PRIVACY_EMAIL_HTML}
 							</p>
 
 							<table role="presentation" cellpadding="0" cellspacing="0" border="0">

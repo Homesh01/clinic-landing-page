@@ -1,4 +1,5 @@
-import { contact, locations, site } from "~/data/content";
+import { Link } from "@remix-run/react";
+import { contact, locations, privacyNotice, site } from "~/data/content";
 
 export function Footer() {
 	return (
@@ -44,7 +45,15 @@ export function Footer() {
 					<p>
 						© {new Date().getFullYear()} {site.name}. All rights reserved.
 					</p>
-					<p>GMC Registration No. {site.gmc}</p>
+					<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+						<Link
+							to={privacyNotice.path}
+							className="transition-colors hover:text-accent"
+						>
+							Patient Privacy Notice
+						</Link>
+						<p>GMC Registration No. {site.gmc}</p>
+					</div>
 				</div>
 			</div>
 		</footer>

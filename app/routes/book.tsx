@@ -14,7 +14,7 @@ import {
 import { json, redirect } from "@remix-run/cloudflare";
 import { useEffect, useMemo, useRef, useState, type AnimationEvent, type ChangeEvent, type FormEvent } from "react";
 import { PageHero } from "~/components/PageHero";
-import { booking, contact, site } from "~/data/content";
+import { booking, contact, privacyNotice, site } from "~/data/content";
 import {
 	DEFAULT_PHONE_COUNTRY_ISO,
 	PHONE_COUNTRIES,
@@ -1156,6 +1156,17 @@ export default function BookPage() {
 												) : null}
 											</label>
 
+											<p className="text-sm leading-relaxed text-ink-muted">
+												{privacyNotice.formBlurbBefore}{" "}
+												<Link
+													to={privacyNotice.path}
+													className="font-medium text-ink underline-offset-2 hover:text-accent hover:underline"
+												>
+													Patient Privacy Notice
+												</Link>{" "}
+												{privacyNotice.formBlurbAfter}
+											</p>
+
 											<button
 												type="submit"
 												className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
@@ -1203,6 +1214,15 @@ export default function BookPage() {
 							</li>
 							<li className="text-sm italic text-ink-muted">
 								{contact.enquiriesNote}
+							</li>
+							<li className="text-sm text-ink-muted">
+								Your privacy:{" "}
+								<Link
+									to={privacyNotice.path}
+									className="font-medium text-ink underline-offset-2 hover:text-accent hover:underline"
+								>
+									Patient Privacy Notice
+								</Link>
 							</li>
 						</ul>
 						<Link to="/contact" className="link-underline mt-8">

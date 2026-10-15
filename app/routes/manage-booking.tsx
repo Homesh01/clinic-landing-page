@@ -34,6 +34,7 @@ import {
 	sendBookingCancelledEmail,
 	sendBookingRescheduledEmail,
 } from "~/utils/booking-email.server";
+import { privacyNotice } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 import { formatBookingDate } from "~/utils/format-date";
 
@@ -869,6 +870,16 @@ export default function ManageBookingPage() {
 								{error ? (
 									<p className="text-sm text-red-700">{error}</p>
 								) : null}
+								<p className="text-sm leading-relaxed text-ink-muted">
+									{privacyNotice.formBlurbBefore}{" "}
+									<Link
+										to={privacyNotice.path}
+										className="font-medium text-ink underline-offset-2 hover:text-accent hover:underline"
+									>
+										Patient Privacy Notice
+									</Link>{" "}
+									{privacyNotice.formBlurbAfter}
+								</p>
 								<button
 									type="submit"
 									className="btn-primary disabled:opacity-50"

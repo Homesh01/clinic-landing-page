@@ -1,7 +1,14 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { PageHero } from "~/components/PageHero";
-import { contact, contactPage, fees, locations } from "~/data/content";
+import {
+	contact,
+	contactPage,
+	fees,
+	locations,
+	privacyNotice,
+} from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 
 export const meta: MetaFunction = () => {
@@ -78,6 +85,15 @@ export default function ContactPage() {
 								</p>
 								<p className="mt-2 text-[0.92rem] italic text-ink-muted">
 									{contact.enquiriesNote}
+								</p>
+								<p className="mt-4 text-[0.92rem] leading-relaxed text-ink-muted">
+									Your privacy:{" "}
+									<Link
+										to={privacyNotice.path}
+										className="font-medium text-ink underline-offset-2 hover:text-accent hover:underline"
+									>
+										Patient Privacy Notice
+									</Link>
 								</p>
 							</div>
 
