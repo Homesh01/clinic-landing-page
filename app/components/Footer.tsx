@@ -11,10 +11,24 @@ export function Footer() {
 						<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
 							{site.title}
 						</p>
+						<p className="mt-1 text-sm text-accent">{site.subtitle}</p>
 						<p className="mt-5 max-w-md text-[0.98rem] text-ink-soft">
-							Specialist care in thyroid cancer and radiotherapy for
-							haematological malignancies, with clinics in central London.
+							{site.brandLine} Clinics in central London.
 						</p>
+						<div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+							<Link
+								to="/research/cancer-vaccine-analytics"
+								className="transition-colors hover:text-accent"
+							>
+								Research Analytics Lab
+							</Link>
+							<Link
+								to="/about"
+								className="transition-colors hover:text-accent"
+							>
+								About
+							</Link>
+						</div>
 					</div>
 
 					<div>

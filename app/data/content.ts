@@ -1,20 +1,55 @@
 export const site = {
 	name: "Dr Karen Sayal",
 	title: "Consultant Clinical Oncologist",
+	subtitle: "Translational AI Innovation Lead, UCLH",
+	/** Short brand line used in footers and secondary placements. */
+	brandLine:
+		"Clinical oncology, computational tools, and translational research for personalised cancer care.",
 	gmc: "7140353",
 	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
 	headshot: "/karen_sayal_image-nobg.png",
 };
 
-export const nav = [
+export type NavLinkItem = {
+	to: string;
+	label: string;
+};
+
+export type NavItem =
+	| NavLinkItem
+	| {
+			label: string;
+			children: readonly NavLinkItem[];
+	  };
+
+export const nav: readonly NavItem[] = [
 	{ to: "/about", label: "About" },
 	{ to: "/conditions", label: "Conditions" },
 	{ to: "/consultations", label: "Consultations" },
+	{
+		label: "Research Analytics Lab",
+		children: [
+			{
+				to: "/research/cancer-vaccine-analytics",
+				label: "Cancer vaccine analytics",
+			},
+			{
+				to: "/research/neoantigen-classifier",
+				label: "Neoantigen priority classifier",
+			},
+		],
+	},
 	{ to: "/conferences", label: "Conferences" },
 	{ to: "/blog", label: "Blog" },
 	{ to: "/faq", label: "FAQ" },
 	{ to: "/contact", label: "Contact" },
-] as const;
+];
+
+export function isNavGroup(
+	item: NavItem,
+): item is Extract<NavItem, { children: readonly NavLinkItem[] }> {
+	return "children" in item;
+}
 
 export const credentials = [
 	{
@@ -52,10 +87,38 @@ export const appointments = [
 	},
 ] as const;
 
+/** Homepage section: clinical practice + software spine + future offerings. */
+export const homePlatform = {
+	eyebrow: "Practice & platform",
+	title: "Oncology care with a software spine",
+	lede:
+		"Personalised Cancer Care is a clinical practice and a growing computational platform. Patients see a consultant oncologist today; beneath that sits research software for cancer analytics, and the groundwork for advanced diagnostics and personalised cancer vaccines.",
+	pillars: [
+		{
+			title: "Consultant-led care",
+			text: "Thyroid cancer and haematological malignancies, with clear plans, multidisciplinary coordination, and clinics across central London.",
+			to: "/consultations",
+			linkLabel: "View consultations",
+		},
+		{
+			title: "Research software",
+			text: "Interactive analytics and machine-learning demonstrators for personalised vaccine research — synthetic data today, the same analytical patterns we use to evaluate real tools.",
+			to: "/research/cancer-vaccine-analytics",
+			linkLabel: "Explore the Analytics Lab",
+		},
+		{
+			title: "Diagnostics & vaccines ahead",
+			text: "We are preparing the clinical and software pathways for advanced diagnostics and personalised cancer vaccines, so those offerings can sit naturally beside consultant care when they are ready for patients.",
+			to: "/about",
+			linkLabel: "About the approach",
+		},
+	],
+} as const;
+
 export const about = {
-	heroTitle: "A clinician at the intersection of oncology and AI",
+	heroTitle: "A clinician building the software layer of personalised oncology",
 	heroLede:
-		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. She combines specialist clinical training with a research and industry background in artificial intelligence, experience she draws on to help design treatment plans that are precise, well informed, and built around each patient.",
+		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinic practice she leads translational AI work and develops analytical software for personalised therapy — the same grounding that will support advanced diagnostics and personalised cancer vaccines as those approaches mature for patients.",
 	sections: [
 		{
 			heading: "Where she practises",
@@ -80,6 +143,7 @@ export const about = {
 			heading: "Bringing it together",
 			paragraphs: [
 				"Dr Sayal brings that experience directly into the care of her own patients. Because she is personally involved in developing and testing new AI driven technologies at UCLH, she can draw on firsthand knowledge of which emerging tools and treatments are genuinely ready to help, not simply what is already established practice, when she reviews a patient's scans, pathology and options. She continues to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy throughout, with every treatment plan still built around the individual in front of her.",
+				"Personalised Cancer Care is therefore both a consultancy and a software-aware practice: clinical appointments today, research analytics in the open, and deliberate preparation for advanced diagnostics and personalised cancer vaccines as those modalities become appropriate to offer.",
 			],
 		},
 	],
@@ -197,7 +261,7 @@ export const conditions = [
 export const consultationsPage = {
 	title: "Care built around you",
 	lede:
-		"Every patient's path is different. Whatever stage you are at, whether a new diagnosis, a second opinion, or ongoing monitoring, each appointment is designed to give you clarity, a clear range of treatment options, and a written plan you can return to.",
+		"Every patient's path is different. Whatever stage you are at, whether a new diagnosis, a second opinion, or ongoing monitoring, each appointment is designed to give you clarity, a clear range of treatment options, and a written plan you can return to — informed by specialist oncology and by ongoing work in analytics, diagnostics, and vaccine science.",
 	reassure: "You will always understand what is being recommended, and why.",
 	callout: {
 		title: "Ready to take the next step?",
@@ -745,7 +809,7 @@ export const privacyNotice = {
 	title: "Patient Privacy Notice",
 	lede:
 		"This notice explains how Personalised Cancer Care Ltd handles personal information in connection with private oncology consultations and related care.",
-	lastUpdated: "15 October 2026",
+	lastUpdated: "16 October 2026",
 	company: {
 		legalName: "Personalised Cancer Care Ltd",
 		companyNumber: "17430677",
@@ -763,7 +827,7 @@ export const privacyNotice = {
 			heading: "1. Who we are",
 			paragraphs: [
 				"Personalised Cancer Care Ltd (“PCC”, “we”, “us” or “our”) provides private oncology services.",
-				"PCC maintains its own records relating to patients who contact us or receive services from us.",
+				"PCC maintains records relating to enquiries, appointments, correspondence, administration and clinical care where PCC is responsible for those records. Where consultations or treatment take place through another healthcare organisation, such as HCA Healthcare UK, that organisation may maintain the primary clinical record in its own systems. PCC does not routinely duplicate those records.",
 				"PCC is responsible for personal information that it processes as an independent data controller. Other healthcare organisations involved in your care, including hospitals, may act as separate data controllers for the information they hold.",
 			],
 		},
@@ -807,10 +871,17 @@ export const privacyNotice = {
 			heading: "4. Our lawful bases for processing",
 			paragraphs: [
 				"Under UK GDPR, we must have a lawful basis for using your personal information. Health information also requires an additional condition because it is special-category data.",
-				"Depending on the activity, our lawful bases may include:",
-				"Article 6 UK GDPR — Contract: where processing is necessary to provide services requested by you; Legal obligation: where we must retain or disclose information to comply with applicable law; Legitimate interests: where necessary for proportionate business administration, security or related activities, subject to your rights; Consent: where a particular activity genuinely requires your consent.",
-				"Article 9 UK GDPR — Healthcare: processing necessary for medical diagnosis, the provision of healthcare or treatment, or management of healthcare services, subject to applicable professional confidentiality safeguards.",
-				"Other lawful bases or conditions may apply in specific circumstances.",
+				"In outline, we typically rely on the following Article 6 bases depending on the purpose:",
+			],
+			bullets: [
+				"Contract — arranging and providing consultations and related services you have requested.",
+				"Legal obligation — retaining or disclosing information where required by applicable law or regulation.",
+				"Legitimate interests — proportionate administration, security and related operational activities, balanced against your rights.",
+				"Consent — only where a particular activity genuinely requires consent.",
+			],
+			closing: [
+				"For health information, we also rely on the Article 9 UK GDPR healthcare condition: processing necessary for medical diagnosis, the provision of healthcare or treatment, or management of healthcare services, subject to applicable professional confidentiality safeguards.",
+				"Other lawful bases or conditions may apply in specific circumstances. The bases described above will be kept aligned with PCC’s approved lawful-bases assessment.",
 			],
 		},
 		{
@@ -852,9 +923,12 @@ export const privacyNotice = {
 		{
 			heading: "8. How long we keep information",
 			paragraphs: [
-				"We retain personal information only for as long as necessary for the purposes for which it was collected, including clinical, professional, legal and regulatory requirements.",
-				"Clinical records may need to be retained for substantially longer than routine administrative correspondence.",
-				"When information is no longer required, we will securely delete it or otherwise dispose of it appropriately.",
+				"We retain personal information for periods appropriate to its purpose and in accordance with applicable legal, professional and regulatory requirements.",
+				"Clinical records are retained in accordance with relevant healthcare records retention guidance, taking account of the patient's circumstances and any applicable legal requirements.",
+				"Administrative, financial and correspondence records are retained for periods appropriate to their purpose, including applicable tax, accounting and legal obligations.",
+				"Where another healthcare organisation, such as HCA Healthcare UK, maintains the primary clinical record, that organisation is responsible for retaining its own records under its applicable policies.",
+				"PCC retains any separate records it creates or holds in accordance with its own responsibilities.",
+				"When a retention period expires, we review whether continued retention is necessary and securely delete or otherwise dispose of information when appropriate.",
 			],
 		},
 		{

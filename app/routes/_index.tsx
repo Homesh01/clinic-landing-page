@@ -2,7 +2,13 @@ import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { JsonLd } from "~/components/JsonLd";
-import { conditions, faqPage, services, site } from "~/data/content";
+import {
+	conditions,
+	faqPage,
+	homePlatform,
+	services,
+	site,
+} from "~/data/content";
 import {
 	CLINIC_TAGLINE,
 	buildPageMeta,
@@ -40,13 +46,19 @@ export default function Index() {
 								{site.title}
 							</h1>
 							<p
+								className="mt-2 text-[0.98rem] tracking-wide text-accent animate-fade-up"
+								style={{ animationDelay: "130ms" }}
+							>
+								{site.subtitle}
+							</p>
+							<p
 								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
 								style={{ animationDelay: "160ms" }}
 							>
-								Specialist care in thyroid cancer and blood cancers such as
-								lymphoma, leukaemia and myeloma. Every treatment plan is
-								personal to you, combining hands-on clinical experience with the
-								latest advances in cancer research.
+								Specialist care in thyroid cancer and blood cancers, with a
+								growing software practice in personalised cancer analytics —
+								building toward advanced diagnostics and personalised cancer
+								vaccines.
 							</p>
 							<div
 								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
@@ -55,13 +67,19 @@ export default function Index() {
 								<Link to="/book" className="btn-primary">
 									Book a consultation
 								</Link>
-								<Link to="/about" className="btn-secondary">
-									About Dr Sayal
+								<Link
+									to="/research/cancer-vaccine-analytics"
+									className="btn-secondary"
+								>
+									Explore the Analytics Lab
 								</Link>
 							</div>
 						</div>
 
-						<div className="mx-auto w-full max-w-sm lg:max-w-none animate-fade-up" style={{ animationDelay: "180ms" }}>
+						<div
+							className="mx-auto w-full max-w-sm animate-fade-up lg:max-w-none"
+							style={{ animationDelay: "180ms" }}
+						>
 							<img
 								src={site.headshot}
 								alt={`Portrait of ${site.name}`}
@@ -108,7 +126,41 @@ export default function Index() {
 				</div>
 			</section>
 
-			<section className="border-y border-line bg-mist/50 section-pad">
+			<section className="border-y border-line bg-mist/40 section-pad">
+				<div className="site-container">
+					<div className="max-w-3xl">
+						<p className="eyebrow">{homePlatform.eyebrow}</p>
+						<h2 className="mt-3 font-display text-display-md text-ink">
+							{homePlatform.title}
+						</h2>
+						<p className="mt-4 text-lg leading-relaxed text-ink-soft">
+							{homePlatform.lede}
+						</p>
+					</div>
+
+					<div className="mt-14 grid gap-10 md:grid-cols-3">
+						{homePlatform.pillars.map((pillar) => (
+							<article
+								key={pillar.title}
+								className="border-t border-accent/40 pt-6"
+							>
+								<h3 className="font-display text-2xl text-ink">
+									{pillar.title}
+								</h3>
+								<p className="mt-4 text-[0.98rem] leading-relaxed text-ink-soft">
+									{pillar.text}
+								</p>
+								<Link to={pillar.to} className="link-underline mt-6">
+									{pillar.linkLabel}
+									<span aria-hidden="true">→</span>
+								</Link>
+							</article>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<section className="section-pad">
 				<div className="site-container grid items-end gap-12 lg:grid-cols-[1.1fr_0.9fr]">
 					<div>
 						<p className="eyebrow">Consultations</p>
@@ -163,13 +215,13 @@ export default function Index() {
 
 			<CalloutBanner
 				eyebrow="Appointments"
-				title="Book a consultation, or speak with the clinic team"
-				body="View available slots and request a consultation at a time that suits you. Clinics at University College Hospital Private Care (HCA), Leaders in Oncology Care (LOC), and The Harley Street Clinic."
+				title="Book a consultation, or explore the Analytics Lab"
+				body="View available slots and request a consultation at a time that suits you. Clinics at University College Hospital Private Care (HCA), Leaders in Oncology Care (LOC), and The Harley Street Clinic. Research analytics demonstrators are available in the Research Analytics Lab."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
 					{
-						label: "Contact & locations",
-						to: "/contact",
+						label: "Research Analytics Lab",
+						to: "/research/cancer-vaccine-analytics",
 						variant: "outline",
 					},
 				]}

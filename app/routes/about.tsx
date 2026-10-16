@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("About the clinic"),
 		description:
-			"About Personalised Cancer Care — private consultant oncology in London, led by Dr Karen Sayal, specialising in thyroid cancer and radiotherapy for haematological cancers.",
+			"About Personalised Cancer Care — consultant oncology in London led by Dr Karen Sayal, with translational AI and research software for personalised cancer analytics, diagnostics, and vaccines.",
 		path: "/about",
 	});
 };
@@ -97,9 +97,17 @@ export default function AboutPage() {
 								</strong>{" "}
 								{about.bottomCta}
 							</p>
-							<Link to="/book" className="btn-primary mt-5">
-								Book a consultation
-							</Link>
+							<div className="mt-5 flex flex-wrap gap-3">
+								<Link to="/book" className="btn-primary">
+									Book a consultation
+								</Link>
+								<Link
+									to="/research/cancer-vaccine-analytics"
+									className="btn-secondary"
+								>
+									Research Analytics Lab
+								</Link>
+							</div>
 						</div>
 					</div>
 
