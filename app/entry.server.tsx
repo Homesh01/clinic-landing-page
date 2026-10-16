@@ -2,6 +2,8 @@ import type { AppLoadContext, EntryContext } from "@remix-run/cloudflare";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { logServerError } from "~/utils/safe-log.server";
+import { applySecurityHeaders } from "~/utils/security-headers.server";
 
 const ABORT_DELAY = 5000;
 
@@ -25,7 +27,7 @@ export default async function handleRequest(
 			signal: controller.signal,
 			onError(error: unknown) {
 				if (!controller.signal.aborted) {
-					console.error(error);
+					logServerError("SSR render error", error);
 				}
 				responseStatusCode = 500;
 			},
@@ -39,13 +41,7 @@ export default async function handleRequest(
 	}
 
 	responseHeaders.set("Content-Type", "text/html");
-	responseHeaders.set("X-Content-Type-Options", "nosniff");
-	responseHeaders.set("X-Frame-Options", "SAMEORIGIN");
-	responseHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
-	responseHeaders.set(
-		"Permissions-Policy",
-		"camera=(), microphone=(), geolocation=()",
-	);
+	applySecurityHeaders(responseHeaders);
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatusCode,

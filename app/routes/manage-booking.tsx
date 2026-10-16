@@ -37,6 +37,7 @@ import {
 import { privacyNotice } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 import { formatBookingDate } from "~/utils/format-date";
+import { logServerError } from "~/utils/safe-log.server";
 
 const EMAIL_RE =
 	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
@@ -227,7 +228,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 							timeLabel: existing.timeLabel,
 						});
 					} catch (lookupError) {
-						console.error("Stripe payment lookup for refund failed:", lookupError);
+						logServerError("Stripe payment lookup for refund failed", lookupError);
 					}
 
 					console.log("Cancel refund lookup", {
@@ -262,7 +263,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 							refundAmountLabel = formatGbpFromPence(refund.amountPence);
 						}
 					} catch (refundError) {
-						console.error("Self-pay cancel refund error:", refundError);
+						logServerError("Self-pay cancel refund error", refundError);
 						return json(
 							{
 								ok: false as const,
@@ -296,7 +297,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					refundMinHours: SELF_PAY_REFUND_MIN_HOURS,
 				});
 			} catch (emailError) {
-				console.error("Cancel confirmation email error:", emailError);
+				logServerError("Cancel confirmation email error", emailError);
 			}
 			return json({
 				ok: true as const,
@@ -393,7 +394,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
-				console.error("Reschedule confirmation email error:", emailError);
+				logServerError("Reschedule confirmation email error", emailError);
 			}
 			return json({
 				ok: true as const,
@@ -425,7 +426,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				{ status: 409 },
 			);
 		}
-		console.error("Manage booking error:", error);
+		logServerError("Manage booking error", error);
 		return json(
 			{
 				ok: false as const,

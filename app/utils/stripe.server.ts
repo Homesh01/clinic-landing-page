@@ -8,6 +8,7 @@ import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import type { ValidatedBookingInput } from "~/utils/booking-validation";
 import { CONSULTATION_TYPES } from "~/utils/booking-validation";
 import { site } from "~/data/content";
+import { logServerError } from "~/utils/safe-log.server";
 
 export type StripeConfig = {
 	secretKey: string;
@@ -106,6 +107,11 @@ async function stripeRequest<T>(
 	return data;
 }
 
+/**
+ * Metadata needed to recreate the appointment after Checkout.
+ * Free-text patient notes are intentionally omitted so clinical narrative
+ * is not stored with the payment processor (data minimisation).
+ */
 function bookingToMetadata(
 	input: ValidatedBookingInput & { bookingRef: string },
 ): Record<string, string> {
@@ -118,7 +124,6 @@ function bookingToMetadata(
 		type: input.type.slice(0, 500),
 		appointmentFormat: input.appointmentFormat,
 		paymentMethod: "self-pay",
-		notes: (input.notes ?? "").slice(0, 500),
 		bookingRef: input.bookingRef.slice(0, 32),
 	};
 }
@@ -149,7 +154,6 @@ function metadataToBooking(
 		type: metadata.type as ValidatedBookingInput["type"],
 		appointmentFormat,
 		paymentMethod: "self-pay",
-		notes: metadata.notes?.trim() ? metadata.notes.trim() : undefined,
 		bookingRef: metadata.bookingRef?.trim() || undefined,
 	};
 }
@@ -283,7 +287,7 @@ export async function resolvePaymentIntentForBooking(
 					: session.payment_intent?.id;
 			if (fromSession) return fromSession;
 		} catch (error) {
-			console.error("Stripe session retrieve for refund failed:", error);
+			logServerError("Stripe session retrieve for refund failed", error);
 		}
 	}
 
@@ -313,7 +317,7 @@ export async function resolvePaymentIntentForBooking(
 			const byRef = await trySearch(`metadata['bookingRef']:'${safeRef}'`);
 			if (byRef) return byRef;
 		} catch (error) {
-			console.error("Stripe payment_intent search by bookingRef failed:", error);
+			logServerError("Stripe payment_intent search by bookingRef failed", error);
 		}
 	}
 
@@ -324,7 +328,7 @@ export async function resolvePaymentIntentForBooking(
 			);
 			if (bySlot) return bySlot;
 		} catch (error) {
-			console.error("Stripe payment_intent search by slot failed:", error);
+			logServerError("Stripe payment_intent search by slot failed", error);
 		}
 	}
 
@@ -343,7 +347,7 @@ export async function resolvePaymentIntentForBooking(
 				if (fromSession) return fromSession;
 			}
 		} catch (error) {
-			console.error("Stripe checkout session search failed:", error);
+			logServerError("Stripe checkout session search failed", error);
 		}
 	}
 
@@ -357,7 +361,7 @@ export async function resolvePaymentIntentForBooking(
 		});
 		if (scanned) return scanned;
 	} catch (error) {
-		console.error("Stripe payment_intent scan failed:", error);
+		logServerError("Stripe payment_intent scan failed", error);
 	}
 
 	return null;
@@ -542,7 +546,8 @@ export async function fulfillPaidCheckoutSession(input: {
 			paymentMethod: "self-pay",
 			stripeSessionId: session.id,
 			stripePaymentIntentId: paymentIntentId,
-			notes: booking.notes?.trim() || undefined,
+			// Administrative payment marker only — free-text notes are not stored in Stripe.
+			notes: "Payment: Self-pay",
 		});
 		await patchBookingPaymentDetails(calendarConfig, created.eventId, {
 			bookingRef: created.bookingRef,
@@ -577,7 +582,7 @@ export async function fulfillPaidCheckoutSession(input: {
 			});
 		} catch (emailError) {
 			emailSent = false;
-			console.error("Post-payment confirmation email error:", emailError);
+			logServerError("Post-payment confirmation email error", emailError);
 		}
 
 		return successFromBooking(
@@ -610,7 +615,7 @@ export async function fulfillPaidCheckoutSession(input: {
 			};
 		}
 
-		console.error("Post-payment booking create error:", error);
+		logServerError("Post-payment booking create error", error);
 		return {
 			ok: false,
 			error:

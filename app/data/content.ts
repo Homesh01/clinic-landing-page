@@ -906,17 +906,28 @@ export const privacyNotice = {
 			heading: "6. How we store and protect your information",
 			paragraphs: [
 				"PCC uses Google Workspace, including Gmail, Calendar and Drive, for aspects of patient correspondence, scheduling, administration and record-keeping.",
-				"Google provides services to PCC under contractual data-processing terms. We use account authentication, access controls and other appropriate security measures to protect information.",
+				"The website is hosted on Cloudflare infrastructure. Online self-pay payments are processed by Stripe. Appointment booking uses Google Calendar.",
+				"Google, Cloudflare and Stripe provide services to PCC under their respective contractual terms. We use account authentication, access controls and other appropriate security measures to protect information.",
 				"Access to patient information is restricted according to professional and administrative responsibilities.",
 				"No electronic system can be guaranteed completely secure, but we take reasonable steps to protect information against unauthorised access, loss and misuse.",
 			],
 		},
 		{
+			heading: "6.1 Website, cookies and Research Analytics Lab",
+			paragraphs: [
+				"Website enquiries are by email only. The Contact page displays an email address and does not submit a web form to Cloudflare or another form processor.",
+				"The website may set strictly necessary cookies for site access control and for authorised clinic-staff tools. These cookies are functional and are not used for advertising.",
+				"PCC does not use Google Analytics, Meta Pixel or similar marketing trackers on the website. If that position changes, this notice will be updated and any required consent arrangements put in place.",
+				"The Research Analytics Lab pages demonstrate analytics and machine-learning concepts using synthetic demonstration data only. They do not upload patient records and do not send identifiable patient information to external analytics or AI services.",
+				"When you book online, the information you enter is used to arrange the appointment. Self-pay checkout is handled by Stripe; free-text appointment notes are not sent to Stripe. Calendar invitations and clinic correspondence are handled through Google Workspace.",
+			],
+		},
+		{
 			heading: "7. International transfers",
 			paragraphs: [
-				"Some technology providers, including Google, may process information outside the United Kingdom.",
+				"Some technology providers, including Google, Cloudflare and Stripe, may process information outside the United Kingdom.",
 				"Where personal information is transferred to a country without applicable UK adequacy protection, we rely on appropriate safeguards where required, such as contractual transfer mechanisms recognised under UK data-protection law.",
-				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses.",
+				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses. Cloudflare and Stripe publish their own UK GDPR / international-transfer documentation; PCC relies on the contractual arrangements applicable to its accounts.",
 				"You may contact us for further information about the safeguards relevant to your information.",
 			],
 		},

@@ -37,6 +37,7 @@ import {
 	rescheduleBookingEvent,
 } from "~/utils/google-calendar.server";
 import { requireSiteAccess } from "~/utils/site-auth.server";
+import { logServerError } from "~/utils/safe-log.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 import {
 	formatGbpFromPence,
@@ -137,7 +138,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					expiresMinutes: CLINIC_MAGIC_LINK_MINUTES,
 				});
 			} catch (emailError) {
-				console.error("Clinic magic link email error:", emailError);
+				logServerError("Clinic magic link email error", emailError);
 				return json(
 					{
 						ok: false as const,
@@ -285,7 +286,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
-				console.error("Insurance confirm email error:", emailError);
+				logServerError("Insurance confirm email error", emailError);
 			}
 			return json({
 				ok: true as const,
@@ -351,7 +352,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					meetLink: booking.meetLink,
 				});
 			} catch (emailError) {
-				console.error("Clinic reschedule email error:", emailError);
+				logServerError("Clinic reschedule email error", emailError);
 			}
 			return json({
 				ok: true as const,
@@ -414,7 +415,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						timeLabel: existing.timeLabel,
 					});
 				} catch (lookupError) {
-					console.error("Clinic cancel refund lookup failed:", lookupError);
+					logServerError("Clinic cancel refund lookup failed", lookupError);
 				}
 
 				if (!paymentIntentId) {
@@ -439,7 +440,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						refundAmountLabel = formatGbpFromPence(refund.amountPence);
 					}
 				} catch (refundError) {
-					console.error("Clinic cancel refund error:", refundError);
+					logServerError("Clinic cancel refund error", refundError);
 					return json(
 						{
 							ok: false as const,
@@ -470,7 +471,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 					refundAmountLabel,
 				});
 			} catch (emailError) {
-				console.error("Clinic cancel email error:", emailError);
+				logServerError("Clinic cancel email error", emailError);
 			}
 
 			return json({
@@ -498,7 +499,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				{ status: 409 },
 			);
 		}
-		console.error("Clinic tools error:", error);
+		logServerError("Clinic tools error", error);
 		return json(
 			{
 				ok: false as const,

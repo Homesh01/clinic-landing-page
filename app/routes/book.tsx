@@ -50,6 +50,7 @@ import {
 } from "~/utils/stripe.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
 import { formatBookingDate } from "~/utils/format-date";
+import { logServerError } from "~/utils/safe-log.server";
 
 /** Keeps browser autofill and later edits in sync with React state. */
 function useEditableField<T extends HTMLInputElement | HTMLTextAreaElement>(
@@ -164,7 +165,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 				checkoutError = fulfillment.error;
 			}
 		} catch (error) {
-			console.error("Checkout session confirm error:", error);
+			logServerError("Checkout session confirm error", error);
 			checkoutError =
 				"Payment may have succeeded, but we could not confirm the appointment automatically. Please contact the clinic team with your payment receipt.";
 		}
@@ -205,7 +206,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 			fees,
 		});
 	} catch (error) {
-		console.error("Booking availability error:", error);
+		logServerError("Booking availability error", error);
 		return json({
 			configured: true as const,
 			days: [] as Awaited<ReturnType<typeof getAvailableDays>>,
@@ -263,7 +264,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		allowedTimesForDate =
 			days.find((day) => day.iso === dateIso.trim())?.times ?? [];
 	} catch (error) {
-		console.error("Booking availability check error:", error);
+		logServerError("Booking availability check error", error);
 		return json(
 			{
 				ok: false as const,
@@ -341,7 +342,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				});
 			} catch (emailError) {
 				emailSent = false;
-				console.error("Insurance booking confirmation email error:", emailError);
+				logServerError("Insurance booking confirmation email error", emailError);
 			}
 
 			return json({
@@ -394,7 +395,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			);
 		}
 
-		console.error("Booking submit error:", error);
+		logServerError("Booking submit error", error);
 		const detail =
 			error instanceof Error && /api key|invalid/i.test(error.message)
 				? "Stripe rejected the API key. Check STRIPE_SECRET_KEY in .dev.vars (test key from Developers → API keys), then restart the dev server."
@@ -1146,9 +1147,17 @@ export default function BookPage() {
 													onBlur={notesField.onBlur}
 													onAnimationStart={notesField.onAnimationStart}
 													className={fieldClass(Boolean(fieldErrors?.notes))}
-													placeholder="Brief context for the appointment"
+													placeholder="Brief non-clinical context for the appointment"
 													aria-invalid={Boolean(fieldErrors?.notes)}
 												/>
+												<p className="mt-1.5 text-sm text-ink-muted">
+													For insurance bookings, notes are stored on the clinic
+													calendar only. For self-pay, free-text notes are not
+													sent to the payment provider — email any additional
+													context to the clinic after booking if needed. Please
+													avoid including diagnoses or detailed medical history
+													here.
+												</p>
 												{fieldErrors?.notes ? (
 													<span className="mt-1.5 block text-sm text-red-700">
 														{fieldErrors.notes}

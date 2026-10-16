@@ -6,6 +6,7 @@ import {
 	retrieveCheckoutSession,
 	verifyStripeWebhookSignature,
 } from "~/utils/stripe.server";
+import { logServerError } from "~/utils/safe-log.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	if (request.method !== "POST") {
@@ -14,7 +15,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const stripe = getStripeConfig(context.cloudflare.env);
 	if (!stripe?.webhookSecret) {
-		console.error("Stripe webhook received but STRIPE_WEBHOOK_SECRET is not set");
+		logServerError(
+			"Stripe webhook received but STRIPE_WEBHOOK_SECRET is not set",
+			new Error("webhook_secret_missing"),
+		);
 		return new Response("Webhook not configured", { status: 503 });
 	}
 
@@ -45,7 +49,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		});
 
 		if (!result.ok) {
-			console.error("Stripe webhook fulfillment failed:", result.error);
+			logServerError(
+				"Stripe webhook fulfillment failed",
+				new Error(result.error),
+			);
 			// 200 so Stripe does not endlessly retry for business conflicts;
 			// payment was taken and needs manual follow-up if booking failed.
 		}
