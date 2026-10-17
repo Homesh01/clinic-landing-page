@@ -37,6 +37,18 @@ export const nav: readonly NavItem[] = [
 				to: "/research/neoantigen-classifier",
 				label: "Neoantigen priority classifier",
 			},
+			{
+				to: "/research/multiomics-stratification",
+				label: "Multi-omics stratification",
+			},
+			{
+				to: "/research/survival-boosting",
+				label: "Survival & gradient boosting",
+			},
+			{
+				to: "/research/distribution-inference",
+				label: "Distributions & inference",
+			},
 		],
 	},
 	{ to: "/conferences", label: "Conferences" },
