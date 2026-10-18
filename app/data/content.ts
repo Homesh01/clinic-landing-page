@@ -130,7 +130,7 @@ export const homePlatform = {
 export const about = {
 	heroTitle: "A clinician building personalised oncology with technology enablement.",
 	heroLede:
-		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinical practice, she leads translational AI research and develops analytical software for personalised therapy. The next generation of cancer care must embrace the latest AI advances to complement clinician-led decision making. Technology without clinician-led expertise makes mistakes.",
+		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinical practice, she leads translational AI research and develops analytical software for personalised therapy. The next generation of cancer care must embrace the latest AI advances to complement clinician lead decision making. Technology without clinician-led expertise makes mistakes.",
 	sections: [
 		{
 			heading: "Where she practises",
