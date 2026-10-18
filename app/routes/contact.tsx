@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("Contact & locations"),
 		description:
-			"Contact Personalised Cancer Care — London clinic locations, fees, insurance, and how to reach the clinic team.",
+			"Contact Personalised Cancer Care — London clinic locations, fees, insurance, and how to reach the clinical team.",
 		path: "/contact",
 	});
 };
@@ -54,7 +54,7 @@ export default function ContactPage() {
 		<>
 			<PageHero
 				eyebrow="Contact &amp; Locations"
-				title="Reach the clinic team"
+				title="Reach the clinical team"
 				summary="Appointments are available across central London clinics. UK self-pay fees are listed below; insurance bookings need an authorisation code and are confirmed after verification."
 			/>
 

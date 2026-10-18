@@ -128,14 +128,14 @@ export const homePlatform = {
 } as const;
 
 export const about = {
-	heroTitle: "A clinician building the software layer of personalised oncology",
+	heroTitle: "A clinician building personalised oncology with technology enablement.",
 	heroLede:
-		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinic practice she leads translational AI work and develops analytical software for personalised therapy — the same grounding that will support advanced diagnostics and personalised cancer vaccines as those approaches mature for patients.",
+		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinical practice, she leads translational AI research and develops analytical software for personalised therapy. The next generation of cancer care must embrace the latest AI advances to complement clinician-led decision making. Technology without clinician-led expertise makes mistakes.",
 	sections: [
 		{
 			heading: "Where she practises",
 			paragraphs: [
-				"Dr Sayal sees patients at University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic (all part of HCA Healthcare). She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
+				"Dr Sayal sees patients at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
 			],
 		},
 		{
@@ -162,7 +162,7 @@ export const about = {
 	belief:
 		"Technology and clinical expertise should work together to give every patient a treatment plan that is accurate, timely, and genuinely personal to them.",
 	bottomCta:
-		"New patient reviews, second opinions, and ongoing monitoring appointments are available across University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic.",
+		"New patient reviews, second opinions, and ongoing monitoring appointments are available across HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic.",
 };
 
 export const conditionsPage = {
@@ -401,7 +401,7 @@ export const faqPage = {
 				{
 					question: "Where are clinics held?",
 					answer:
-						"Dr Sayal sees patients at University College Hospital Private Care, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. Virtual consultations are also available where appropriate.",
+						"Dr Sayal sees patients at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. Virtual consultations are also available where appropriate.",
 				},
 				{
 					question: "Are remote consultations offered?",
@@ -784,7 +784,7 @@ export const locations = [
 		mapsUrl: "https://maps.app.goo.gl/qu9RB1Smnry8AP2k9",
 	},
 	{
-		name: "LOC — Leaders in Oncology Care",
+		name: "Leaders in Oncology Care",
 		addressLines: ["95 Harley Street", "London, W1G 6AF"],
 		mapsUrl: "https://maps.app.goo.gl/NBycteGA8KXvRmSJA",
 	},
@@ -797,16 +797,16 @@ export const locations = [
 
 export const contactPage = {
 	callout: {
-		title: "Need to reach the clinic team?",
+		title: "Need to reach the clinical team?",
 		body:
-			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, email the clinic team. Enquiries by email only.",
-		emailLabel: "Email the clinic team",
+			"For questions about fees, insurance, clinic locations, or what to expect before your first visit, email the clinical team. Enquiries by email only.",
+		emailLabel: "Email the clinical team",
 		bookLabel: "Book a consultation",
 	},
 } as const;
 
 export const contact = {
-	secretaryLabel: "Secretary / PA",
+	secretaryLabel: "Secretary",
 	email: "info@personalisedcancercare.com",
 	enquiriesNote: "Enquiries by email only",
 };
