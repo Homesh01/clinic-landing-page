@@ -200,3 +200,8 @@ dist
 
 ### Remix ###
 /build/
+
+### Data Analysis ###
+/data-analysis/
+/data-analysis-raw/
+# processed aggregates are committed under data-analysis-processed/
