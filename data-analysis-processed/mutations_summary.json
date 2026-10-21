@@ -1,0 +1,1003 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "tier": "A+B",
+  "nPatients": 11,
+  "totalMutationRows": 15827,
+  "globalVariantClasses": [
+    {
+      "class": "Missense_Mutation",
+      "count": 7086
+    },
+    {
+      "class": "Silent",
+      "count": 4160
+    },
+    {
+      "class": "Intron",
+      "count": 2759
+    },
+    {
+      "class": "Nonsense_Mutation",
+      "count": 470
+    },
+    {
+      "class": "Splice_Site",
+      "count": 298
+    },
+    {
+      "class": "RNA",
+      "count": 289
+    },
+    {
+      "class": "3'UTR",
+      "count": 203
+    },
+    {
+      "class": "IGR",
+      "count": 166
+    },
+    {
+      "class": "5'UTR",
+      "count": 150
+    },
+    {
+      "class": "5'Flank",
+      "count": 125
+    },
+    {
+      "class": "Frame_Shift_Del",
+      "count": 41
+    },
+    {
+      "class": "lincRNA",
+      "count": 28
+    },
+    {
+      "class": "Frame_Shift_Ins",
+      "count": 15
+    },
+    {
+      "class": "In_Frame_Del",
+      "count": 13
+    },
+    {
+      "class": "START_CODON_SNP",
+      "count": 11
+    },
+    {
+      "class": "Nonstop_Mutation",
+      "count": 4
+    },
+    {
+      "class": "In_Frame_Ins",
+      "count": 4
+    },
+    {
+      "class": "Start_Codon_SNP",
+      "count": 3
+    },
+    {
+      "class": "COULD_NOT_DETERMINE",
+      "count": 1
+    },
+    {
+      "class": "DE_NOVO_START_IN_FRAME",
+      "count": 1
+    }
+  ],
+  "globalTopGenes": [
+    {
+      "gene": "TTN",
+      "count": 92
+    },
+    {
+      "gene": "MUC16",
+      "count": 56
+    },
+    {
+      "gene": "DNAH5",
+      "count": 30
+    },
+    {
+      "gene": "CSMD1",
+      "count": 19
+    },
+    {
+      "gene": "DNAH6",
+      "count": 18
+    },
+    {
+      "gene": "LRP1B",
+      "count": 18
+    },
+    {
+      "gene": "DNAH7",
+      "count": 18
+    },
+    {
+      "gene": "MGAM",
+      "count": 18
+    },
+    {
+      "gene": "WDFY4",
+      "count": 18
+    },
+    {
+      "gene": "MYO18B",
+      "count": 18
+    },
+    {
+      "gene": "TRANK1",
+      "count": 16
+    },
+    {
+      "gene": "RYR1",
+      "count": 16
+    },
+    {
+      "gene": "LRP2",
+      "count": 16
+    },
+    {
+      "gene": "HIST2H2AB",
+      "count": 16
+    },
+    {
+      "gene": "DSCAM",
+      "count": 15
+    },
+    {
+      "gene": "SPTA1",
+      "count": 15
+    },
+    {
+      "gene": "USH2A",
+      "count": 15
+    },
+    {
+      "gene": "DNAH9",
+      "count": 15
+    },
+    {
+      "gene": "FRAS1",
+      "count": 14
+    },
+    {
+      "gene": "DNAH10",
+      "count": 14
+    },
+    {
+      "gene": "COL7A1",
+      "count": 14
+    },
+    {
+      "gene": "TNXB",
+      "count": 13
+    },
+    {
+      "gene": "RP11-1220K2.2",
+      "count": 13
+    },
+    {
+      "gene": "MUC12",
+      "count": 13
+    },
+    {
+      "gene": "C12orf55",
+      "count": 13
+    }
+  ],
+  "patients": [
+    {
+      "patientId": "P101",
+      "totalMutations": 716,
+      "codingMutations": 385,
+      "missense": 332,
+      "silent": 188,
+      "nonsense": 23,
+      "frameshift": 3,
+      "spliceSite": 27,
+      "neoantigenProxy": 358,
+      "neoantigenProxyFraction": 0.5,
+      "topGenes": [
+        {
+          "gene": "MUC16",
+          "count": 5
+        },
+        {
+          "gene": "DCAF17",
+          "count": 3
+        },
+        {
+          "gene": "TTN",
+          "count": 3
+        },
+        {
+          "gene": "TRANK1",
+          "count": 3
+        },
+        {
+          "gene": "RP11-1220K2.2",
+          "count": 3
+        },
+        {
+          "gene": "HECTD4",
+          "count": 3
+        },
+        {
+          "gene": "SLC2A7",
+          "count": 2
+        },
+        {
+          "gene": "YTHDF2",
+          "count": 2
+        },
+        {
+          "gene": "MAP7D1",
+          "count": 2
+        },
+        {
+          "gene": "TYW3",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 88,
+        "Missense_Mutation": 332,
+        "IGR": 10,
+        "5'Flank": 4,
+        "Silent": 188,
+        "5'UTR": 10,
+        "Splice_Site": 27,
+        "lincRNA": 3,
+        "RNA": 15,
+        "3'UTR": 13,
+        "Nonsense_Mutation": 23,
+        "Frame_Shift_Del": 3
+      },
+      "cnvSegments": 138,
+      "cnvLohSegments": 37,
+      "cnvMeanAbsLog2": 0.4028
+    },
+    {
+      "patientId": "P102",
+      "totalMutations": 52,
+      "codingMutations": 15,
+      "missense": 14,
+      "silent": 5,
+      "nonsense": 0,
+      "frameshift": 0,
+      "spliceSite": 0,
+      "neoantigenProxy": 15,
+      "neoantigenProxyFraction": 0.2885,
+      "topGenes": [
+        {
+          "gene": "SARDH",
+          "count": 2
+        },
+        {
+          "gene": "PADI4",
+          "count": 1
+        },
+        {
+          "gene": "EIF4G3",
+          "count": 1
+        },
+        {
+          "gene": "RP11-337C18.8",
+          "count": 1
+        },
+        {
+          "gene": "C4BPB",
+          "count": 1
+        },
+        {
+          "gene": "ZAP70",
+          "count": 1
+        },
+        {
+          "gene": "CFLAR",
+          "count": 1
+        },
+        {
+          "gene": "C3orf83",
+          "count": 1
+        },
+        {
+          "gene": "PDCD10",
+          "count": 1
+        },
+        {
+          "gene": "ZNF595",
+          "count": 1
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 22,
+        "5'UTR": 1,
+        "RNA": 2,
+        "IGR": 4,
+        "Missense_Mutation": 14,
+        "3'UTR": 2,
+        "Silent": 5,
+        "In_Frame_Del": 1,
+        "5'Flank": 1
+      },
+      "cnvSegments": 0,
+      "cnvLohSegments": 0,
+      "cnvMeanAbsLog2": null
+    },
+    {
+      "patientId": "P103",
+      "totalMutations": 1480,
+      "codingMutations": 802,
+      "missense": 736,
+      "silent": 382,
+      "nonsense": 40,
+      "frameshift": 3,
+      "spliceSite": 21,
+      "neoantigenProxy": 779,
+      "neoantigenProxyFraction": 0.5264,
+      "topGenes": [
+        {
+          "gene": "TTN",
+          "count": 12
+        },
+        {
+          "gene": "MUC16",
+          "count": 11
+        },
+        {
+          "gene": "KLHDC9",
+          "count": 3
+        },
+        {
+          "gene": "ABI3BP",
+          "count": 3
+        },
+        {
+          "gene": "MECOM",
+          "count": 3
+        },
+        {
+          "gene": "DNAH5",
+          "count": 3
+        },
+        {
+          "gene": "IL7R",
+          "count": 3
+        },
+        {
+          "gene": "THSD7A",
+          "count": 3
+        },
+        {
+          "gene": "MGAM",
+          "count": 3
+        },
+        {
+          "gene": "FAM135B",
+          "count": 3
+        }
+      ],
+      "variantClassCounts": {
+        "Splice_Site": 21,
+        "Nonsense_Mutation": 40,
+        "Intron": 212,
+        "Missense_Mutation": 736,
+        "Silent": 382,
+        "5'Flank": 10,
+        "RNA": 24,
+        "3'UTR": 17,
+        "5'UTR": 5,
+        "lincRNA": 9,
+        "Nonstop_Mutation": 2,
+        "IGR": 19,
+        "Frame_Shift_Ins": 1,
+        "Frame_Shift_Del": 2
+      },
+      "cnvSegments": 117,
+      "cnvLohSegments": 22,
+      "cnvMeanAbsLog2": 0.2767
+    },
+    {
+      "patientId": "P104",
+      "totalMutations": 87,
+      "codingMutations": 41,
+      "missense": 34,
+      "silent": 14,
+      "nonsense": 5,
+      "frameshift": 2,
+      "spliceSite": 0,
+      "neoantigenProxy": 41,
+      "neoantigenProxyFraction": 0.4713,
+      "topGenes": [
+        {
+          "gene": "SYDE1",
+          "count": 2
+        },
+        {
+          "gene": "VWA5B1",
+          "count": 1
+        },
+        {
+          "gene": "EIF4G3",
+          "count": 1
+        },
+        {
+          "gene": "RPS8",
+          "count": 1
+        },
+        {
+          "gene": "OLFML2B",
+          "count": 1
+        },
+        {
+          "gene": "RFWD2",
+          "count": 1
+        },
+        {
+          "gene": "FAIM3",
+          "count": 1
+        },
+        {
+          "gene": "RYR2",
+          "count": 1
+        },
+        {
+          "gene": "AKT3",
+          "count": 1
+        },
+        {
+          "gene": "EML6",
+          "count": 1
+        }
+      ],
+      "variantClassCounts": {
+        "Missense_Mutation": 34,
+        "5'UTR": 1,
+        "Intron": 22,
+        "Silent": 14,
+        "Nonsense_Mutation": 5,
+        "Start_Codon_SNP": 1,
+        "3'UTR": 2,
+        "RNA": 1,
+        "IGR": 5,
+        "Frame_Shift_Del": 1,
+        "Frame_Shift_Ins": 1
+      },
+      "cnvSegments": 133,
+      "cnvLohSegments": 40,
+      "cnvMeanAbsLog2": 0.2894
+    },
+    {
+      "patientId": "P105",
+      "totalMutations": 710,
+      "codingMutations": 375,
+      "missense": 335,
+      "silent": 190,
+      "nonsense": 23,
+      "frameshift": 0,
+      "spliceSite": 17,
+      "neoantigenProxy": 358,
+      "neoantigenProxyFraction": 0.5042,
+      "topGenes": [
+        {
+          "gene": "TTN",
+          "count": 3
+        },
+        {
+          "gene": "COL4A3",
+          "count": 3
+        },
+        {
+          "gene": "MYRFL",
+          "count": 3
+        },
+        {
+          "gene": "C1QB",
+          "count": 2
+        },
+        {
+          "gene": "GJB3",
+          "count": 2
+        },
+        {
+          "gene": "CD5L",
+          "count": 2
+        },
+        {
+          "gene": "TAGLN2",
+          "count": 2
+        },
+        {
+          "gene": "CACNA1E",
+          "count": 2
+        },
+        {
+          "gene": "BRINP3",
+          "count": 2
+        },
+        {
+          "gene": "USH2A",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Missense_Mutation": 335,
+        "Silent": 190,
+        "IGR": 13,
+        "RNA": 24,
+        "Intron": 79,
+        "Nonsense_Mutation": 23,
+        "3'UTR": 9,
+        "Splice_Site": 17,
+        "5'Flank": 8,
+        "5'UTR": 4,
+        "Start_Codon_SNP": 1,
+        "lincRNA": 7
+      },
+      "cnvSegments": 127,
+      "cnvLohSegments": 48,
+      "cnvMeanAbsLog2": 0.3287
+    },
+    {
+      "patientId": "P106",
+      "totalMutations": 614,
+      "codingMutations": 318,
+      "missense": 281,
+      "silent": 158,
+      "nonsense": 20,
+      "frameshift": 1,
+      "spliceSite": 12,
+      "neoantigenProxy": 305,
+      "neoantigenProxyFraction": 0.4967,
+      "topGenes": [
+        {
+          "gene": "LRP1B",
+          "count": 6
+        },
+        {
+          "gene": "SCN11A",
+          "count": 3
+        },
+        {
+          "gene": "RPL35A",
+          "count": 3
+        },
+        {
+          "gene": "MROH2B",
+          "count": 3
+        },
+        {
+          "gene": "PREX2",
+          "count": 3
+        },
+        {
+          "gene": "STAB2",
+          "count": 3
+        },
+        {
+          "gene": "FBN1",
+          "count": 3
+        },
+        {
+          "gene": "COL1A1",
+          "count": 3
+        },
+        {
+          "gene": "ADPRHL2",
+          "count": 2
+        },
+        {
+          "gene": "DOCK7",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Silent": 158,
+        "Missense_Mutation": 281,
+        "Splice_Site": 12,
+        "Intron": 93,
+        "3'UTR": 9,
+        "Nonsense_Mutation": 20,
+        "5'UTR": 6,
+        "IGR": 12,
+        "RNA": 10,
+        "5'Flank": 4,
+        "Nonstop_Mutation": 1,
+        "Start_Codon_SNP": 1,
+        "lincRNA": 3,
+        "In_Frame_Del": 3,
+        "Frame_Shift_Del": 1
+      },
+      "cnvSegments": 130,
+      "cnvLohSegments": 48,
+      "cnvMeanAbsLog2": 0.4336
+    },
+    {
+      "patientId": "P107",
+      "totalMutations": 181,
+      "codingMutations": 100,
+      "missense": 91,
+      "silent": 37,
+      "nonsense": 2,
+      "frameshift": 2,
+      "spliceSite": 5,
+      "neoantigenProxy": 95,
+      "neoantigenProxyFraction": 0.5249,
+      "topGenes": [
+        {
+          "gene": "FLG2",
+          "count": 3
+        },
+        {
+          "gene": "ANKRD13D",
+          "count": 3
+        },
+        {
+          "gene": "ZNF493",
+          "count": 3
+        },
+        {
+          "gene": "C4BPB",
+          "count": 2
+        },
+        {
+          "gene": "ZNF678",
+          "count": 2
+        },
+        {
+          "gene": "UPP2",
+          "count": 2
+        },
+        {
+          "gene": "ANKRD33B",
+          "count": 2
+        },
+        {
+          "gene": "MUC22",
+          "count": 2
+        },
+        {
+          "gene": "ZNF680",
+          "count": 2
+        },
+        {
+          "gene": "DEAF1",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 28,
+        "Splice_Site": 5,
+        "Silent": 37,
+        "Missense_Mutation": 91,
+        "IGR": 6,
+        "Nonsense_Mutation": 2,
+        "5'Flank": 1,
+        "3'UTR": 4,
+        "RNA": 5,
+        "Frame_Shift_Ins": 2
+      },
+      "cnvSegments": 0,
+      "cnvLohSegments": 0,
+      "cnvMeanAbsLog2": null
+    },
+    {
+      "patientId": "P108",
+      "totalMutations": 497,
+      "codingMutations": 262,
+      "missense": 232,
+      "silent": 129,
+      "nonsense": 19,
+      "frameshift": 1,
+      "spliceSite": 9,
+      "neoantigenProxy": 253,
+      "neoantigenProxyFraction": 0.5091,
+      "topGenes": [
+        {
+          "gene": "USH2A",
+          "count": 4
+        },
+        {
+          "gene": "FCRL5",
+          "count": 3
+        },
+        {
+          "gene": "LRP1B",
+          "count": 3
+        },
+        {
+          "gene": "ANO7P1",
+          "count": 2
+        },
+        {
+          "gene": "PTPRU",
+          "count": 2
+        },
+        {
+          "gene": "AGO4",
+          "count": 2
+        },
+        {
+          "gene": "PBXIP1",
+          "count": 2
+        },
+        {
+          "gene": "RBM45",
+          "count": 2
+        },
+        {
+          "gene": "TTN",
+          "count": 2
+        },
+        {
+          "gene": "ALS2",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Silent": 129,
+        "Missense_Mutation": 232,
+        "RNA": 10,
+        "Intron": 74,
+        "Nonsense_Mutation": 19,
+        "IGR": 4,
+        "Splice_Site": 9,
+        "3'UTR": 7,
+        "5'UTR": 1,
+        "5'Flank": 4,
+        "lincRNA": 6,
+        "Frame_Shift_Del": 1,
+        "In_Frame_Del": 1
+      },
+      "cnvSegments": 139,
+      "cnvLohSegments": 36,
+      "cnvMeanAbsLog2": 0.4184
+    },
+    {
+      "patientId": "P109",
+      "totalMutations": 529,
+      "codingMutations": 251,
+      "missense": 224,
+      "silent": 142,
+      "nonsense": 15,
+      "frameshift": 2,
+      "spliceSite": 8,
+      "neoantigenProxy": 243,
+      "neoantigenProxyFraction": 0.4594,
+      "topGenes": [
+        {
+          "gene": "DCDC2B",
+          "count": 3
+        },
+        {
+          "gene": "TERT",
+          "count": 3
+        },
+        {
+          "gene": "GLT8D2",
+          "count": 3
+        },
+        {
+          "gene": "KRTAP13-3",
+          "count": 3
+        },
+        {
+          "gene": "PPT1",
+          "count": 2
+        },
+        {
+          "gene": "EPS15",
+          "count": 2
+        },
+        {
+          "gene": "CACNA1E",
+          "count": 2
+        },
+        {
+          "gene": "KCNK1",
+          "count": 2
+        },
+        {
+          "gene": "RFX8",
+          "count": 2
+        },
+        {
+          "gene": "TTN",
+          "count": 2
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 97,
+        "Missense_Mutation": 224,
+        "Silent": 142,
+        "RNA": 9,
+        "5'Flank": 4,
+        "5'UTR": 12,
+        "3'UTR": 8,
+        "Nonsense_Mutation": 15,
+        "IGR": 6,
+        "Splice_Site": 8,
+        "In_Frame_Ins": 1,
+        "Frame_Shift_Ins": 1,
+        "In_Frame_Del": 1,
+        "Frame_Shift_Del": 1
+      },
+      "cnvSegments": 267,
+      "cnvLohSegments": 89,
+      "cnvMeanAbsLog2": 0.3965
+    },
+    {
+      "patientId": "P110",
+      "totalMutations": 10309,
+      "codingMutations": 5059,
+      "missense": 4521,
+      "silent": 2750,
+      "nonsense": 309,
+      "frameshift": 31,
+      "spliceSite": 180,
+      "neoantigenProxy": 4867,
+      "neoantigenProxyFraction": 0.4721,
+      "topGenes": [
+        {
+          "gene": "TTN",
+          "count": 65
+        },
+        {
+          "gene": "MUC16",
+          "count": 32
+        },
+        {
+          "gene": "DNAH5",
+          "count": 19
+        },
+        {
+          "gene": "LRP2",
+          "count": 15
+        },
+        {
+          "gene": "WDFY4",
+          "count": 15
+        },
+        {
+          "gene": "RYR1",
+          "count": 14
+        },
+        {
+          "gene": "CSMD1",
+          "count": 13
+        },
+        {
+          "gene": "SPTA1",
+          "count": 12
+        },
+        {
+          "gene": "DNAH6",
+          "count": 12
+        },
+        {
+          "gene": "COL7A1",
+          "count": 12
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 1938,
+        "Missense_Mutation": 4521,
+        "Silent": 2750,
+        "Nonsense_Mutation": 309,
+        "Splice_Site": 180,
+        "5'Flank": 81,
+        "RNA": 172,
+        "3'UTR": 124,
+        "5'UTR": 103,
+        "START_CODON_SNP": 11,
+        "Nonstop_Mutation": 1,
+        "IGR": 81,
+        "Frame_Shift_Del": 25,
+        "Frame_Shift_Ins": 6,
+        "In_Frame_Del": 6,
+        "COULD_NOT_DETERMINE": 1
+      },
+      "cnvSegments": 151,
+      "cnvLohSegments": 27,
+      "cnvMeanAbsLog2": 0.2237
+    },
+    {
+      "patientId": "P111",
+      "totalMutations": 652,
+      "codingMutations": 334,
+      "missense": 286,
+      "silent": 165,
+      "nonsense": 14,
+      "frameshift": 11,
+      "spliceSite": 19,
+      "neoantigenProxy": 315,
+      "neoantigenProxyFraction": 0.4831,
+      "topGenes": [
+        {
+          "gene": "HIST2H2AB",
+          "count": 16
+        },
+        {
+          "gene": "HIST2H2AC",
+          "count": 9
+        },
+        {
+          "gene": "VAV1",
+          "count": 6
+        },
+        {
+          "gene": "KLHL30",
+          "count": 4
+        },
+        {
+          "gene": "CHRDL2",
+          "count": 4
+        },
+        {
+          "gene": "GLT8D2",
+          "count": 4
+        },
+        {
+          "gene": "NLRP1",
+          "count": 4
+        },
+        {
+          "gene": "BOLA1",
+          "count": 3
+        },
+        {
+          "gene": "ABCF1",
+          "count": 3
+        },
+        {
+          "gene": "ZFX",
+          "count": 3
+        }
+      ],
+      "variantClassCounts": {
+        "Intron": 106,
+        "Silent": 165,
+        "5'Flank": 8,
+        "Missense_Mutation": 286,
+        "DE_NOVO_START_IN_FRAME": 1,
+        "5'UTR": 7,
+        "Splice_Site": 19,
+        "3'UTR": 8,
+        "Nonsense_Mutation": 14,
+        "RNA": 17,
+        "IGR": 6,
+        "Frame_Shift_Del": 7,
+        "In_Frame_Ins": 3,
+        "In_Frame_Del": 1,
+        "Frame_Shift_Ins": 4
+      },
+      "cnvSegments": 101,
+      "cnvLohSegments": 18,
+      "cnvMeanAbsLog2": 0.2152
+    }
+  ],
+  "cohort": {
+    "medianCodingMutations": 318,
+    "minCodingMutations": 15,
+    "maxCodingMutations": 5059
+  },
+  "notes": [
+    "neoantigenProxy counts missense/indel/nonsense without HLA binding scores (S1 has no NetMHC ranks).",
+    "Paper reports median 134.5 high-quality coding mutations (range 35\u20132730) after WES+RNA filters; S1 includes broader call classes."
+  ]
+}

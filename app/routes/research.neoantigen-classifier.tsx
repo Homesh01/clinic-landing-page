@@ -47,6 +47,7 @@ export const meta: MetaFunction = () => {
 		description:
 			"Supervised machine-learning demonstration: logistic regression for synthetic neoantigen prioritisation with ROC curves and interactive thresholds.",
 		path: "/research/neoantigen-classifier",
+		noIndex: true,
 	});
 };
 

@@ -18,6 +18,18 @@ export function getSitePassword(env: Env | undefined): string | undefined {
 	return password ? password : undefined;
 }
 
+/** Local Remix/Wrangler hosts skip the site password gate. */
+export function isLocalDevRequest(request: Request): boolean {
+	const host = new URL(request.url).hostname.toLowerCase();
+	return (
+		host === "localhost" ||
+		host === "127.0.0.1" ||
+		host === "[::1]" ||
+		host === "::1" ||
+		host.endsWith(".localhost")
+	);
+}
+
 function getCookieSecret(env: Env | undefined, password: string): string {
 	const dedicated = env?.SITE_COOKIE_SECRET?.trim();
 	return dedicated || password;
@@ -70,6 +82,8 @@ export async function requireSiteAccess(
 	request: Request,
 	env: Env | undefined,
 ): Promise<void> {
+	if (isLocalDevRequest(request)) return;
+
 	const password = getSitePassword(env);
 	if (!password) return;
 

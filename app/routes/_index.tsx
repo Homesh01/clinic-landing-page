@@ -68,7 +68,7 @@ export default function Index() {
 									Book a consultation
 								</Link>
 								<Link
-									to="/research/cancer-vaccine-analytics"
+									to="/research/neovaxmi-reanalysis"
 									className="btn-secondary"
 								>
 									Explore the Analytics Lab
@@ -216,12 +216,12 @@ export default function Index() {
 			<CalloutBanner
 				eyebrow="Appointments"
 				title="Book a consultation, or explore the Analytics Lab"
-				body="View available slots and request a consultation at a time that suits you. Clinics at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic. Research analytics demonstrators are available in the Research Analytics Lab."
+				body="View available slots and request a consultation at a time that suits you. Clinics at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic. The Research Analytics Lab includes a reanalysis of published NeoVaxMI trial data."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
 					{
 						label: "Research Analytics Lab",
-						to: "/research/cancer-vaccine-analytics",
+						to: "/research/neovaxmi-reanalysis",
 						variant: "outline",
 					},
 				]}

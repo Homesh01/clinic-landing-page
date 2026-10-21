@@ -1,0 +1,1748 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "tier": "A",
+  "tumorSamples": [
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 719
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 2397
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 1020
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3572
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3697
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3380
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 2353
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "ipiCohort": "5mgIpi",
+      "nCells": 2838
+    },
+    {
+      "sample": "*The timepoint nomenclature for the cell barcodes of scRNA tumor data differs from the nomenclature in the manuscript and is noted in column CellBC_TimepointLabel",
+      "patientId": "",
+      "timepoint": "",
+      "ipiCohort": "",
+      "nCells": 0
+    }
+  ],
+  "tumorGroupComposition": [
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "B/Plasma",
+      "nCells": 19,
+      "fraction": 0.0079
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "Melanoma",
+      "nCells": 289,
+      "fraction": 0.1206
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "Other",
+      "nCells": 1184,
+      "fraction": 0.494
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "T/NK",
+      "nCells": 905,
+      "fraction": 0.3776
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "B/Plasma",
+      "nCells": 33,
+      "fraction": 0.0324
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "Melanoma",
+      "nCells": 4,
+      "fraction": 0.0039
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "Other",
+      "nCells": 782,
+      "fraction": 0.7667
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "T/NK",
+      "nCells": 201,
+      "fraction": 0.1971
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "B/Plasma",
+      "nCells": 2,
+      "fraction": 0.0028
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "Melanoma",
+      "nCells": 179,
+      "fraction": 0.249
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "Other",
+      "nCells": 362,
+      "fraction": 0.5035
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "T/NK",
+      "nCells": 176,
+      "fraction": 0.2448
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "B/Plasma",
+      "nCells": 236,
+      "fraction": 0.0638
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "Melanoma",
+      "nCells": 798,
+      "fraction": 0.2159
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "Other",
+      "nCells": 428,
+      "fraction": 0.1158
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "T/NK",
+      "nCells": 2235,
+      "fraction": 0.6045
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "B/Plasma",
+      "nCells": 131,
+      "fraction": 0.0388
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "Melanoma",
+      "nCells": 547,
+      "fraction": 0.1618
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "Other",
+      "nCells": 218,
+      "fraction": 0.0645
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "T/NK",
+      "nCells": 2484,
+      "fraction": 0.7349
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "B/Plasma",
+      "nCells": 449,
+      "fraction": 0.1257
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "Melanoma",
+      "nCells": 2545,
+      "fraction": 0.7125
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "Other",
+      "nCells": 307,
+      "fraction": 0.0859
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "T/NK",
+      "nCells": 271,
+      "fraction": 0.0759
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "B/Plasma",
+      "nCells": 0,
+      "fraction": 0.0
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "Melanoma",
+      "nCells": 2176,
+      "fraction": 0.9248
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "Other",
+      "nCells": 140,
+      "fraction": 0.0595
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "T/NK",
+      "nCells": 37,
+      "fraction": 0.0157
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "B/Plasma",
+      "nCells": 12,
+      "fraction": 0.0042
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "Melanoma",
+      "nCells": 1264,
+      "fraction": 0.4454
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "Other",
+      "nCells": 993,
+      "fraction": 0.3499
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "T/NK",
+      "nCells": 569,
+      "fraction": 0.2005
+    }
+  ],
+  "reconstructedTcrs": [
+    {
+      "tcrId": "1",
+      "patientId": "P101",
+      "cdr3a": "CATPQAGTALIF",
+      "cdr3b": "CASSQAIGRSNYGYTF",
+      "trav": "TRAV17",
+      "trbv": "TRBV4-1"
+    },
+    {
+      "tcrId": "2",
+      "patientId": "P101",
+      "cdr3a": "CAAKAGGYNKLIF",
+      "cdr3b": "CASSLVAGGPTDTQYF",
+      "trav": "TRAV13-1",
+      "trbv": "TRBV7-6"
+    },
+    {
+      "tcrId": "3",
+      "patientId": "P101",
+      "cdr3a": "CAGPRRNNNARLMF",
+      "cdr3b": "CASRDSFDYGYTF",
+      "trav": "TRAV27",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "4",
+      "patientId": "P101",
+      "cdr3a": "CAATGANNLFF",
+      "cdr3b": "CASSLVTLPSGANVLTF",
+      "trav": "TRAV29DV5",
+      "trbv": "TRBV18"
+    },
+    {
+      "tcrId": "5",
+      "patientId": "P101",
+      "cdr3a": "CAVTYGGATNKLIF",
+      "cdr3b": "CASSPLAGGSNYEQYF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV7-6"
+    },
+    {
+      "tcrId": "6",
+      "patientId": "P101",
+      "cdr3a": "CAMIPRSNDYKLSF",
+      "cdr3b": "CASSLGPDTQYF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV12-3/4"
+    },
+    {
+      "tcrId": "7",
+      "patientId": "P101",
+      "cdr3a": "CALGSYQLTF",
+      "cdr3b": "CASSLGQGSIFSSYEQYF",
+      "trav": "TRAV16",
+      "trbv": "TRBV5-1"
+    },
+    {
+      "tcrId": "8",
+      "patientId": "P101",
+      "cdr3a": "CATDETGANNLFF",
+      "cdr3b": "CASSGGTLKYEQYF",
+      "trav": "TRAV17",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "9",
+      "patientId": "P101",
+      "cdr3a": "CAETDAGKSTF",
+      "cdr3b": "CASSSTAQNIQYF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "10",
+      "patientId": "P101",
+      "cdr3a": "CAASKGTDKLIF",
+      "cdr3b": "CASSQFRGQHNSPLHF",
+      "trav": "TRAV13-1",
+      "trbv": "TRBV4-1"
+    },
+    {
+      "tcrId": "11",
+      "patientId": "P101",
+      "cdr3a": "CAMRGPWRGTASKLTF",
+      "cdr3b": "CSASTDRLNYGYTF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "12",
+      "patientId": "P101",
+      "cdr3a": "CAVDNAGNMLTF",
+      "cdr3b": "CASSRTGYNEQFF",
+      "trav": "TRAV21",
+      "trbv": "TRBV5-4"
+    },
+    {
+      "tcrId": "13",
+      "patientId": "P101",
+      "cdr3a": "CAASVHNYGQNFVF",
+      "cdr3b": "CASSFVFLPGRDTQYF",
+      "trav": "TRAV29DV5",
+      "trbv": "TRBV7-2"
+    },
+    {
+      "tcrId": "14",
+      "patientId": "P101",
+      "cdr3a": "CAENMKYGNKLVF",
+      "cdr3b": "CASSPDIGSSPLHF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV5-5"
+    },
+    {
+      "tcrId": "15",
+      "patientId": "P101",
+      "cdr3a": "CAGGSGTASKLTF",
+      "cdr3b": "CASSLDGSYGDTQYF",
+      "trav": "TRAV27",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "16",
+      "patientId": "P101",
+      "cdr3a": "CAVNDLGGSARQLTF",
+      "cdr3b": "CASSQDELGSYNEQFF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV3-1"
+    },
+    {
+      "tcrId": "17",
+      "patientId": "P101",
+      "cdr3a": "CAVRKQTGANNLFF",
+      "cdr3b": "CASSPTWGGSMVF",
+      "trav": "TRAV21",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "18",
+      "patientId": "P101",
+      "cdr3a": "CAVSGQAGTALIF",
+      "cdr3b": "CASSTWTSGRETQYF",
+      "trav": "TRAV21",
+      "trbv": "TRBV5-4"
+    },
+    {
+      "tcrId": "19",
+      "patientId": "P101",
+      "cdr3a": "CVVNTNAGKSTF",
+      "cdr3b": "CASSLGSGVAYNEQFF",
+      "trav": "TRAV10",
+      "trbv": "TRBV7-2"
+    },
+    {
+      "tcrId": "20",
+      "patientId": "P103",
+      "cdr3a": "CAFKAGGATNKLIF",
+      "cdr3b": "CSARGRSGSGNTGELFF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "21",
+      "patientId": "P103",
+      "cdr3a": "CAVGAGTASKLTF",
+      "cdr3b": "CASSQDWNGGNQPQHF",
+      "trav": "TRAV8-3",
+      "trbv": "TRBV4-3"
+    },
+    {
+      "tcrId": "22",
+      "patientId": "P103",
+      "cdr3a": "CAMREGEGGNSGGGADGLTF",
+      "cdr3b": "CASSFELAGGPLGELFF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV7-2"
+    },
+    {
+      "tcrId": "23",
+      "patientId": "P103",
+      "cdr3a": "CAVGVEGNNRLAF",
+      "cdr3b": "CASSLGAAGLNTEAFF",
+      "trav": "TRAV8-3",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "24",
+      "patientId": "P103",
+      "cdr3a": "CAVKDTDKLIF",
+      "cdr3b": "CASSLSITSYTNNEQFF",
+      "trav": "TRAV8-1",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "25",
+      "patientId": "P103",
+      "cdr3a": "CAMREPGSSNYKLTF",
+      "cdr3b": "CLTQGGTEAFF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "26",
+      "patientId": "P103",
+      "cdr3a": "CATDDGNNRLAF",
+      "cdr3b": "CASSETSSFYNEQFF",
+      "trav": "TRAV17",
+      "trbv": "TRBV2"
+    },
+    {
+      "tcrId": "27",
+      "patientId": "P103",
+      "cdr3a": "CAVDSGSARQLTF",
+      "cdr3b": "CSASEGAHEQYF",
+      "trav": "TRAV27",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "28",
+      "patientId": "P103",
+      "cdr3a": "CAVKDTDKLIF",
+      "cdr3b": "CATSDFLLAGDEQFF",
+      "trav": "TRAV8-1",
+      "trbv": "TRBV24-1"
+    },
+    {
+      "tcrId": "29",
+      "patientId": "P103",
+      "cdr3a": "CAVKEGLGGGADGLTF",
+      "cdr3b": "CASSQDRAGANVLTF",
+      "trav": "TRAV8-1",
+      "trbv": "TRBV4-3"
+    },
+    {
+      "tcrId": "30",
+      "patientId": "P103",
+      "cdr3a": "CAVMDSGYSTLTF",
+      "cdr3b": "CASSPGHGANEQYF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "31",
+      "patientId": "P103",
+      "cdr3a": "CAVRDSNYQLIW",
+      "cdr3b": "CASSYQVQETQYF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "32",
+      "patientId": "P103",
+      "cdr3a": "CAVRGSWANNLFF",
+      "cdr3b": "CASSQETRGQQETQYF",
+      "trav": "TRAV22",
+      "trbv": "TRBV4-3"
+    },
+    {
+      "tcrId": "33",
+      "patientId": "P103",
+      "cdr3a": "CAVSPYGGATNKLIF",
+      "cdr3b": "CSARRTGDTQYF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "34",
+      "patientId": "P104",
+      "cdr3a": "CAASRGLNAGNNRKLIW",
+      "cdr3b": "CASSLILAGGPNNEQFF",
+      "trav": "TRAV23/DV6",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "35",
+      "patientId": "P104",
+      "cdr3a": "CLVARGARLMF",
+      "cdr3b": "CASSLILAGGPNNEQFF",
+      "trav": "TRAV4",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "36",
+      "patientId": "P104",
+      "cdr3a": "CAASGTSGTYKYIF",
+      "cdr3b": "CASKTSGTDTQYF",
+      "trav": "TRAV23DV6",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "37",
+      "patientId": "P104",
+      "cdr3a": "CAVLARETSGSRLTF",
+      "cdr3b": "CASSEDGEGRYGYTF",
+      "trav": "TRAV41",
+      "trbv": "TRBV2"
+    },
+    {
+      "tcrId": "38",
+      "patientId": "P104",
+      "cdr3a": "CAVREETSGSRLTF",
+      "cdr3b": "CASSLAGTYTYEQYF",
+      "trav": "TRAV21",
+      "trbv": "TRBV5-5"
+    },
+    {
+      "tcrId": "39",
+      "patientId": "P104",
+      "cdr3a": "CATDPGFQKLVF",
+      "cdr3b": "CASSEEAGGDEQFF",
+      "trav": "TRAV17",
+      "trbv": "TRBV6-1"
+    },
+    {
+      "tcrId": "40",
+      "patientId": "P104",
+      "cdr3a": "CIGVLYNQGGKLIF",
+      "cdr3b": "CASSLESGQEDYGYTF",
+      "trav": "TRAV26-1",
+      "trbv": "TRBV5-1"
+    },
+    {
+      "tcrId": "41",
+      "patientId": "P104",
+      "cdr3a": "CAVSADRGSTLGRLYF",
+      "cdr3b": "CASSLEGQGATEAFF",
+      "trav": "TRAV21",
+      "trbv": "TRBV28"
+    },
+    {
+      "tcrId": "42",
+      "patientId": "P104",
+      "cdr3a": "CAAGSNYQLIW",
+      "cdr3b": "CASTSQDASYEQYF",
+      "trav": "TRAV13-1",
+      "trbv": "TRBV5-1"
+    },
+    {
+      "tcrId": "43",
+      "patientId": "P104",
+      "cdr3a": "CAVRDNNNDMRF",
+      "cdr3b": "CASRVAGGPYEQFF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV6-1"
+    },
+    {
+      "tcrId": "44",
+      "patientId": "P104",
+      "cdr3a": "CAVRIPLHDDMRF",
+      "cdr3b": "CASSLEGGVGTEAFF",
+      "trav": "TRAV21",
+      "trbv": "TRBV7-8"
+    },
+    {
+      "tcrId": "45",
+      "patientId": "P104",
+      "cdr3a": "CAAVGKGTSGSRLTF",
+      "cdr3b": "CASTEAGTGNTEAFF",
+      "trav": "TRAV29DV5",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "46",
+      "patientId": "P104",
+      "cdr3a": "CAASGTGNTPLVF",
+      "cdr3b": "CASSPTGENTGELFF",
+      "trav": "TRAV29DV5",
+      "trbv": "TRBV18"
+    },
+    {
+      "tcrId": "47",
+      "patientId": "P104",
+      "cdr3a": "CAPNTDKLIF",
+      "cdr3b": "CASSRAGLYSYEQYF",
+      "trav": "TRAV21",
+      "trbv": "TRBV4-1"
+    },
+    {
+      "tcrId": "48",
+      "patientId": "P104",
+      "cdr3a": "CAAKGGSQGNLIF",
+      "cdr3b": "CASSVSLTGAKNIQYF",
+      "trav": "TRAV5",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "49",
+      "patientId": "P104",
+      "cdr3a": "CAYRIHNDMRF",
+      "cdr3b": "CASSLVFGTGSSQPQHF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV7-8"
+    },
+    {
+      "tcrId": "50",
+      "patientId": "P104",
+      "cdr3a": "CAVRGYGGATNKLIF",
+      "cdr3b": "CASGGTSHNEQFF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV10-2"
+    },
+    {
+      "tcrId": "51",
+      "patientId": "P104",
+      "cdr3a": "CAVSDSTGFQKLVF",
+      "cdr3b": "CASSQAGGPYEQYF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV5-5"
+    },
+    {
+      "tcrId": "52",
+      "patientId": "P104",
+      "cdr3a": "CASPDPTGFGNEKLTF",
+      "cdr3b": "CASSLVRDYEQYF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV7-8"
+    },
+    {
+      "tcrId": "53",
+      "patientId": "P104",
+      "cdr3a": "CAVLLISSGSARQLTF",
+      "cdr3b": "CAIGPRKGGNTGELFF",
+      "trav": "TRAV41",
+      "trbv": "TRBV10-3"
+    },
+    {
+      "tcrId": "54",
+      "patientId": "P104",
+      "cdr3a": "CAVSEINNNDMRF",
+      "cdr3b": "CASSLATSGSYEQYF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV5-5"
+    },
+    {
+      "tcrId": "55",
+      "patientId": "P104",
+      "cdr3a": "CAESLSNTGKLIF",
+      "cdr3b": "CASSYGLNTEAFF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "56",
+      "patientId": "P104",
+      "cdr3a": "CAGEKSNNARLMF",
+      "cdr3b": "CASTHYNEQFF",
+      "trav": "TRAV27",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "57",
+      "patientId": "P104",
+      "cdr3a": "CATVRMDSSYKLIF",
+      "cdr3b": "CASSEGEEETQYF",
+      "trav": "TRAV17",
+      "trbv": "TRBV27"
+    },
+    {
+      "tcrId": "58",
+      "patientId": "P104",
+      "cdr3a": "CALIEETSGSRLTF",
+      "cdr3b": "CASSTWTDYGYTF",
+      "trav": "TRAV9-2",
+      "trbv": "TRBV5-5"
+    },
+    {
+      "tcrId": "59",
+      "patientId": "P104",
+      "cdr3a": "CAMSSVGGSQGNLIF",
+      "cdr3b": "CASSRNQGSTDTQYF",
+      "trav": "TRAV12-3",
+      "trbv": "TRBV5-4"
+    },
+    {
+      "tcrId": "60",
+      "patientId": "P104",
+      "cdr3a": "CAYRSEQGAQKLVF",
+      "cdr3b": "CASQRLGQSYEQYF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "61",
+      "patientId": "P104",
+      "cdr3a": "CAASATGTYKYIF",
+      "cdr3b": "CASSPWGEGEKLFF",
+      "trav": "TRAV29DV5",
+      "trbv": "TRBV18"
+    },
+    {
+      "tcrId": "62",
+      "patientId": "P104",
+      "cdr3a": "CALSLDDKIIF",
+      "cdr3b": "CAISGGAQVTEAFF",
+      "trav": "TRAV9-2",
+      "trbv": "TRBV10-3"
+    },
+    {
+      "tcrId": "63",
+      "patientId": "P104",
+      "cdr3a": "CVVNSWDFGNEKLTF",
+      "cdr3b": "CASSREGGSSPLHF",
+      "trav": "TRAV12-1",
+      "trbv": "TRBV4-2"
+    },
+    {
+      "tcrId": "64",
+      "patientId": "P104",
+      "cdr3a": "CAESKWDGQKLLF",
+      "cdr3b": "CSSSRTQDYGYTF",
+      "trav": "TRAV5",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "65",
+      "patientId": "P104",
+      "cdr3a": "CATDAFEETGTYKYIF",
+      "cdr3b": "CASSSAGELFF",
+      "trav": "TRAV17",
+      "trbv": "TRBV7-7"
+    },
+    {
+      "tcrId": "66",
+      "patientId": "P108",
+      "cdr3a": "CAVASSGGSYIPTF",
+      "cdr3b": "CATSTGDSNQPQHF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV10-3"
+    },
+    {
+      "tcrId": "67",
+      "patientId": "P108",
+      "cdr3a": "CVVSAVNNNDMRF",
+      "cdr3b": "CASSYTDQGTEAFF",
+      "trav": "TRAV10",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "68",
+      "patientId": "P108",
+      "cdr3a": "CAVMDSNYQLIW",
+      "cdr3b": "CASSETSTDTQYF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV6-4"
+    },
+    {
+      "tcrId": "69",
+      "patientId": "P108",
+      "cdr3a": "CAYRSPSGSRLTF",
+      "cdr3b": "CASSLNSMDGYTF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV9"
+    },
+    {
+      "tcrId": "70",
+      "patientId": "P108",
+      "cdr3a": "CAVRDTGNQFYF",
+      "cdr3b": "CASSFGHLNQPQHF",
+      "trav": "TRAV3",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "71",
+      "patientId": "P108",
+      "cdr3a": "CAGHGGSQGNLIF",
+      "cdr3b": "CASSPETSGGRETQYF",
+      "trav": "TRAV25",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "72",
+      "patientId": "P108",
+      "cdr3a": "CALSGGSGGSNYKLTF",
+      "cdr3b": "CASSQVTLTGGGADTQYF",
+      "trav": "TRAV16",
+      "trbv": "TRBV4-2"
+    },
+    {
+      "tcrId": "73",
+      "patientId": "P108",
+      "cdr3a": "CAVYNFNKFYF",
+      "cdr3b": "CASSQVTLTGGGADTQYF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV4-2"
+    },
+    {
+      "tcrId": "74",
+      "patientId": "P108",
+      "cdr3a": "CAVNTYVDNYGQNFVF",
+      "cdr3b": "CASSSDLNTEAFF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV7-2"
+    },
+    {
+      "tcrId": "75",
+      "patientId": "P108",
+      "cdr3a": "CIVRVTYSGAGSYQLTF",
+      "cdr3b": "CASSQDETQPQHF",
+      "trav": "TRAV26-1",
+      "trbv": "TRBV4-1"
+    },
+    {
+      "tcrId": "76",
+      "patientId": "P108",
+      "cdr3a": "CLVGDTINAGNNRKLIW",
+      "cdr3b": "CASSLLAGRADTQYF",
+      "trav": "TRAV4",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "77",
+      "patientId": "P108",
+      "cdr3a": "CALAGNNRKLIW",
+      "cdr3b": "CASSQGGTGNEQFF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV4-1"
+    },
+    {
+      "tcrId": "78",
+      "patientId": "P108",
+      "cdr3a": "CAMSPHTGNQFYF",
+      "cdr3b": "CASTSGLGGGATDTQYF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV13"
+    },
+    {
+      "tcrId": "79",
+      "patientId": "P108",
+      "cdr3a": "CAVRRSDYKLSF",
+      "cdr3b": "CASSPDRNEQFF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "80",
+      "patientId": "P108",
+      "cdr3a": "CAESSDTGRRALTF",
+      "cdr3b": "CASSQAGTDEQYF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV4-3"
+    },
+    {
+      "tcrId": "81",
+      "patientId": "P108",
+      "cdr3a": "CAMREGASGTYKYIF",
+      "cdr3b": "CASSIDLPGPLETQYF",
+      "trav": "TRAV14DV4",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "82",
+      "patientId": "P108",
+      "cdr3a": "CAEKGQAGTALIF",
+      "cdr3b": "CASSLGSNQPQHF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV7-9"
+    },
+    {
+      "tcrId": "83",
+      "patientId": "P108",
+      "cdr3a": "CAEKPPNNAGNMLTF",
+      "cdr3b": "CATSREGRDYGYTF",
+      "trav": "TRAV13-2",
+      "trbv": "TRBV15"
+    },
+    {
+      "tcrId": "84",
+      "patientId": "P108",
+      "cdr3a": "CALSGGSGGSNYKLTF",
+      "cdr3b": "CASSQVTLTGGGADTQYF",
+      "trav": "TRAV16",
+      "trbv": "TRBV4-2"
+    },
+    {
+      "tcrId": "85",
+      "patientId": "P108",
+      "cdr3a": "CAYGLIQGAQKLVF",
+      "cdr3b": "CASSQGSLGGRDFQETQYF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV4-2"
+    },
+    {
+      "tcrId": "86",
+      "patientId": "P108",
+      "cdr3a": "CAVSEMNSGYSTLTF",
+      "cdr3b": "CASSRTSGTYEQYF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV11-2"
+    },
+    {
+      "tcrId": "87",
+      "patientId": "P108",
+      "cdr3a": "CAFMKQRNNARLMF",
+      "cdr3b": "CASSYSTRDTNYGYTF",
+      "trav": "TRAV38-1",
+      "trbv": "TRBV6-2/3/5/6"
+    },
+    {
+      "tcrId": "88",
+      "patientId": "P108",
+      "cdr3a": "CAVPGGGSASKIIF",
+      "cdr3b": "CASSMGPGGAETQYF",
+      "trav": "TRAV1-1",
+      "trbv": "TRBV19"
+    },
+    {
+      "tcrId": "89",
+      "patientId": "P108",
+      "cdr3a": "CAVRAGGYNKLIF",
+      "cdr3b": "CASSDPSGALTGELFF",
+      "trav": "TRAV8-6",
+      "trbv": "TRBV2"
+    },
+    {
+      "tcrId": "90",
+      "patientId": "P108",
+      "cdr3a": "CAVRDILNTDKLIF",
+      "cdr3b": "CSAETGDYYNEQFF",
+      "trav": "TRAV3",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "91",
+      "patientId": "P108",
+      "cdr3a": "CAVQALGNAGNMLTF",
+      "cdr3b": "CASTDRRGSAFF",
+      "trav": "TRAV20",
+      "trbv": "TRBV9"
+    },
+    {
+      "tcrId": "92",
+      "patientId": "P108",
+      "cdr3a": "CAVRSELGSTLTF",
+      "cdr3b": "CASSFGTGGGETQYF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV5-4"
+    },
+    {
+      "tcrId": "93",
+      "patientId": "P108",
+      "cdr3a": "CAVSPLSGGYNKLIF",
+      "cdr3b": "CASSTLRDREGANYGYTF",
+      "trav": "TRAV1-2",
+      "trbv": "TRBV28"
+    },
+    {
+      "tcrId": "94",
+      "patientId": "P108",
+      "cdr3a": "CAVVRSGSARQLTF",
+      "cdr3b": "CASSQGLRNEQFF",
+      "trav": "TRAV12-2",
+      "trbv": "TRBV7-6"
+    },
+    {
+      "tcrId": "95",
+      "patientId": "P108",
+      "cdr3a": "CAYSLGGSEKLVF",
+      "cdr3b": "CSARDRGRGTRGYNYGYTF",
+      "trav": "TRAV38-2DV8",
+      "trbv": "TRBV20-1"
+    },
+    {
+      "tcrId": "96",
+      "patientId": "P108",
+      "cdr3a": "CVVAFGGGYQKVTF",
+      "cdr3b": "CSVIGTASGNTIYF",
+      "trav": "TRAV12-1",
+      "trbv": "TRBV29-1"
+    }
+  ],
+  "reactiveTcrs": [
+    {
+      "tcrId": "TCR7",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASSLGQGSIFSSYEQYF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR17",
+      "tcrb": "TRBV27;TRBJ2-1;CASSPTWGGSMVF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR19",
+      "tcrb": "TRBV7-2;TRBJ2-1;CASSLGSGVAYNEQFF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR20",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGRSGSGNTGELFF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR23",
+      "tcrb": "TRBV27;TRBJ1-1;CASSLGAAGLNTEAFF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR27",
+      "tcrb": "TRBV20-1;TRBJ2-7;CSASEGAHEQYF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "Yes",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Nivolumab",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR38",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSLAGTYTYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR40",
+      "tcrb": "TRBV5-1;TRBJ1-2;CASSLESGQEDYGYTF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR42",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASTSQDASYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR43",
+      "tcrb": "TRBV6-1;TRBJ2-1;CASRVAGGPYEQFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR46",
+      "tcrb": "TRBV18;TRBJ2-2;CASSPTGENTGELFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR47",
+      "tcrb": "TRBV4-1;TRBJ2-7;CASSRAGLYSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR49",
+      "tcrb": "TRBV7-8;TRBJ1-5;CASSLVFGTGSSQPQHF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR51",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSQAGGPYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR53",
+      "tcrb": "TRBV10-3;TRBJ2-2;CAIGPRKGGNTGELFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR54",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSLATSGSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR55",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-1;CASSYGLNTEAFF",
+      "patientId": "P104",
+      "seenPre": "Yes",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR56",
+      "tcrb": "TRBV19;TRBJ2-1;CASTHYNEQFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR57",
+      "tcrb": "TRBV27;TRBJ2-5;CASSEGEEETQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR58",
+      "tcrb": "TRBV5-5;TRBJ1-2;CASSTWTDYGYTF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR59",
+      "tcrb": "TRBV5-4;TRBJ2-3;CASSRNQGSTDTQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR60",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ2-7;CASQRLGQSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR61",
+      "tcrb": "TRBV18;TRBJ1-4;CASSPWGEGEKLFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR62",
+      "tcrb": "TRBV10-3;TRBJ1-1;CAISGGAQVTEAFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "Non_IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR86",
+      "tcrb": "TRBV11-2;TRBJ2-7;CASSRTSGTYEQYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR87",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-2;CASSYSTRDTNYGYTF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR88",
+      "tcrb": "TRBV19;TRBJ2-5;CASSMGPGGAETQYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR89",
+      "tcrb": "TRBV2;TRBJ2-2;CASSDPSGALTGELFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR90",
+      "tcrb": "TRBV20-1;TRBJ2-1;CSAETGDYYNEQFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR94",
+      "tcrb": "TRBV7-6;TRBJ2-1;CASSQGLRNEQFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR96",
+      "tcrb": "TRBV29-1;TRBJ1-3;CSVIGTASGNTIYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    }
+  ],
+  "reactiveSummary": {
+    "nReactive": 31,
+    "nReconstructed": 96,
+    "byType": {
+      "Post-Vaccine": 21,
+      "Other": 9,
+      "Post-Nivolumab": 1
+    },
+    "firstDetected": {
+      "post-vaccine": 29,
+      "post-nivolumab": 1,
+      "pre-treatment": 1
+    },
+    "impExpandedCount": 22
+  },
+  "scTcrQc": [
+    {
+      "sample": "P101_INFg_Postvax",
+      "patientId": "P101",
+      "site": "Peripheral Blood",
+      "clonesPassQC": 1566,
+      "clonesMatchedRNA": 1212
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment",
+      "patientId": "P101",
+      "site": "Tumor",
+      "clonesPassQC": 300,
+      "clonesMatchedRNA": 148
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab",
+      "patientId": "P101",
+      "site": "Tumor",
+      "clonesPassQC": 845,
+      "clonesMatchedRNA": 676
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine",
+      "patientId": "P101",
+      "site": "Tumor",
+      "clonesPassQC": 265,
+      "clonesMatchedRNA": 198
+    },
+    {
+      "sample": "P103_INFg_Postvax",
+      "patientId": "P103",
+      "site": "Peripheral Blood",
+      "clonesPassQC": 497,
+      "clonesMatchedRNA": 399
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment",
+      "patientId": "P103",
+      "site": "Tumor",
+      "clonesPassQC": 516,
+      "clonesMatchedRNA": 187
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab",
+      "patientId": "P103",
+      "site": "Tumor",
+      "clonesPassQC": 955,
+      "clonesMatchedRNA": 790
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine",
+      "patientId": "P103",
+      "site": "Tumor",
+      "clonesPassQC": 930,
+      "clonesMatchedRNA": 794
+    },
+    {
+      "sample": "P104_INFg_Postvax",
+      "patientId": "P104",
+      "site": "Peripheral Blood",
+      "clonesPassQC": 1466,
+      "clonesMatchedRNA": 1292
+    },
+    {
+      "sample": "P104_Tumor_PD",
+      "patientId": "P104",
+      "site": "Tumor",
+      "clonesPassQC": 1386,
+      "clonesMatchedRNA": 38
+    },
+    {
+      "sample": "P108_INFg_Postvax",
+      "patientId": "P108",
+      "site": "Peripheral Blood",
+      "clonesPassQC": 2118,
+      "clonesMatchedRNA": 1754
+    },
+    {
+      "sample": "P108_Tumor_PD",
+      "patientId": "P108",
+      "site": "Tumor",
+      "clonesPassQC": 818,
+      "clonesMatchedRNA": 406
+    }
+  ],
+  "tumorCloneTypeCounts": [
+    {
+      "patientId": "P101",
+      "type": "Existing",
+      "nClones": 300
+    },
+    {
+      "patientId": "P101",
+      "type": "Post-Nivolumab",
+      "nClones": 810
+    },
+    {
+      "patientId": "P101",
+      "type": "Post-Vaccine",
+      "nClones": 246
+    },
+    {
+      "patientId": "P103",
+      "type": "Existing",
+      "nClones": 516
+    },
+    {
+      "patientId": "P103",
+      "type": "Post-Nivolumab",
+      "nClones": 890
+    },
+    {
+      "patientId": "P103",
+      "type": "Post-Vaccine",
+      "nClones": 612
+    },
+    {
+      "patientId": "P104",
+      "type": "NA",
+      "nClones": 1386
+    },
+    {
+      "patientId": "P108",
+      "type": "NA",
+      "nClones": 818
+    }
+  ],
+  "tumorCloneTypesGlobal": {
+    "Existing": 816,
+    "Post-Nivolumab": 1700,
+    "Post-Vaccine": 858,
+    "NA": 2204
+  },
+  "bloodTumorOverlaps": [
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-7;CSASEGAHEQYF",
+      "pbmcType": "Post-Nivolumab",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV27;TRBJ1-1;CASSLGAAGLNTEAFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASSLGQGSIFSSYEQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ1-4;CASSLTRTNEKLFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-5;CASSKGQAQETQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-1;CASSLGSGVAYNEQFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-7;CASSLGPSGGYEQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-5;CASSPPQRNRGETQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV10-1;TRBJ1-4;CASSESGTGNEKLFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGRSGSGNTGELFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGGGGAGNTGELFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-5;CASSPFGTGHNNQPQHF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV19;TRBJ1-1;CASSPLLLRQSEAFF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-7;CASSSKVYEQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-3;CASSLTSGSTDTQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV11-2;TRBJ2-5;CASSLGLAEQETQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-3;CSAATSGGLRDTQYF",
+      "pbmcType": "Post-Nivolumab",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ2-1;CASTPTGRSNEQFF",
+      "pbmcType": "Existing",
+      "tumorType": "Pre-treatment"
+    },
+    {
+      "patientId": "IE: IMP-expanded",
+      "tcrb": "",
+      "pbmcType": "",
+      "tumorType": ""
+    }
+  ]
+}

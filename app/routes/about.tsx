@@ -102,7 +102,7 @@ export default function AboutPage() {
 									Book a consultation
 								</Link>
 								<Link
-									to="/research/cancer-vaccine-analytics"
+									to="/research/neovaxmi-reanalysis"
 									className="btn-secondary"
 								>
 									Research Analytics Lab

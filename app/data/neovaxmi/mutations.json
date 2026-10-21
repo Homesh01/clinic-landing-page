@@ -1,0 +1,244 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "patients": [
+    {
+      "patientId": "P101",
+      "totalMutations": 716,
+      "codingMutations": 385,
+      "missense": 332,
+      "neoantigenProxy": 358,
+      "neoantigenProxyFraction": 0.5,
+      "cnvSegments": 138,
+      "cnvLohSegments": 37
+    },
+    {
+      "patientId": "P102",
+      "totalMutations": 52,
+      "codingMutations": 15,
+      "missense": 14,
+      "neoantigenProxy": 15,
+      "neoantigenProxyFraction": 0.2885,
+      "cnvSegments": 0,
+      "cnvLohSegments": 0
+    },
+    {
+      "patientId": "P103",
+      "totalMutations": 1480,
+      "codingMutations": 802,
+      "missense": 736,
+      "neoantigenProxy": 779,
+      "neoantigenProxyFraction": 0.5264,
+      "cnvSegments": 117,
+      "cnvLohSegments": 22
+    },
+    {
+      "patientId": "P104",
+      "totalMutations": 87,
+      "codingMutations": 41,
+      "missense": 34,
+      "neoantigenProxy": 41,
+      "neoantigenProxyFraction": 0.4713,
+      "cnvSegments": 133,
+      "cnvLohSegments": 40
+    },
+    {
+      "patientId": "P105",
+      "totalMutations": 710,
+      "codingMutations": 375,
+      "missense": 335,
+      "neoantigenProxy": 358,
+      "neoantigenProxyFraction": 0.5042,
+      "cnvSegments": 127,
+      "cnvLohSegments": 48
+    },
+    {
+      "patientId": "P106",
+      "totalMutations": 614,
+      "codingMutations": 318,
+      "missense": 281,
+      "neoantigenProxy": 305,
+      "neoantigenProxyFraction": 0.4967,
+      "cnvSegments": 130,
+      "cnvLohSegments": 48
+    },
+    {
+      "patientId": "P107",
+      "totalMutations": 181,
+      "codingMutations": 100,
+      "missense": 91,
+      "neoantigenProxy": 95,
+      "neoantigenProxyFraction": 0.5249,
+      "cnvSegments": 0,
+      "cnvLohSegments": 0
+    },
+    {
+      "patientId": "P108",
+      "totalMutations": 497,
+      "codingMutations": 262,
+      "missense": 232,
+      "neoantigenProxy": 253,
+      "neoantigenProxyFraction": 0.5091,
+      "cnvSegments": 139,
+      "cnvLohSegments": 36
+    },
+    {
+      "patientId": "P109",
+      "totalMutations": 529,
+      "codingMutations": 251,
+      "missense": 224,
+      "neoantigenProxy": 243,
+      "neoantigenProxyFraction": 0.4594,
+      "cnvSegments": 267,
+      "cnvLohSegments": 89
+    },
+    {
+      "patientId": "P110",
+      "totalMutations": 10309,
+      "codingMutations": 5059,
+      "missense": 4521,
+      "neoantigenProxy": 4867,
+      "neoantigenProxyFraction": 0.4721,
+      "cnvSegments": 151,
+      "cnvLohSegments": 27
+    },
+    {
+      "patientId": "P111",
+      "totalMutations": 652,
+      "codingMutations": 334,
+      "missense": 286,
+      "neoantigenProxy": 315,
+      "neoantigenProxyFraction": 0.4831,
+      "cnvSegments": 101,
+      "cnvLohSegments": 18
+    }
+  ],
+  "globalVariantClasses": [
+    {
+      "class": "Missense_Mutation",
+      "count": 7086
+    },
+    {
+      "class": "Silent",
+      "count": 4160
+    },
+    {
+      "class": "Intron",
+      "count": 2759
+    },
+    {
+      "class": "Nonsense_Mutation",
+      "count": 470
+    },
+    {
+      "class": "Splice_Site",
+      "count": 298
+    },
+    {
+      "class": "RNA",
+      "count": 289
+    },
+    {
+      "class": "3'UTR",
+      "count": 203
+    },
+    {
+      "class": "IGR",
+      "count": 166
+    },
+    {
+      "class": "5'UTR",
+      "count": 150
+    },
+    {
+      "class": "5'Flank",
+      "count": 125
+    },
+    {
+      "class": "Frame_Shift_Del",
+      "count": 41
+    },
+    {
+      "class": "lincRNA",
+      "count": 28
+    }
+  ],
+  "globalTopGenes": [
+    {
+      "gene": "TTN",
+      "count": 92
+    },
+    {
+      "gene": "MUC16",
+      "count": 56
+    },
+    {
+      "gene": "DNAH5",
+      "count": 30
+    },
+    {
+      "gene": "CSMD1",
+      "count": 19
+    },
+    {
+      "gene": "DNAH6",
+      "count": 18
+    },
+    {
+      "gene": "LRP1B",
+      "count": 18
+    },
+    {
+      "gene": "DNAH7",
+      "count": 18
+    },
+    {
+      "gene": "MGAM",
+      "count": 18
+    },
+    {
+      "gene": "WDFY4",
+      "count": 18
+    },
+    {
+      "gene": "MYO18B",
+      "count": 18
+    },
+    {
+      "gene": "TRANK1",
+      "count": 16
+    },
+    {
+      "gene": "RYR1",
+      "count": 16
+    },
+    {
+      "gene": "LRP2",
+      "count": 16
+    },
+    {
+      "gene": "HIST2H2AB",
+      "count": 16
+    },
+    {
+      "gene": "DSCAM",
+      "count": 15
+    }
+  ],
+  "cohort": {
+    "medianCodingMutations": 318,
+    "minCodingMutations": 15,
+    "maxCodingMutations": 5059
+  }
+}

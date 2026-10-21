@@ -30,27 +30,15 @@ export const nav: readonly NavItem[] = [
 		label: "Research Analytics Lab",
 		children: [
 			{
-				to: "/research/cancer-vaccine-analytics",
-				label: "Cancer vaccine analytics",
-			},
-			{
-				to: "/research/neoantigen-classifier",
-				label: "Neoantigen priority classifier",
-			},
-			{
-				to: "/research/multiomics-stratification",
-				label: "Multi-omics stratification",
-			},
-			{
-				to: "/research/survival-boosting",
-				label: "Survival & gradient boosting",
-			},
-			{
-				to: "/research/distribution-inference",
-				label: "Distributions & inference",
+				to: "/research/neovaxmi-reanalysis",
+				label: "NeoVaxMI melanoma reanalysis",
 			},
 		],
 	},
+	// Synthetic Research Lab demos retained in app/routes but not linked in the nav:
+	// /research/cancer-vaccine-analytics, /research/neoantigen-classifier,
+	// /research/multiomics-stratification, /research/survival-boosting,
+	// /research/distribution-inference
 	{ to: "/conferences", label: "Conferences" },
 	{ to: "/blog", label: "Blog" },
 	{ to: "/faq", label: "FAQ" },
@@ -114,8 +102,8 @@ export const homePlatform = {
 		},
 		{
 			title: "Research software",
-			text: "Interactive analytics and machine-learning demonstrators for personalised vaccine research — synthetic data today, the same analytical patterns we use to evaluate real tools.",
-			to: "/research/cancer-vaccine-analytics",
+			text: "Interactive reanalysis of published NeoVaxMI melanoma neoantigen-vaccine trial data — mutations, vaccine-site immunity, TCR dynamics and tumour reactivity.",
+			to: "/research/neovaxmi-reanalysis",
 			linkLabel: "Explore the Analytics Lab",
 		},
 		{
@@ -930,7 +918,7 @@ export const privacyNotice = {
 				"Website enquiries are by email only. The Contact page displays an email address and does not submit a web form to Cloudflare or another form processor.",
 				"The website may set strictly necessary cookies for site access control and for authorised clinic-staff tools. These cookies are functional and are not used for advertising.",
 				"PCC does not use Google Analytics, Meta Pixel or similar marketing trackers on the website. If that position changes, this notice will be updated and any required consent arrangements put in place.",
-				"The Research Analytics Lab pages demonstrate analytics and machine-learning concepts using synthetic demonstration data only. They do not upload patient records and do not send identifiable patient information to external analytics or AI services.",
+				"The Research Analytics Lab page presents aggregates derived from published, de-identified clinical-trial supplemental tables (Cell 2025 Data S1–S5; NCT03929029). It does not upload Personalised Cancer Care patient records and does not send identifiable patient information to external analytics or AI services.",
 				"When you book online, the information you enter is used to arrange the appointment. Self-pay checkout is handled by Stripe; free-text appointment notes are not sent to Stripe. Calendar invitations and clinic correspondence are handled through Google Workspace.",
 			],
 		},

@@ -1,0 +1,43 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "tiers": {
+    "A": [
+      "mutations_summary.json",
+      "vaccine_site.json",
+      "tcr_repertoire.json",
+      "tumor_tcr.json",
+      "cross_layer.json"
+    ],
+    "B": [
+      "mutations_summary.json (neoantigenProxy)",
+      "vaccine_site.json (ipiDoseExploratory)",
+      "claim_checks.json"
+    ],
+    "C_skipped": [
+      "Full scRNA re-clustering (no count matrices in supplements)",
+      "Uploading raw S3 ex vivo clonotype tables",
+      "Clinical efficacy / survival modeling (single-arm, small n)"
+    ]
+  },
+  "files": {
+    "claim_checks.json": "2584 bytes",
+    "cross_layer.json": "4388 bytes",
+    "mutations_summary.json": "19575 bytes",
+    "tcr_repertoire.json": "716753 bytes",
+    "tumor_tcr.json": "40963 bytes",
+    "vaccine_site.json": "63644 bytes"
+  },
+  "uiBundle": "app/data/neovaxmi/"
+}

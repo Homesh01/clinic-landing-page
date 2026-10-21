@@ -54,6 +54,7 @@ export const meta: MetaFunction = () => {
 		description:
 			"Advanced synthetic machine-learning demonstrator: PCA, k-means clustering and random-forest response prediction on mock multi-omics patient profiles.",
 		path: "/research/multiomics-stratification",
+		noIndex: true,
 	});
 };
 

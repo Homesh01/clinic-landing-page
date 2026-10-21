@@ -51,6 +51,7 @@ export const meta: MetaFunction = () => {
 		description:
 			"Statistical demonstrator on large synthetic measurement series: mixture densities, QQ plots, KS tests, bootstrap sampling distributions, Bayesian posteriors and Monte Carlo power.",
 		path: "/research/distribution-inference",
+		noIndex: true,
 	});
 };
 

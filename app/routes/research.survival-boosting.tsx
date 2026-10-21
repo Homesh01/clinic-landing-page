@@ -58,6 +58,7 @@ export const meta: MetaFunction = () => {
 		description:
 			"Advanced synthetic ML lab: Kaplan–Meier survival, log-rank tests, gradient boosting risk scores, bootstrap AUC and calibration on a large mock oncology cohort.",
 		path: "/research/survival-boosting",
+		noIndex: true,
 	});
 };
 

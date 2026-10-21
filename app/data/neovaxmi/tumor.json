@@ -1,0 +1,821 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "tumorGroupComposition": [
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "B/Plasma",
+      "nCells": 19,
+      "fraction": 0.0079
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "Melanoma",
+      "nCells": 289,
+      "fraction": 0.1206
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "Other",
+      "nCells": 1184,
+      "fraction": 0.494
+    },
+    {
+      "sample": "P101_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-nivolumab",
+      "group": "T/NK",
+      "nCells": 905,
+      "fraction": 0.3776
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "B/Plasma",
+      "nCells": 33,
+      "fraction": 0.0324
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "Melanoma",
+      "nCells": 4,
+      "fraction": 0.0039
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "Other",
+      "nCells": 782,
+      "fraction": 0.7667
+    },
+    {
+      "sample": "P101_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post-vaccine",
+      "group": "T/NK",
+      "nCells": 201,
+      "fraction": 0.1971
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "B/Plasma",
+      "nCells": 2,
+      "fraction": 0.0028
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "Melanoma",
+      "nCells": 179,
+      "fraction": 0.249
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "Other",
+      "nCells": 362,
+      "fraction": 0.5035
+    },
+    {
+      "sample": "P101_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre-treatment",
+      "group": "T/NK",
+      "nCells": 176,
+      "fraction": 0.2448
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "B/Plasma",
+      "nCells": 236,
+      "fraction": 0.0638
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "Melanoma",
+      "nCells": 798,
+      "fraction": 0.2159
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "Other",
+      "nCells": 428,
+      "fraction": 0.1158
+    },
+    {
+      "sample": "P103_Tumor_Post-nivolumab_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-nivolumab",
+      "group": "T/NK",
+      "nCells": 2235,
+      "fraction": 0.6045
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "B/Plasma",
+      "nCells": 131,
+      "fraction": 0.0388
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "Melanoma",
+      "nCells": 547,
+      "fraction": 0.1618
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "Other",
+      "nCells": 218,
+      "fraction": 0.0645
+    },
+    {
+      "sample": "P103_Tumor_Post-vaccine_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post-vaccine",
+      "group": "T/NK",
+      "nCells": 2484,
+      "fraction": 0.7349
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "B/Plasma",
+      "nCells": 449,
+      "fraction": 0.1257
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "Melanoma",
+      "nCells": 2545,
+      "fraction": 0.7125
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "Other",
+      "nCells": 307,
+      "fraction": 0.0859
+    },
+    {
+      "sample": "P103_Tumor_Pre-treatment_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre-treatment",
+      "group": "T/NK",
+      "nCells": 271,
+      "fraction": 0.0759
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "B/Plasma",
+      "nCells": 0,
+      "fraction": 0.0
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "Melanoma",
+      "nCells": 2176,
+      "fraction": 0.9248
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "Other",
+      "nCells": 140,
+      "fraction": 0.0595
+    },
+    {
+      "sample": "P104_Tumor_PD_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "PD",
+      "group": "T/NK",
+      "nCells": 37,
+      "fraction": 0.0157
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "B/Plasma",
+      "nCells": 12,
+      "fraction": 0.0042
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "Melanoma",
+      "nCells": 1264,
+      "fraction": 0.4454
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "Other",
+      "nCells": 993,
+      "fraction": 0.3499
+    },
+    {
+      "sample": "P108_Tumor_PD_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "PD",
+      "group": "T/NK",
+      "nCells": 569,
+      "fraction": 0.2005
+    }
+  ],
+  "reactiveSummary": {
+    "nReactive": 31,
+    "nReconstructed": 96,
+    "byType": {
+      "Post-Vaccine": 21,
+      "Other": 9,
+      "Post-Nivolumab": 1
+    },
+    "firstDetected": {
+      "post-vaccine": 29,
+      "post-nivolumab": 1,
+      "pre-treatment": 1
+    },
+    "impExpandedCount": 22
+  },
+  "reactiveTcrs": [
+    {
+      "tcrId": "TCR7",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASSLGQGSIFSSYEQYF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR17",
+      "tcrb": "TRBV27;TRBJ2-1;CASSPTWGGSMVF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR19",
+      "tcrb": "TRBV7-2;TRBJ2-1;CASSLGSGVAYNEQFF",
+      "patientId": "P101",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR20",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGRSGSGNTGELFF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR23",
+      "tcrb": "TRBV27;TRBJ1-1;CASSLGAAGLNTEAFF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR27",
+      "tcrb": "TRBV20-1;TRBJ2-7;CSASEGAHEQYF",
+      "patientId": "P103",
+      "seenPre": "No",
+      "seenPostNivo": "Yes",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Nivolumab",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR38",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSLAGTYTYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR40",
+      "tcrb": "TRBV5-1;TRBJ1-2;CASSLESGQEDYGYTF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR42",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASTSQDASYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR43",
+      "tcrb": "TRBV6-1;TRBJ2-1;CASRVAGGPYEQFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR46",
+      "tcrb": "TRBV18;TRBJ2-2;CASSPTGENTGELFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR47",
+      "tcrb": "TRBV4-1;TRBJ2-7;CASSRAGLYSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR49",
+      "tcrb": "TRBV7-8;TRBJ1-5;CASSLVFGTGSSQPQHF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR51",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSQAGGPYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR53",
+      "tcrb": "TRBV10-3;TRBJ2-2;CAIGPRKGGNTGELFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR54",
+      "tcrb": "TRBV5-5;TRBJ2-7;CASSLATSGSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR55",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-1;CASSYGLNTEAFF",
+      "patientId": "P104",
+      "seenPre": "Yes",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR56",
+      "tcrb": "TRBV19;TRBJ2-1;CASTHYNEQFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR57",
+      "tcrb": "TRBV27;TRBJ2-5;CASSEGEEETQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR58",
+      "tcrb": "TRBV5-5;TRBJ1-2;CASSTWTDYGYTF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR59",
+      "tcrb": "TRBV5-4;TRBJ2-3;CASSRNQGSTDTQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR60",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ2-7;CASQRLGQSYEQYF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "NA",
+      "type": "Other",
+      "impExpanded": "NA",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR61",
+      "tcrb": "TRBV18;TRBJ1-4;CASSPWGEGEKLFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR62",
+      "tcrb": "TRBV10-3;TRBJ1-1;CAISGGAQVTEAFF",
+      "patientId": "P104",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "Non_IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR86",
+      "tcrb": "TRBV11-2;TRBJ2-7;CASSRTSGTYEQYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR87",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-2;CASSYSTRDTNYGYTF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR88",
+      "tcrb": "TRBV19;TRBJ2-5;CASSMGPGGAETQYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR89",
+      "tcrb": "TRBV2;TRBJ2-2;CASSDPSGALTGELFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "Non SE",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR90",
+      "tcrb": "TRBV20-1;TRBJ2-1;CSAETGDYYNEQFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR94",
+      "tcrb": "TRBV7-6;TRBJ2-1;CASSQGLRNEQFF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    },
+    {
+      "tcrId": "TCR96",
+      "tcrb": "TRBV29-1;TRBJ1-3;CSVIGTASGNTIYF",
+      "patientId": "P108",
+      "seenPre": "No",
+      "seenPostNivo": "No",
+      "seenPostVax": "Yes",
+      "se": "SE vax",
+      "type": "Post-Vaccine",
+      "impExpanded": "IMP-expanded",
+      "reactive": "Yes"
+    }
+  ],
+  "tumorCloneTypeCounts": [
+    {
+      "patientId": "P101",
+      "type": "Existing",
+      "nClones": 300
+    },
+    {
+      "patientId": "P101",
+      "type": "Post-Nivolumab",
+      "nClones": 810
+    },
+    {
+      "patientId": "P101",
+      "type": "Post-Vaccine",
+      "nClones": 246
+    },
+    {
+      "patientId": "P103",
+      "type": "Existing",
+      "nClones": 516
+    },
+    {
+      "patientId": "P103",
+      "type": "Post-Nivolumab",
+      "nClones": 890
+    },
+    {
+      "patientId": "P103",
+      "type": "Post-Vaccine",
+      "nClones": 612
+    },
+    {
+      "patientId": "P104",
+      "type": "NA",
+      "nClones": 1386
+    },
+    {
+      "patientId": "P108",
+      "type": "NA",
+      "nClones": 818
+    }
+  ],
+  "bloodTumorOverlaps": [
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-7;CSASEGAHEQYF",
+      "pbmcType": "Post-Nivolumab",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV27;TRBJ1-1;CASSLGAAGLNTEAFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV5-1;TRBJ2-7;CASSLGQGSIFSSYEQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ1-4;CASSLTRTNEKLFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-5;CASSKGQAQETQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-1;CASSLGSGVAYNEQFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-7;CASSLGPSGGYEQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-5;CASSPPQRNRGETQYF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV10-1;TRBJ1-4;CASSESGTGNEKLFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGRSGSGNTGELFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-2;CSARGGGGAGNTGELFF",
+      "pbmcType": "Post-Vaccine",
+      "tumorType": "Post-vaccine"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ1-5;CASSPFGTGHNNQPQHF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV19;TRBJ1-1;CASSPLLLRQSEAFF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV12-3/4;TRBJ2-7;CASSSKVYEQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV7-2;TRBJ2-3;CASSLTSGSTDTQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P101",
+      "tcrb": "TRBV11-2;TRBJ2-5;CASSLGLAEQETQYF",
+      "pbmcType": "Existing",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV20-1;TRBJ2-3;CSAATSGGLRDTQYF",
+      "pbmcType": "Post-Nivolumab",
+      "tumorType": "Post-nivolumab"
+    },
+    {
+      "patientId": "P103",
+      "tcrb": "TRBV6-2/3/5/6;TRBJ2-1;CASTPTGRSNEQFF",
+      "pbmcType": "Existing",
+      "tumorType": "Pre-treatment"
+    },
+    {
+      "patientId": "IE: IMP-expanded",
+      "tcrb": "",
+      "pbmcType": "",
+      "tumorType": ""
+    }
+  ],
+  "reconstructedCount": 96
+}

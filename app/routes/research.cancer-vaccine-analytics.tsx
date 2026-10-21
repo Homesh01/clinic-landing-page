@@ -75,6 +75,7 @@ export const meta: MetaFunction = () => {
 		description:
 			"Interactive demonstration of biomedical data analytics for personalised cancer vaccine research using entirely synthetic data.",
 		path: "/research/cancer-vaccine-analytics",
+		noIndex: true,
 	});
 };
 

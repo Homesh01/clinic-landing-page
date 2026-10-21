@@ -7,6 +7,8 @@ type ChartCardProps = {
 	chartRef?: Ref<HTMLDivElement>;
 	onExportPng?: () => void;
 	actions?: ReactNode;
+	/** Defaults to synthetic demo labelling used across Research Lab pages. */
+	datasetLabel?: string;
 };
 
 export function ChartCard({
@@ -16,6 +18,7 @@ export function ChartCard({
 	chartRef,
 	onExportPng,
 	actions,
+	datasetLabel = "Synthetic demonstration data",
 }: ChartCardProps) {
 	return (
 		<section className="border border-line bg-white">
@@ -23,7 +26,7 @@ export function ChartCard({
 				<div>
 					<h3 className="font-display text-xl text-ink sm:text-2xl">{title}</h3>
 					<p className="mt-1 text-sm text-ink-muted">
-						Dataset: Synthetic demonstration data
+						Dataset: {datasetLabel}
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2">

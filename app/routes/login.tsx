@@ -9,6 +9,7 @@ import {
 	createSiteAccessHeaders,
 	getSitePassword,
 	hasSiteAccess,
+	isLocalDevRequest,
 	timingSafeEqual,
 } from "~/utils/site-auth.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
@@ -23,6 +24,10 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
+	if (isLocalDevRequest(request)) {
+		throw redirect("/");
+	}
+
 	const password = getSitePassword(context.cloudflare.env);
 	if (!password) {
 		throw redirect("/");
@@ -38,6 +43,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+	if (isLocalDevRequest(request)) {
+		throw redirect("/");
+	}
+
 	const password = getSitePassword(context.cloudflare.env);
 	if (!password) {
 		throw redirect("/");

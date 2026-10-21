@@ -1,0 +1,1640 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "compositionByCellClass": [
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 6,
+      "fraction": 0.0035
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 178,
+      "fraction": 0.1036
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 12,
+      "fraction": 0.007
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 798,
+      "fraction": 0.4645
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 682,
+      "fraction": 0.397
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 42,
+      "fraction": 0.0244
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 5,
+      "fraction": 0.0117
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 25,
+      "fraction": 0.0587
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 4,
+      "fraction": 0.0094
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 41,
+      "fraction": 0.0962
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 256,
+      "fraction": 0.6009
+    },
+    {
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 95,
+      "fraction": 0.223
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 2,
+      "fraction": 0.0005
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 240,
+      "fraction": 0.0644
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 5,
+      "fraction": 0.0013
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 1923,
+      "fraction": 0.5161
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 1134,
+      "fraction": 0.3043
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 422,
+      "fraction": 0.1133
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 9,
+      "fraction": 0.011
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 105,
+      "fraction": 0.1284
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 18,
+      "fraction": 0.022
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 137,
+      "fraction": 0.1675
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 485,
+      "fraction": 0.5929
+    },
+    {
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 64,
+      "fraction": 0.0782
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 17,
+      "fraction": 0.0031
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 387,
+      "fraction": 0.0712
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 36,
+      "fraction": 0.0066
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 2242,
+      "fraction": 0.4126
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 2645,
+      "fraction": 0.4868
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 107,
+      "fraction": 0.0197
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 11,
+      "fraction": 0.0036
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 593,
+      "fraction": 0.1918
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 109,
+      "fraction": 0.0353
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 411,
+      "fraction": 0.1329
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 1776,
+      "fraction": 0.5744
+    },
+    {
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 192,
+      "fraction": 0.0621
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 26,
+      "fraction": 0.0076
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 231,
+      "fraction": 0.0674
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 1,
+      "fraction": 0.0003
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 432,
+      "fraction": 0.126
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 2631,
+      "fraction": 0.7673
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 108,
+      "fraction": 0.0315
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 27,
+      "fraction": 0.0107
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 156,
+      "fraction": 0.0618
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 7,
+      "fraction": 0.0028
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 176,
+      "fraction": 0.0697
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 997,
+      "fraction": 0.3947
+    },
+    {
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 1163,
+      "fraction": 0.4604
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 2,
+      "fraction": 0.0012
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 120,
+      "fraction": 0.0725
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 12,
+      "fraction": 0.0073
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 774,
+      "fraction": 0.4677
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 712,
+      "fraction": 0.4302
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 35,
+      "fraction": 0.0211
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 3,
+      "fraction": 0.0027
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 43,
+      "fraction": 0.0384
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 5,
+      "fraction": 0.0045
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 423,
+      "fraction": 0.3773
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 601,
+      "fraction": 0.5361
+    },
+    {
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 46,
+      "fraction": 0.041
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 6,
+      "fraction": 0.0022
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 186,
+      "fraction": 0.0692
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 6,
+      "fraction": 0.0022
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 805,
+      "fraction": 0.2994
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 1530,
+      "fraction": 0.569
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 156,
+      "fraction": 0.058
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 1,
+      "fraction": 0.0011
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 209,
+      "fraction": 0.2231
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 37,
+      "fraction": 0.0395
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 197,
+      "fraction": 0.2102
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 386,
+      "fraction": 0.412
+    },
+    {
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 107,
+      "fraction": 0.1142
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 45,
+      "fraction": 0.0327
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 141,
+      "fraction": 0.1025
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 26,
+      "fraction": 0.0189
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 162,
+      "fraction": 0.1178
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 644,
+      "fraction": 0.4684
+    },
+    {
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 357,
+      "fraction": 0.2596
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 6,
+      "fraction": 0.0041
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 212,
+      "fraction": 0.1431
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 44,
+      "fraction": 0.0297
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 289,
+      "fraction": 0.1951
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 789,
+      "fraction": 0.5327
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 141,
+      "fraction": 0.0952
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 11,
+      "fraction": 0.0092
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 118,
+      "fraction": 0.0991
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 30,
+      "fraction": 0.0252
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 156,
+      "fraction": 0.131
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 693,
+      "fraction": 0.5819
+    },
+    {
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 183,
+      "fraction": 0.1537
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 0,
+      "fraction": 0.0
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 104,
+      "fraction": 0.0775
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 15,
+      "fraction": 0.0112
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 346,
+      "fraction": 0.2578
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 545,
+      "fraction": 0.4061
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 332,
+      "fraction": 0.2474
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "B",
+      "nCells": 0,
+      "fraction": 0.0
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "DC",
+      "nCells": 68,
+      "fraction": 0.1556
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Mast",
+      "nCells": 40,
+      "fraction": 0.0915
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Monocyte/Macrophage",
+      "nCells": 55,
+      "fraction": 0.1259
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "NK/T",
+      "nCells": 183,
+      "fraction": 0.4188
+    },
+    {
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "cellClass": "Non-immune",
+      "nCells": 91,
+      "fraction": 0.2082
+    }
+  ],
+  "ipiDoseExploratory": {
+    "note": "Descriptive Pre3rd\u2192Post3rd fraction deltas by local ipilimumab dose; n is small.",
+    "deltas": [
+      {
+        "patientId": "P108",
+        "ipiCohort": "5mgIpi",
+        "monoMacDelta": 0.0891,
+        "nkTDelta": 0.157
+      },
+      {
+        "patientId": "P110",
+        "ipiCohort": "5mgIpi",
+        "monoMacDelta": 0.0642,
+        "nkTDelta": -0.0491
+      },
+      {
+        "patientId": "P111",
+        "ipiCohort": "5mgIpi",
+        "monoMacDelta": 0.132,
+        "nkTDelta": -0.0127
+      }
+    ],
+    "meanMonoMacDeltaByDose": {
+      "5mgIpi": 0.0951
+    },
+    "meanNkTDeltaByDose": {
+      "5mgIpi": 0.0317
+    }
+  },
+  "interferonAssociatedDE": [
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "ISG15",
+      "logFC": 5.4853,
+      "pAdjGlobal": 5.39e-20,
+      "stat": 10.2416068,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "gene": "ISG15",
+      "logFC": 6.5118,
+      "pAdjGlobal": 2.37e-19,
+      "stat": 10.0472062,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "ISG15",
+      "logFC": 4.4014,
+      "pAdjGlobal": 3.4e-19,
+      "stat": 9.9867265,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "IFI6",
+      "logFC": 4.4493,
+      "pAdjGlobal": 3.4e-19,
+      "stat": 9.97820547,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "IFI6",
+      "logFC": 4.0956,
+      "pAdjGlobal": 6.17e-19,
+      "stat": 9.90557297,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "5_0",
+      "annotation": "NK/T_1",
+      "gene": "IFI6",
+      "logFC": 4.8961,
+      "pAdjGlobal": 1.87e-17,
+      "stat": 9.52542541,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "0",
+      "annotation": "MonoMac_1",
+      "gene": "ISG15",
+      "logFC": 4.5033,
+      "pAdjGlobal": 3.16e-16,
+      "stat": 9.20134575,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "MX1",
+      "logFC": 3.942,
+      "pAdjGlobal": 7.15e-16,
+      "stat": 9.08606149,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "1_0",
+      "annotation": "CD4_T_Naive/CM",
+      "gene": "MX1",
+      "logFC": 3.4139,
+      "pAdjGlobal": 1.89e-15,
+      "stat": 8.97397826,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "OAS2",
+      "logFC": 3.3132,
+      "pAdjGlobal": 2.05e-15,
+      "stat": 8.95379676,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "0",
+      "annotation": "MonoMac_1",
+      "gene": "IFI6",
+      "logFC": 3.6991,
+      "pAdjGlobal": 4.13e-15,
+      "stat": 8.85667806,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "IRF7",
+      "logFC": 2.4769,
+      "pAdjGlobal": 4.46e-15,
+      "stat": 8.83549247,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "OAS1",
+      "logFC": 3.7487,
+      "pAdjGlobal": 1e-14,
+      "stat": 8.73687653,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "2_1",
+      "annotation": "CD8_T_Naive/CM_1",
+      "gene": "IFI6",
+      "logFC": 4.1516,
+      "pAdjGlobal": 2.26e-14,
+      "stat": 8.61744861,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "6_0",
+      "annotation": "T_unknown_1",
+      "gene": "MX1",
+      "logFC": 3.2762,
+      "pAdjGlobal": 5.51e-14,
+      "stat": 8.50028328,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "4_0",
+      "annotation": "CD8_T_Naive/CM_2",
+      "gene": "IFI6",
+      "logFC": 4.0882,
+      "pAdjGlobal": 6.17e-14,
+      "stat": 8.48189876,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "1_0",
+      "annotation": "CD4_T_Naive/CM",
+      "gene": "IFI6",
+      "logFC": 4.1851,
+      "pAdjGlobal": 8.66e-14,
+      "stat": 8.42323973,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "IFIT3",
+      "logFC": 6.2158,
+      "pAdjGlobal": 6.09e-13,
+      "stat": 8.1633782,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "MX1",
+      "logFC": 3.5457,
+      "pAdjGlobal": 7.04e-13,
+      "stat": 8.13386166,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "2_0",
+      "annotation": "CD8_T_EM_1",
+      "gene": "IFI6",
+      "logFC": 3.9807,
+      "pAdjGlobal": 7.95e-13,
+      "stat": 8.11266576,
+      "contrast": "Post3rd-Pre3rd"
+    }
+  ],
+  "topDifferentialExpression": [
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "IFITM1",
+      "logFC": 6.4401,
+      "pAdjGlobal": 1.35e-24,
+      "stat": 11.3171337,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "1_0",
+      "annotation": "CD4_T_Naive/CM",
+      "gene": "LY6E",
+      "logFC": 2.5572,
+      "pAdjGlobal": 2.5e-21,
+      "stat": 10.5726966,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "ISG15",
+      "logFC": 5.4853,
+      "pAdjGlobal": 5.39e-20,
+      "stat": 10.2416068,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "APOBEC3A",
+      "logFC": 4.2893,
+      "pAdjGlobal": 1.01e-19,
+      "stat": 10.1531282,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "gene": "ISG15",
+      "logFC": 6.5118,
+      "pAdjGlobal": 2.37e-19,
+      "stat": 10.0472062,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "ISG15",
+      "logFC": 4.4014,
+      "pAdjGlobal": 3.4e-19,
+      "stat": 9.9867265,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "IFI6",
+      "logFC": 4.4493,
+      "pAdjGlobal": 3.4e-19,
+      "stat": 9.97820547,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "IFI6",
+      "logFC": 4.0956,
+      "pAdjGlobal": 6.17e-19,
+      "stat": 9.90557297,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "1_1",
+      "annotation": "CD4_T_CTL",
+      "gene": "LY6E",
+      "logFC": 1.9536,
+      "pAdjGlobal": 1.69e-18,
+      "stat": 9.79263393,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "TNFSF10",
+      "logFC": 4.1932,
+      "pAdjGlobal": 1.99e-18,
+      "stat": 9.76539824,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "5_0",
+      "annotation": "NK/T_1",
+      "gene": "IFI6",
+      "logFC": 4.8961,
+      "pAdjGlobal": 1.87e-17,
+      "stat": 9.52542541,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "12",
+      "annotation": "MonoMac_3",
+      "gene": "HS3ST2",
+      "logFC": -8.952,
+      "pAdjGlobal": 1.05e-16,
+      "stat": -9.3355046,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "GBP1",
+      "logFC": 4.5766,
+      "pAdjGlobal": 2.17e-16,
+      "stat": 9.24985806,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "0",
+      "annotation": "MonoMac_1",
+      "gene": "ISG15",
+      "logFC": 4.5033,
+      "pAdjGlobal": 3.16e-16,
+      "stat": 9.20134575,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "gene": "LY6E",
+      "logFC": 3.745,
+      "pAdjGlobal": 4.81e-16,
+      "stat": 9.14864628,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "UBE2L6",
+      "logFC": 2.8844,
+      "pAdjGlobal": 5.94e-16,
+      "stat": 9.11900747,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "10",
+      "annotation": "Fibroblasts",
+      "gene": "CCL5",
+      "logFC": 5.3268,
+      "pAdjGlobal": 6.62e-16,
+      "stat": 9.1005318,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "MX1",
+      "logFC": 3.942,
+      "pAdjGlobal": 7.15e-16,
+      "stat": 9.08606149,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "1_0",
+      "annotation": "CD4_T_Naive/CM",
+      "gene": "MX1",
+      "logFC": 3.4139,
+      "pAdjGlobal": 1.89e-15,
+      "stat": 8.97397826,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "GBP5",
+      "logFC": 3.9312,
+      "pAdjGlobal": 2.05e-15,
+      "stat": 8.95527861,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "OAS2",
+      "logFC": 3.3132,
+      "pAdjGlobal": 2.05e-15,
+      "stat": 8.95379676,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "gene": "SERPING1",
+      "logFC": 4.6389,
+      "pAdjGlobal": 2.88e-15,
+      "stat": 8.91084567,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "15",
+      "annotation": "DC_LAMP3",
+      "gene": "ENSG00000273149",
+      "logFC": -4.3772,
+      "pAdjGlobal": 3.34e-15,
+      "stat": -8.8896186,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "2_0",
+      "annotation": "CD8_T_EM_1",
+      "gene": "LY6E",
+      "logFC": 2.1236,
+      "pAdjGlobal": 3.4e-15,
+      "stat": 8.88288796,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "0",
+      "annotation": "MonoMac_1",
+      "gene": "IFI6",
+      "logFC": 3.6991,
+      "pAdjGlobal": 4.13e-15,
+      "stat": 8.85667806,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "0",
+      "annotation": "MonoMac_1",
+      "gene": "LY6E",
+      "logFC": 3.2368,
+      "pAdjGlobal": 4.25e-15,
+      "stat": 8.84904638,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "5_0",
+      "annotation": "NK/T_1",
+      "gene": "LY6E",
+      "logFC": 2.2064,
+      "pAdjGlobal": 4.34e-15,
+      "stat": 8.84255562,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "IRF7",
+      "logFC": 2.4769,
+      "pAdjGlobal": 4.46e-15,
+      "stat": 8.83549247,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "gene": "CASP5",
+      "logFC": 3.7385,
+      "pAdjGlobal": 4.93e-15,
+      "stat": 8.82026332,
+      "contrast": "Post3rd-Pre3rd"
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "gene": "OAS1",
+      "logFC": 3.7487,
+      "pAdjGlobal": 1e-14,
+      "stat": 8.73687653,
+      "contrast": "Post3rd-Pre3rd"
+    }
+  ],
+  "topGSEA": [
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "GSE13485_CTRL_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.6319,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "pathway": "GSE37533_PPARG1_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.5828,
+      "padj": 1.21e-47
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "pathway": "GSE13485_CTRL_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.5473,
+      "padj": 9.04e-48
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "GSE13484_UNSTIM_VS_YF17D_VACCINE_STIM_PBMC_DN",
+      "NES": 3.5247,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "10",
+      "annotation": "Fibroblasts",
+      "pathway": "GSE13485_CTRL_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.5199,
+      "padj": 1.22e-47
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "pathway": "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "NES": 3.4996,
+      "padj": 1.21e-47
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "pathway": "GSE37533_PPARG1_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.4974,
+      "padj": 9.04e-48
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "GSE13485_DAY3_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.4905,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "GSE13485_DAY1_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.4889,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "pathway": "GSE13485_CTRL_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.4815,
+      "padj": 2.48e-45
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "pathway": "GSE13485_DAY3_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.479,
+      "padj": 1.69e-47
+    },
+    {
+      "cluster": "10",
+      "annotation": "Fibroblasts",
+      "pathway": "GSE37533_PPARG1_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.4759,
+      "padj": 1.22e-47
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "GSE37533_PPARG1_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.4696,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "pathway": "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "NES": 3.4662,
+      "padj": 9.04e-48
+    },
+    {
+      "cluster": "8",
+      "annotation": "Keratinocytes",
+      "pathway": "GSE37533_PPARG2_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.4531,
+      "padj": 1.63e-46
+    },
+    {
+      "cluster": "7",
+      "annotation": "cDC2",
+      "pathway": "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "NES": 3.4513,
+      "padj": 9.9e-48
+    },
+    {
+      "cluster": "10",
+      "annotation": "Fibroblasts",
+      "pathway": "GSE37533_PPARG2_FOXP3_VS_FOXP3_TRANSDUCED_CD4_TCELL_DN",
+      "NES": 3.4335,
+      "padj": 1.22e-47
+    },
+    {
+      "cluster": "9_0",
+      "annotation": "Treg_1",
+      "pathway": "GSE13485_CTRL_VS_DAY7_YF17D_VACCINE_PBMC_DN",
+      "NES": 3.4334,
+      "padj": 1.89e-44
+    },
+    {
+      "cluster": "3",
+      "annotation": "MonoMac_2",
+      "pathway": "GSE13484_UNSTIM_VS_YF17D_VACCINE_STIM_PBMC_DN",
+      "NES": 3.4284,
+      "padj": 1.69e-47
+    },
+    {
+      "cluster": "10",
+      "annotation": "Fibroblasts",
+      "pathway": "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "NES": 3.4282,
+      "padj": 1.22e-47
+    }
+  ],
+  "samples": [
+    {
+      "sample": "P101_Skin_Post3rd_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Post3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 1718,
+      "medianNCount": 6798.9014219275,
+      "medianNFeature": 2390.0,
+      "medianPercentMt": 2.60999884063458
+    },
+    {
+      "sample": "P101_Skin_Pre3rd_2.5mgIpi",
+      "patientId": "P101",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 426,
+      "medianNCount": 8316.4919499785,
+      "medianNFeature": 2570.0,
+      "medianPercentMt": 4.93279202217153
+    },
+    {
+      "sample": "P103_Skin_Post3rd_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Post3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3726,
+      "medianNCount": 5361.888092236,
+      "medianNFeature": 2105.5,
+      "medianPercentMt": 1.98816825659028
+    },
+    {
+      "sample": "P103_Skin_Pre3rd_2.5mgIpi",
+      "patientId": "P103",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 818,
+      "medianNCount": 7175.4721425605,
+      "medianNFeature": 2290.5,
+      "medianPercentMt": 6.10537731212257
+    },
+    {
+      "sample": "P104_Skin_Post3rd_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "Post3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 5434,
+      "medianNCount": 4288.49679226074,
+      "medianNFeature": 1830.0,
+      "medianPercentMt": 1.67539539533327
+    },
+    {
+      "sample": "P104_Skin_Pre3rd_2.5mgIpi",
+      "patientId": "P104",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3092,
+      "medianNCount": 4883.9974233935,
+      "medianNFeature": 1839.5,
+      "medianPercentMt": 2.5694940418528
+    },
+    {
+      "sample": "P105_Skin_Post3rd_2.5mgIpi",
+      "patientId": "P105",
+      "timepoint": "Post3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 3429,
+      "medianNCount": 3565.936245332,
+      "medianNFeature": 1629.0,
+      "medianPercentMt": 3.09350046115829
+    },
+    {
+      "sample": "P105_Skin_Pre3rd_2.5mgIpi",
+      "patientId": "P105",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 2526,
+      "medianNCount": 5304.99030479624,
+      "medianNFeature": 2051.0,
+      "medianPercentMt": 2.55200219939454
+    },
+    {
+      "sample": "P106_Skin_Post3rd_2.5mgIpi",
+      "patientId": "P106",
+      "timepoint": "Post3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 1655,
+      "medianNCount": 7172.959414777,
+      "medianNFeature": 2353.0,
+      "medianPercentMt": 3.12261447033091
+    },
+    {
+      "sample": "P106_Skin_Pre3rd_2.5mgIpi",
+      "patientId": "P106",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "2.5mgIpi",
+      "nCells": 1121,
+      "medianNCount": 10880.8924136889,
+      "medianNFeature": 2950.0,
+      "medianPercentMt": 3.56053637249078
+    },
+    {
+      "sample": "P108_Skin_Post3rd_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 2689,
+      "medianNCount": 7316.999988703,
+      "medianNFeature": 2514.0,
+      "medianPercentMt": 2.80542002905625
+    },
+    {
+      "sample": "P108_Skin_Pre3rd_5mgIpi",
+      "patientId": "P108",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 937,
+      "medianNCount": 11076.9240340355,
+      "medianNFeature": 2851.0,
+      "medianPercentMt": 4.16294361102933
+    },
+    {
+      "sample": "P109_Skin_Pre3rd_5mgIpi",
+      "patientId": "P109",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 1375,
+      "medianNCount": 6332.816500399,
+      "medianNFeature": 2115.0,
+      "medianPercentMt": 4.20961783136804
+    },
+    {
+      "sample": "P110_Skin_Post3rd_5mgIpi",
+      "patientId": "P110",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 1481,
+      "medianNCount": 6485.860283848,
+      "medianNFeature": 2255.0,
+      "medianPercentMt": 4.28360413531153
+    },
+    {
+      "sample": "P110_Skin_Pre3rd_5mgIpi",
+      "patientId": "P110",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 1191,
+      "medianNCount": 8492.92414906299,
+      "medianNFeature": 2700.0,
+      "medianPercentMt": 4.10552349353994
+    },
+    {
+      "sample": "P111_Skin_Post3rd_5mgIpi",
+      "patientId": "P111",
+      "timepoint": "Post3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 1342,
+      "medianNCount": 10120.4500938024,
+      "medianNFeature": 2987.0,
+      "medianPercentMt": 2.68069246567652
+    },
+    {
+      "sample": "P111_Skin_Pre3rd_5mgIpi",
+      "patientId": "P111",
+      "timepoint": "Pre3rd",
+      "ipiCohort": "5mgIpi",
+      "nCells": 437,
+      "medianNCount": 8836.978090481,
+      "medianNFeature": 2605.0,
+      "medianPercentMt": 3.3625173332882
+    },
+    {
+      "sample": "*P109 Skin Post3rd scRNA sample was removed due to poor quality",
+      "patientId": "",
+      "timepoint": "",
+      "ipiCohort": "",
+      "nCells": 0,
+      "medianNCount": null,
+      "medianNFeature": null,
+      "medianPercentMt": null
+    }
+  ]
+}

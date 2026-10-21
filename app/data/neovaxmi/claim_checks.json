@@ -1,0 +1,80 @@
+{
+  "paper": {
+    "title": "A multi-adjuvant personal neoantigen vaccine generates potent immunity in melanoma",
+    "authors": "Blass, Keskin, Ott, Wu et al.",
+    "journal": "Cell",
+    "year": 2025,
+    "doi": "10.1016/j.cell.2025.06.019",
+    "trial": "NCT03929029",
+    "vaccine": "NeoVaxMI",
+    "n_enrolled": 11,
+    "n_vaccinated": 10,
+    "n_fully_vaccinated": 9,
+    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+  },
+  "tier": "B",
+  "checks": [
+    {
+      "claim": "All fully vaccinated patients with bulk TCR data show post-vaccine expanded clonotypes",
+      "paperHint": "Vaccination induced circulating TCR clonotypes distinct from PD-1 inhibition",
+      "observed": {
+        "nPatients": 9,
+        "minExpandedAfterVaccine": 115,
+        "medianExpandedAfterVaccine": 209,
+        "medianExpandedAfterNivolumab": 111
+      },
+      "pass": true
+    },
+    {
+      "claim": "Most IMP-expanded TCR\u03b2 clones are post-vaccine category (cohort mean > 75%)",
+      "paperHint": "Neoantigen vaccination reshapes distinct TCR repertoires; IMP-expanded clones enriched post-vaccine",
+      "observed": {
+        "meanPctImpExpandedPostVaccine": 90.85
+      },
+      "pass": true
+    },
+    {
+      "claim": "Reactive tumor-associated TCRs are predominantly post-vaccine type",
+      "paperHint": "TCR reconstruction and antigen screening reveals vaccine-specific TIL post vaccine",
+      "observed": {
+        "nReactive": 31,
+        "nPostVaccineType": 21,
+        "firstDetected": {
+          "post-vaccine": 29,
+          "post-nivolumab": 1,
+          "pre-treatment": 1
+        }
+      },
+      "pass": true
+    },
+    {
+      "claim": "Mutation tables cover enrolled patient IDs P101\u2013P111",
+      "paperHint": "Data S1 related to Figure 1 / vaccine generation",
+      "observed": {
+        "nPatients": 11,
+        "patientIds": [
+          "P101",
+          "P102",
+          "P103",
+          "P104",
+          "P105",
+          "P106",
+          "P107",
+          "P108",
+          "P109",
+          "P110",
+          "P111"
+        ],
+        "medianCodingInS1": 318
+      },
+      "pass": true
+    }
+  ],
+  "nPassed": 4,
+  "nChecks": 4,
+  "limitations": [
+    "ELISpot / % IMP immunogenicity figures are not in Data S1\u2013S5 and cannot be rechecked here.",
+    "Single-arm, small n; exploratory ipi-dose contrasts are descriptive only.",
+    "S1 coding counts are broader than the paper\u2019s \u2018high-quality coding mutations\u2019 filter."
+  ]
+}

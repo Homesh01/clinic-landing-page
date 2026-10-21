@@ -17,7 +17,7 @@ export function Footer() {
 						</p>
 						<div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
 							<Link
-								to="/research/cancer-vaccine-analytics"
+								to="/research/neovaxmi-reanalysis"
 								className="transition-colors hover:text-accent"
 							>
 								Research Analytics Lab
