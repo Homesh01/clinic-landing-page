@@ -35,10 +35,6 @@ export const nav: readonly NavItem[] = [
 			},
 		],
 	},
-	// Synthetic Research Lab demos retained in app/routes but not linked in the nav:
-	// /research/cancer-vaccine-analytics, /research/neoantigen-classifier,
-	// /research/multiomics-stratification, /research/survival-boosting,
-	// /research/distribution-inference
 	{ to: "/conferences", label: "Conferences" },
 	{ to: "/blog", label: "Blog" },
 	{ to: "/faq", label: "FAQ" },
