@@ -46,7 +46,9 @@ export function ChartCard({
 				{children}
 			</div>
 			<p className="border-t border-line px-5 py-4 text-sm leading-relaxed text-ink-soft sm:px-6">
-				<span className="font-semibold text-ink">What does this chart show? </span>
+				<span className="font-semibold text-ink">
+					What does this figure show us?{" "}
+				</span>
 				{explanation}
 			</p>
 		</section>

@@ -98,7 +98,7 @@ export const homePlatform = {
 		},
 		{
 			title: "Research software",
-			text: "Interactive reanalysis of published NeoVaxMI melanoma neoantigen-vaccine trial data — mutations, vaccine-site immunity, TCR dynamics and tumour reactivity.",
+			text: "Interactive reanalysis of published NeoVaxMI melanoma neoantigen vaccine trial data: mutations, vaccine site immunity, TCR dynamics and tumour reactivity.",
 			to: "/research/neovaxmi-reanalysis",
 			linkLabel: "Explore the Analytics Lab",
 		},
@@ -464,7 +464,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 	},
 	{
 		year: 2026,
-		timing: "upcoming",
+		timing: "past",
 		date: "24 Oct 2026",
 		location: "Madrid, Spain",
 		tag: "Invited panel",
@@ -472,13 +472,13 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 		description: [
 			{
 				text:
-					"Will take part in an invited panel discussion on the responsible use of AI in medicine, in conversation with Dr. Caroline Chung, the Chief Data Officer of MD Anderson Cancer Center, at the Women in Cancer event during the ESMO Congress 2026 in Madrid, Spain, on 24 October 2026.",
+					"Took part in an invited panel discussion on the responsible use of AI in medicine, in conversation with Dr. Caroline Chung, the Chief Data Officer of MD Anderson Cancer Center, at the Women in Cancer event during the ESMO Congress 2026 in Madrid, Spain, on 24 October 2026.",
 			},
 		],
 	},
 	{
 		year: 2026,
-		timing: "upcoming",
+		timing: "past",
 		date: "9 to 10 Oct 2026",
 		location: "Riyadh, Saudi Arabia",
 		tag: "Invited talks",
@@ -492,7 +492,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			},
 			{
 				text:
-					" Will present an invited talk and panel discussion at the SOHO meeting in Riyadh, Saudi Arabia, from 9 to 10 October 2026.",
+					" Presented an invited talk and panel discussion at the SOHO meeting in Riyadh, Saudi Arabia, from 9 to 10 October 2026.",
 			},
 		],
 	},
@@ -914,7 +914,7 @@ export const privacyNotice = {
 				"Website enquiries are by email only. The Contact page displays an email address and does not submit a web form to Cloudflare or another form processor.",
 				"The website may set strictly necessary cookies for site access control and for authorised clinic-staff tools. These cookies are functional and are not used for advertising.",
 				"PCC does not use Google Analytics, Meta Pixel or similar marketing trackers on the website. If that position changes, this notice will be updated and any required consent arrangements put in place.",
-				"The Research Analytics Lab page presents aggregates derived from published, de-identified clinical-trial supplemental tables (Cell 2025 Data S1–S5; NCT03929029). It does not upload Personalised Cancer Care patient records and does not send identifiable patient information to external analytics or AI services.",
+				"The Research Analytics Lab page presents aggregates derived from published, de identified clinical trial supplemental tables (Cell 2025 Data S1 to S5; NCT03929029). It does not upload Personalised Cancer Care patient records and does not send identifiable patient information to external analytics or AI services.",
 				"When you book online, the information you enter is used to arrange the appointment. Self-pay checkout is handled by Stripe; free-text appointment notes are not sent to Stripe. Calendar invitations and clinic correspondence are handled through Google Workspace.",
 			],
 		},

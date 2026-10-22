@@ -29,7 +29,6 @@ import { PageHero } from "~/components/PageHero";
 import {
 	ALL_NEOVAXMI_CLONES,
 	NEOVAXMI_CLASS_COUNTS,
-	NEOVAXMI_ML_TASK,
 	NEOVAXMI_POSITIVE_RATE,
 	classificationMetrics,
 	featureImportances,
@@ -50,12 +49,12 @@ export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("NeoVaxMI reanalysis"),
 		description:
-			"Interactive reanalysis of published NeoVaxMI melanoma neoantigen vaccine supplemental data (Cell 2025 Data S1–S5): mutations, vaccine-site immunity, TCR dynamics and tumour reactivity.",
+			"Interactive reanalysis of published NeoVaxMI melanoma neoantigen vaccine supplemental data (Cell 2025 Data S1 to S5): mutations, vaccine site immunity, TCR dynamics and tumour reactivity.",
 		path: "/research/neovaxmi-reanalysis",
 	});
 };
 
-const DATASET = datasetMeta.datasetLabel;
+const DATASET = "NeoVaxMI / Cell 2025 Data S1 to S5";
 const COLORS = {
 	existing: "#5D6B78",
 	nivo: "#2A3644",
@@ -263,14 +262,14 @@ export default function NeoVaxmiReanalysisPage() {
 			<PageHero
 				eyebrow="Research Analytics Lab"
 				title="NeoVaxMI reanalysis"
-				summary="A multi-adjuvant personal neoantigen vaccine (NeoVaxMI) in melanoma: mutation fuel, vaccine-site immune remodeling, circulating TCR expansion beyond PD-1 blockade, and vaccine-linked T cells in tumour."
-				accent={`${paper.authors} · ${paper.journal} ${paper.year}`}
+				summary="A multi adjuvant personal neoantigen vaccine (NeoVaxMI) in melanoma: mutation fuel, vaccine site immune remodeling, circulating TCR expansion beyond PD1 blockade, and vaccine linked T cells in tumour."
+				accent={`${paper.authors}, ${paper.journal} ${paper.year}`}
 			>
 				<div className="mt-5 max-w-2xl space-y-2 text-sm leading-relaxed text-ink-soft">
 					<p>
 						<span className="font-semibold text-ink">Published trial data.</span>{" "}
-						Aggregates from {paper.journal} {paper.year} supplemental Data S1–S5
-						({paper.trial}). De-identified research IDs only — not PCC patient
+						Aggregates from {paper.journal} {paper.year} supplemental Data S1 to
+						S5 ({paper.trial}). De identified research IDs only, not PCC patient
 						records.
 					</p>
 					<p>
@@ -295,33 +294,36 @@ export default function NeoVaxmiReanalysisPage() {
 							hint={`Trial enrolled ${paper.n_enrolled}; vaccinated ${paper.n_vaccinated}`}
 						/>
 						<Stat
-							label="Median post-vaccine TCR expansions"
+							label="Median post vaccine TCR expansions"
 							value={tcr.cohort.medianExpandedAfterVaccine}
-							hint={`vs ${tcr.cohort.medianExpandedAfterNivolumab} after nivolumab`}
+							hint={`versus ${tcr.cohort.medianExpandedAfterNivolumab} after nivolumab`}
 						/>
 						<Stat
-							label="IMP-expanded clones retained"
+							label="IMP expanded clones retained"
 							value={tcr.cohort.totalImpExpandedClones}
-							hint={`${tcr.cohort.meanPctImpExpandedPostVaccine}% mean post-vaccine category`}
+							hint={`${tcr.cohort.meanPctImpExpandedPostVaccine}% mean post vaccine category`}
 						/>
 						<Stat
 							label="Reactive tumour TCRs"
 							value={tumor.reactiveSummary.nReactive}
-							hint={`${tumor.reactiveSummary.byType["Post-Vaccine"] ?? 0} typed post-vaccine`}
+							hint={`${tumor.reactiveSummary.byType["Post-Vaccine"] ?? 0} typed post vaccine`}
 						/>
 					</div>
 
 					<p className="max-w-3xl text-sm leading-relaxed text-ink-soft">
-						{crossLayer.narrative} Below, a class-weighted logistic model asks
-						whether in vitro peptide-pool expansion features distinguish
-						post-vaccine TCR clones from pre-existing / post-nivolumab clones.
+						This page follows one story across the trial tables: how much
+						mutation fuel each patient had, how the vaccine site changed, how T
+						cell clones expanded after vaccine versus after PD1 therapy alone,
+						and whether vaccine linked clones appear in tumour. A machine
+						learning section then tests whether lab expansion features can flag
+						clones that belong to the post vaccine repertoire.
 					</p>
 
 					{/* Tier A: mutations */}
 					<ChartCard
 						title="Mutation landscape (Data S1)"
 						datasetLabel={DATASET}
-						explanation="Coding and neoantigen-proxy mutation counts per patient from whole-exome call tables. The proxy tallies missense/indel/nonsense without HLA binding ranks (those scores are not in S1)."
+						explanation="Each bar is one patient and shows how many coding mutations were found in their tumour sequencing. The second bar is a simple neoantigen proxy count of mutation types that often create vaccine targets, without using HLA binding scores."
 						chartRef={mutRef}
 						onExportPng={() =>
 							exportSvgAsPng(mutRef.current, "neovaxmi-mutations.png")
@@ -372,10 +374,11 @@ export default function NeoVaxmiReanalysisPage() {
 					<div className="flex flex-wrap items-end gap-4 border border-line bg-white px-5 py-4 sm:px-6">
 						<div>
 							<p className="text-sm font-semibold text-ink">
-								Vaccine-site filters (Data S2)
+								Vaccine site filters (Data S2)
 							</p>
 							<p className="text-xs text-ink-muted">
-								Pre3rd vs Post3rd injection-site scRNA composition
+								Cell mix at the injection site before and after the third
+								vaccine dose
 							</p>
 						</div>
 						<label className="text-sm text-ink">
@@ -405,19 +408,19 @@ export default function NeoVaxmiReanalysisPage() {
 							</select>
 						</label>
 						<p className="text-xs text-ink-muted">
-							Ipi exploratory — mean MonoMac Δ:{" "}
+							Ipilimumab dose exploratory mean MonoMac change:{" "}
 							{Object.entries(
 								vaccineSite.ipiDoseExploratory.meanMonoMacDeltaByDose,
 							)
-								.map(([dose, v]) => `${dose} ${v ?? "—"}`)
-								.join(" · ")}
+								.map(([dose, v]) => `${dose} ${v ?? "n/a"}`)
+								.join(", ")}
 						</p>
 					</div>
 
 					<ChartCard
-						title="Vaccine-site myeloid vs T/NK fractions"
+						title="Vaccine site myeloid versus T and NK fractions"
 						datasetLabel={DATASET}
-						explanation="Share of Monocyte/Macrophage and NK/T cells at the vaccine site before and after the third vaccination. The paper highlights dynamic myeloid remodeling at injection sites."
+						explanation="This compares the share of myeloid cells and T or NK cells in skin biopsies from the vaccine injection site. It shows how that local immune mix shifted from before to after the third vaccine dose."
 						chartRef={siteRef}
 						onExportPng={() =>
 							exportSvgAsPng(siteRef.current, "neovaxmi-vaccine-site.png")
@@ -449,7 +452,7 @@ export default function NeoVaxmiReanalysisPage() {
 						{vaccineSite.interferonAssociatedDE.length > 0 ? (
 							<div className="mt-4 overflow-x-auto border-t border-line px-1 pt-4">
 								<p className="mb-2 text-sm font-semibold text-ink">
-									Interferon-associated DE (Post3rd − Pre3rd)
+									Interferon associated gene changes after the third dose
 								</p>
 								<table className="min-w-full text-left text-sm">
 									<thead className="text-ink-muted">
@@ -483,9 +486,9 @@ export default function NeoVaxmiReanalysisPage() {
 
 					{/* Tier A: TCR */}
 					<ChartCard
-						title="Circulating TCR expansion after nivolumab vs vaccine (Data S3)"
+						title="Circulating TCR expansion after nivolumab versus vaccine (Data S3)"
 						datasetLabel={DATASET}
-						explanation="Significantly expanded TCRβ clonotypes after PD-1 blockade versus after NeoVaxMI. Median post-vaccine expansions exceed post-nivolumab expansions in this supplemental summary — the paper’s core repertoire claim."
+						explanation="This counts T cell receptor clones in blood that grew after PD1 therapy alone and after the personalised vaccine. For most patients, more new clones expand after vaccination than after nivolumab alone."
 						chartRef={tcrRef}
 						onExportPng={() =>
 							exportSvgAsPng(tcrRef.current, "neovaxmi-tcr-expansion.png")
@@ -526,7 +529,7 @@ export default function NeoVaxmiReanalysisPage() {
 										/>
 										<YAxis tick={{ fill: CHART_MUTED, fontSize: 11 }} />
 										<Tooltip contentStyle={tooltipStyle} />
-										<Bar dataKey="count" name="IMP-expanded" fill={CHART_ACCENT}>
+										<Bar dataKey="count" name="IMP expanded" fill={CHART_ACCENT}>
 											{impCategories.map((entry) => (
 												<Cell
 													key={entry.name}
@@ -543,7 +546,8 @@ export default function NeoVaxmiReanalysisPage() {
 									</BarChart>
 								</ResponsiveContainer>
 								<p className="mt-2 text-center text-xs text-ink-muted">
-									In vitro IMP-expanded clones by repertoire category
+									Lab expanded vaccine peptide clones by when they first
+									appeared in blood
 								</p>
 							</div>
 						</div>
@@ -551,9 +555,9 @@ export default function NeoVaxmiReanalysisPage() {
 
 					{/* Tier A: tumor */}
 					<ChartCard
-						title="Tumour composition & reactive TCRs (Data S4–S5)"
+						title="Tumour composition and reactive TCRs (Data S4 and S5)"
 						datasetLabel={DATASET}
-						explanation="Single-cell tumour fractions (melanoma vs T/NK vs other) across available timepoints, plus reconstructed TCRs scored as neoantigen-reactive. Most reactive clonotypes are classified as post-vaccine."
+						explanation="The left panel shows what kinds of cells make up each tumour sample, such as melanoma cells versus T or NK cells. The right panel counts T cell receptors that reacted to vaccine peptides, and most of those reactive clones are typed as post vaccine."
 						chartRef={tumorRef}
 						onExportPng={() =>
 							exportSvgAsPng(tumorRef.current, "neovaxmi-tumor.png")
@@ -598,17 +602,18 @@ export default function NeoVaxmiReanalysisPage() {
 								<p className="mt-2 text-center text-xs text-ink-muted">
 									{tumor.reactiveSummary.nReactive} reactive /{" "}
 									{tumor.reconstructedCount} reconstructed ·{" "}
-									{tumor.bloodTumorOverlaps.length} blood–tumour overlaps in S5D
+									{tumor.bloodTumorOverlaps.length} blood and tumour overlaps
+									in S5D
 								</p>
 							</div>
 						</div>
 					</ChartCard>
 
-					{/* Cross-layer */}
+					{/* Cross layer: mutations, blood TCR expansion, and tumour reactivity together */}
 					<ChartCard
-						title="Cross-layer patient view"
+						title="Patient overview across mutation, blood and tumour data"
 						datasetLabel={DATASET}
-						explanation="Each point is a patient with bulk TCR data: coding mutation burden versus post-vaccine expanded clonotype count. Point size scales with the number of reactive tumour TCRs reported for that patient."
+						explanation="Each point is one patient. The horizontal axis is coding mutation burden, the vertical axis is how many blood T cell clones expanded after vaccine, and larger points mean more vaccine reactive T cell receptors were found in that patient’s tumour samples."
 						chartRef={crossRef}
 						onExportPng={() =>
 							exportSvgAsPng(crossRef.current, "neovaxmi-cross-layer.png")
@@ -634,7 +639,7 @@ export default function NeoVaxmiReanalysisPage() {
 									<YAxis
 										type="number"
 										dataKey="expanded"
-										name="Post-vaccine expansions"
+										name="Post vaccine expansions"
 										tick={{ fill: CHART_MUTED, fontSize: 11 }}
 										label={{
 											value: "Expanded after vaccine",
@@ -662,32 +667,34 @@ export default function NeoVaxmiReanalysisPage() {
 						</div>
 					</ChartCard>
 
-					{/* Machine learning on IMP-expanded clones */}
+					{/* Machine learning on IMP expanded clones */}
 					<section className="border border-line bg-white px-5 py-5 sm:px-6">
 						<h3 className="font-display text-xl text-ink sm:text-2xl">
-							Machine learning · post-vaccine clone classifier
+							Machine learning: post vaccine clone classifier
 						</h3>
 						<p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-soft">
-							{NEOVAXMI_ML_TASK}{" "}
-							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} IMP-expanded clones
-							({NEOVAXMI_CLASS_COUNTS["Post-Vaccine"]?.toLocaleString()}{" "}
-							post-vaccine · base rate{" "}
-							{Math.round(NEOVAXMI_POSITIVE_RATE * 1000) / 10}%). Class-weighted
-							L2 logistic regression, 75/25 hold-out.
+							We train a model on{" "}
+							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} vaccine peptide
+							expanded T cell clones to predict whether a clone belongs to the
+							post vaccine blood repertoire rather than an earlier category.{" "}
+							{NEOVAXMI_CLASS_COUNTS["Post-Vaccine"]?.toLocaleString()} of those
+							clones are post vaccine (base rate{" "}
+							{Math.round(NEOVAXMI_POSITIVE_RATE * 1000) / 10}%), so the model
+							uses class weighting and a 75% train / 25% test split.
 						</p>
 						<div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 							<Stat
-								label="Hold-out AUC"
+								label="Hold out AUC"
 								value={mlTestMetrics.auc}
 								hint={`Train AUC ${mlTrainMetrics.auc}`}
 							/>
 							<Stat
-								label="Hold-out F1"
+								label="Hold out F1"
 								value={mlTestMetrics.f1}
-								hint={`Precision ${mlTestMetrics.precision} · recall ${mlTestMetrics.recall}`}
+								hint={`Precision ${mlTestMetrics.precision}, recall ${mlTestMetrics.recall}`}
 							/>
 							<Stat
-								label="Hold-out accuracy"
+								label="Hold out accuracy"
 								value={mlTestMetrics.accuracy}
 								hint={`Majority baseline ${mlTestMetrics.baselineAccuracy}`}
 							/>
@@ -713,9 +720,9 @@ export default function NeoVaxmiReanalysisPage() {
 
 					<div className="grid gap-6 lg:grid-cols-2">
 						<ChartCard
-							title="ROC · hold-out clones"
+							title="ROC curve on held out clones"
 							datasetLabel={DATASET}
-							explanation="Receiver-operating curve for predicting post-vaccine repertoire category from peptide-pool log-fold changes. The marked point is the current decision threshold. AUC above the majority baseline is the useful signal under class imbalance."
+							explanation="This curve shows how well the model separates post vaccine clones from earlier clones as we change the decision threshold. The marked point is the threshold you set above, and a higher AUC means better ranking than chance."
 							chartRef={rocRef}
 							onExportPng={() =>
 								exportSvgAsPng(rocRef.current, "neovaxmi-ml-roc.png")
@@ -781,9 +788,9 @@ export default function NeoVaxmiReanalysisPage() {
 						</ChartCard>
 
 						<ChartCard
-							title="Standardised feature weights"
+							title="Which lab features the model uses most"
 							datasetLabel={DATASET}
-							explanation="Signed logistic coefficients after z-scoring. Positive weights push toward a post-vaccine label; negative toward existing / post-nivolumab. Interpret cautiously — features are correlated (max log2FC is derived from the pool-specific folds)."
+							explanation="Each bar is how strongly one lab expansion feature pushes the model toward a post vaccine label after scaling. Positive bars favour post vaccine; negative bars favour earlier clone categories, and correlated features should be read with care."
 							chartRef={weightRef}
 							onExportPng={() =>
 								exportSvgAsPng(weightRef.current, "neovaxmi-ml-weights.png")
@@ -820,9 +827,9 @@ export default function NeoVaxmiReanalysisPage() {
 					</div>
 
 					<ChartCard
-						title="Patient-level LOO · mutation burden → vaccine TCR expansion"
+						title="Leave one patient out: can mutation burden predict vaccine TCR expansion?"
 						datasetLabel={DATASET}
-						explanation={`Leave-one-patient-out linear model predicting post-vaccine expanded clonotype count from coding mutations and neoantigen-proxy count (n=${patientMl.n}). Small-n exploratory only — correlation of hold-out predictions vs actual is ${patientMl.corr ?? "n/a"} (MAE ${patientMl.mae ?? "n/a"}).`}
+						explanation={`LOO means leave one patient out: for each patient we train on the others, then predict their post vaccine T cell expansion from coding mutations and neoantigen proxy counts (n=${patientMl.n}). Points near the diagonal are better predictions; with so few patients this is exploratory only (correlation ${patientMl.corr ?? "n/a"}, mean absolute error ${patientMl.mae ?? "n/a"}).`}
 						chartRef={loocvRef}
 						onExportPng={() =>
 							exportSvgAsPng(loocvRef.current, "neovaxmi-ml-loocv.png")
@@ -851,7 +858,7 @@ export default function NeoVaxmiReanalysisPage() {
 										name="Predicted"
 										tick={{ fill: CHART_MUTED, fontSize: 11 }}
 										label={{
-											value: "LOO predicted",
+											value: "Predicted (leave one out)",
 											angle: -90,
 											position: "insideLeft",
 											fill: CHART_MUTED,
