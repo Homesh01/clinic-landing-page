@@ -805,7 +805,7 @@ export const privacyNotice = {
 	title: "Patient Privacy Notice",
 	lede:
 		"This notice explains how Personalised Cancer Care Ltd handles personal information in connection with private oncology consultations and related care.",
-	lastUpdated: "16 October 2026",
+	lastUpdated: "21 October 2026",
 	company: {
 		legalName: "Personalised Cancer Care Ltd",
 		companyNumber: "17430677",
