@@ -805,7 +805,7 @@ export const privacyNotice = {
 	title: "Patient Privacy Notice",
 	lede:
 		"This notice explains how Personalised Cancer Care Ltd handles personal information in connection with private oncology consultations and related care.",
-	lastUpdated: "21 October 2026",
+	lastUpdated: "28 October 2026",
 	company: {
 		legalName: "Personalised Cancer Care Ltd",
 		companyNumber: "17430677",
@@ -931,11 +931,11 @@ export const privacyNotice = {
 			heading: "8. How long we keep information",
 			paragraphs: [
 				"We retain personal information for periods appropriate to its purpose and in accordance with applicable legal, professional and regulatory requirements.",
-				"Clinical records are retained in accordance with relevant healthcare records retention guidance, taking account of the patient's circumstances and any applicable legal requirements.",
-				"Administrative, financial and correspondence records are retained for periods appropriate to their purpose, including applicable tax, accounting and legal obligations.",
-				"Where another healthcare organisation, such as HCA Healthcare UK, maintains the primary clinical record, that organisation is responsible for retaining its own records under its applicable policies.",
-				"PCC retains any separate records it creates or holds in accordance with its own responsibilities.",
-				"When a retention period expires, we review whether continued retention is necessary and securely delete or otherwise dispose of information when appropriate.",
+				"Cancer and oncology clinical records: PCC generally retains oncology records for 30 years from diagnosis, or 8 years after death, in accordance with relevant healthcare records-management guidance. This includes consultation notes, second opinions, diagnoses, treatment plans, prescribing records, investigation results, referrals and clinically relevant correspondence forming part of the oncology record.",
+				"Other adult clinical records: We apply the retention period appropriate to the relevant record category. The general adult health-record retention benchmark is 8 years.",
+				"Administrative and financial records: Enquiries, appointment information, administrative correspondence, invoices and financial records are retained for periods appropriate to their purpose and applicable legal, tax and accounting obligations.",
+				"Records held by other healthcare organisations: Where another healthcare organisation, such as HCA Healthcare UK, maintains the primary clinical record, that organisation is responsible for retaining its own records under its applicable policies.",
+				"At the end of the applicable retention period, PCC reviews whether continued retention is necessary for clinical, legal or regulatory reasons before securely deleting or otherwise disposing of the information.",
 			],
 		},
 		{
