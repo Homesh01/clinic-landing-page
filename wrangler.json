@@ -9,5 +9,13 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": false
+	"upload_source_maps": false,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "pcc-clinic-patients",
+			"database_id": "2ec7a342-af5a-406b-80b1-d4f4883eb41c",
+			"migrations_dir": "migrations"
+		}
+	]
 }

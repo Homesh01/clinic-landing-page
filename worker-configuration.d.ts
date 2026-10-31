@@ -15,4 +15,8 @@ interface Env {
 	CLINIC_STAFF_COOKIE_SECRET?: string;
 	STRIPE_SECRET_KEY?: string;
 	STRIPE_WEBHOOK_SECRET?: string;
+	TWILIO_ACCOUNT_SID?: string;
+	TWILIO_AUTH_TOKEN?: string;
+	TWILIO_FROM_NUMBER?: string;
+	DB?: D1Database;
 }

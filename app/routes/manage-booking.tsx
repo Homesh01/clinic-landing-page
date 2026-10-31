@@ -231,15 +231,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						logServerError("Stripe payment lookup for refund failed", lookupError);
 					}
 
-					console.log("Cancel refund lookup", {
-						bookingRef: existing.bookingRef,
-						paymentMethod: existing.paymentMethod,
-						hasSessionId: Boolean(existing.stripeSessionId),
-						hasPaymentIntentId: Boolean(existing.stripePaymentIntentId),
-						resolvedPaymentIntentId: paymentIntentId ? "yes" : "no",
-						eligible: true,
-					});
-
 					if (!paymentIntentId) {
 						return json(
 							{

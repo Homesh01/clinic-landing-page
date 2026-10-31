@@ -42,7 +42,7 @@ export function isAllowedClinicStaffEmail(
 function staffCookie(secret: string, secure: boolean) {
 	return createCookie(COOKIE_NAME, {
 		httpOnly: true,
-		path: "/",
+		path: "/clinic",
 		sameSite: "lax",
 		secure,
 		secrets: [secret],
@@ -188,8 +188,22 @@ export async function clearClinicStaffSessionHeaders(
 	const secret = getStaffCookieSecret(env);
 	const headers = new Headers();
 	if (!secret) return headers;
-	const cookie = staffCookie(secret, request.url.startsWith("https:"));
-	headers.append("Set-Cookie", await cookie.serialize("", { maxAge: 0 }));
+	const secure = request.url.startsWith("https:");
+	// Clear current path (/clinic) and any legacy path=/ cookies.
+	const clinicScoped = staffCookie(secret, secure);
+	const legacySiteScoped = createCookie(COOKIE_NAME, {
+		httpOnly: true,
+		path: "/",
+		sameSite: "lax",
+		secure,
+		secrets: [secret],
+		maxAge: SESSION_MAX_AGE_SEC,
+	});
+	headers.append("Set-Cookie", await clinicScoped.serialize("", { maxAge: 0 }));
+	headers.append(
+		"Set-Cookie",
+		await legacySiteScoped.serialize("", { maxAge: 0 }),
+	);
 	return headers;
 }
 

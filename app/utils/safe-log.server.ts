@@ -11,6 +11,9 @@ function redact(value: string): string {
 		.replace(/\bwhsec_[A-Za-z0-9]+\b/g, "[webhook_secret]")
 		.replace(/\bcs_(?:live|test)_[A-Za-z0-9]+\b/g, "[checkout_session]")
 		.replace(/\bpi_[A-Za-z0-9]+\b/g, "[payment_intent]")
+		.replace(/\bSM[0-9a-fA-F]{32}\b/g, "[twilio_sid]")
+		.replace(/\bAC[0-9a-fA-F]{32}\b/g, "[twilio_account]")
+		.replace(/\+\d{8,15}\b/g, "[phone]")
 		.replace(/\bBearer\s+[A-Za-z0-9._\-]+/gi, "Bearer [redacted]")
 		.replace(/\beya[A-Za-z0-9_\-]{20,}\b/g, "[token]")
 		.slice(0, 280);

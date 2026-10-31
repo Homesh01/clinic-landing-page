@@ -805,7 +805,7 @@ export const privacyNotice = {
 	title: "Patient Privacy Notice",
 	lede:
 		"This notice explains how Personalised Cancer Care Ltd handles personal information in connection with private oncology consultations and related care.",
-	lastUpdated: "28 October 2026",
+	lastUpdated: "31 October 2026",
 	company: {
 		legalName: "Personalised Cancer Care Ltd",
 		companyNumber: "17430677",
@@ -835,10 +835,12 @@ export const privacyNotice = {
 			bullets: [
 				"Your name, date of birth and contact details.",
 				"Appointment details and correspondence.",
+				"A limited administrative contact record (name, postal address, email and telephone) where staff maintain your details in clinic tools.",
 				"Medical history, diagnoses, treatment plans, test results and other relevant clinical information.",
 				"Information received from or shared with healthcare professionals involved in your care.",
 				"Insurance, invoicing and payment information.",
 				"Information you provide when contacting us through our website, email or telephone.",
+				"Records of administrative SMS messages sent to you through clinic tools, where applicable.",
 			],
 			closing: [
 				"Health information is particularly sensitive and receives additional protection under data-protection law.",
@@ -856,6 +858,7 @@ export const privacyNotice = {
 				"Communicate with hospitals, GPs and other healthcare professionals involved in your care.",
 				"Arrange clinically appropriate investigations or referrals.",
 				"Issue invoices, liaise with insurers and administer payments.",
+				"Send administrative SMS messages where appropriate (for example appointment-related notices).",
 				"Meet applicable professional, legal and regulatory obligations.",
 				"Maintain the security and effective operation of our services.",
 			],
@@ -902,8 +905,9 @@ export const privacyNotice = {
 			heading: "6. How we store and protect your information",
 			paragraphs: [
 				"PCC uses Google Workspace, including Gmail, Calendar and Drive, for aspects of patient correspondence, scheduling, administration and record-keeping.",
-				"The website is hosted on Cloudflare infrastructure. Online self-pay payments are processed by Stripe. Appointment booking uses Google Calendar.",
-				"Google, Cloudflare and Stripe provide services to PCC under their respective contractual terms. We use account authentication, access controls and other appropriate security measures to protect information.",
+				"The website is hosted on Cloudflare infrastructure. Online self-pay payments are processed by Stripe. Appointment booking uses Google Calendar. Authorised clinic staff may maintain a limited patient contact directory (name, postal address, email and telephone) in a Cloudflare D1 database used only for clinic administration.",
+				"Where staff send administrative SMS messages through the clinic tools, message delivery is processed by Twilio. Message content and delivery metadata may be retained in the clinic systems as an audit record.",
+				"Google, Cloudflare, Stripe and Twilio provide services to PCC under their respective contractual terms. We use account authentication, access controls and other appropriate security measures to protect information.",
 				"Access to patient information is restricted according to professional and administrative responsibilities.",
 				"No electronic system can be guaranteed completely secure, but we take reasonable steps to protect information against unauthorised access, loss and misuse.",
 			],
@@ -921,9 +925,9 @@ export const privacyNotice = {
 		{
 			heading: "7. International transfers",
 			paragraphs: [
-				"Some technology providers, including Google, Cloudflare and Stripe, may process information outside the United Kingdom.",
+				"Some technology providers, including Google, Cloudflare, Stripe and Twilio, may process information outside the United Kingdom.",
 				"Where personal information is transferred to a country without applicable UK adequacy protection, we rely on appropriate safeguards where required, such as contractual transfer mechanisms recognised under UK data-protection law.",
-				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses. Cloudflare and Stripe publish their own UK GDPR / international-transfer documentation; PCC relies on the contractual arrangements applicable to its accounts.",
+				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses. Cloudflare, Stripe and Twilio publish their own UK GDPR / international-transfer documentation; PCC relies on the contractual arrangements applicable to its accounts.",
 				"You may contact us for further information about the safeguards relevant to your information.",
 			],
 		},
@@ -933,7 +937,7 @@ export const privacyNotice = {
 				"We retain personal information for periods appropriate to its purpose and in accordance with applicable legal, professional and regulatory requirements.",
 				"Cancer and oncology clinical records: PCC generally retains oncology records for 30 years from diagnosis, or 8 years after death, in accordance with relevant healthcare records-management guidance. This includes consultation notes, second opinions, diagnoses, treatment plans, prescribing records, investigation results, referrals and clinically relevant correspondence forming part of the oncology record.",
 				"Other adult clinical records: We apply the retention period appropriate to the relevant record category. The general adult health-record retention benchmark is 8 years.",
-				"Administrative and financial records: Enquiries, appointment information, administrative correspondence, invoices and financial records are retained for periods appropriate to their purpose and applicable legal, tax and accounting obligations.",
+				"Administrative and financial records: Enquiries, appointment information, administrative correspondence, invoices, SMS audit records and financial records are retained for periods appropriate to their purpose and applicable legal, tax and accounting obligations.",
 				"Records held by other healthcare organisations: Where another healthcare organisation, such as HCA Healthcare UK, maintains the primary clinical record, that organisation is responsible for retaining its own records under its applicable policies.",
 				"At the end of the applicable retention period, PCC reviews whether continued retention is necessary for clinical, legal or regulatory reasons before securely deleting or otherwise disposing of the information.",
 			],
