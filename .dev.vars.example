@@ -1,23 +1,32 @@
-# Site gate (omit or blank to disable locally)
+# Local secrets for `npm run dev` / Wrangler.
+# Copy this file to `.dev.vars` (and keep `.dev.vars.example` in sync if you maintain one).
+# Never commit `.dev.vars`.
+
+# Site password gate (skipped automatically on localhost)
 SITE_PASSWORD=preview
+SITE_COOKIE_SECRET=replace-with-long-random-string
 
-# Google Calendar + Gmail (OAuth as bookings@personalisedcancercare.com)
-# Scopes: calendar + gmail.send
-GOOGLE_CLIENT_ID=........apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=........
-GOOGLE_REFRESH_TOKEN=........
-GOOGLE_CALENDAR_ID=........@group.calendar.google.com
+# Google Workspace booking + staff magic-link email
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REFRESH_TOKEN=
+GOOGLE_CALENDAR_ID=
 BOOKING_TIMEZONE=Europe/London
-BOOKING_FROM_EMAIL=bookings@personalisedcancercare.com
-BOOKING_FROM_NAME=Personalised Cancer Care Bookings
-# BOOKING_BCC_EMAIL=
+BOOKING_FROM_EMAIL=
+BOOKING_FROM_NAME=Personalised Cancer Care
+BOOKING_BCC_EMAIL=
 
-# /clinic staff magic-link (10 min). Comma-separated allowlist.
+# Staff allowlist (comma-separated) + dedicated cookie secret (preferred over SITE_PASSWORD)
 CLINIC_STAFF_EMAILS=you@example.com
-# CLINIC_STAFF_COOKIE_SECRET=
+CLINIC_STAFF_COOKIE_SECRET=replace-with-long-random-string
 
-# Stripe (test: sk_test_… / whsec_…)
-# Fees: New Patient / Second Opinion / Virtual £350; Follow-up / Monitoring £250
-STRIPE_SECRET_KEY=sk_test_........
-# stripe listen --forward-to localhost:5173/api/stripe-webhook
-# STRIPE_WEBHOOK_SECRET=whsec_........
+# Stripe (self-pay + staff refunds)
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+# Twilio outbound SMS (clinic patient contacts)
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=
+TWILIO_FROM_NUMBER=+447xxxxxxxxx
+
+# D1 is bound via wrangler.json (binding DB) — no secret needed here.
