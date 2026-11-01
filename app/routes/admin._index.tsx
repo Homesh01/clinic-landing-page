@@ -373,22 +373,26 @@ export default function ClinicHubPage() {
 										All set · site gate {gateLabel}
 									</p>
 								) : (
-									<ul className="mt-3">
-										{healthIssues.map((check) => (
-											<li
-												key={check.label}
-												className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line py-2 last:border-b-0"
-											>
-												<span className="text-sm text-ink">{check.label}</span>
-												<span className="text-sm font-semibold text-amber-800">
-													{check.fix}
-												</span>
-											</li>
-										))}
-										<li className="pt-2 text-sm text-ink-soft">
+									<>
+										<ul className="mt-3">
+											{healthIssues.map((check) => (
+												<li
+													key={check.label}
+													className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line py-2 last:border-b-0"
+												>
+													<span className="text-sm text-ink">
+														{check.label}
+													</span>
+													<span className="text-sm font-semibold text-amber-800">
+														{check.fix}
+													</span>
+												</li>
+											))}
+										</ul>
+										<p className="mt-3 text-sm text-ink-soft">
 											Site gate {gateLabel}
-										</li>
-									</ul>
+										</p>
+									</>
 								)}
 							</div>
 
