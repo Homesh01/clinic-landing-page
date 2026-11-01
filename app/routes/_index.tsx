@@ -128,108 +128,24 @@ export default function Index() {
 
 			<section className="border-y border-line bg-white section-pad">
 				<div className="site-container">
-					<div className="grid items-end gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-						<div className="max-w-xl">
-							<div className="mb-5 h-px w-14 bg-accent" aria-hidden="true" />
-							<p className="eyebrow">Research Analytics Lab</p>
-							<h2 className="mt-3 font-display text-display-md text-ink">
-								Modernity you can inspect
-							</h2>
-							<p className="mt-4 text-lg leading-relaxed text-ink-soft">
-								Interactive reanalyses of published neoantigen vaccine trials —
-								clone kinetics, persistence, and classifiers — built as open
-								computational work beside consultant care.
-							</p>
-							<Link
-								to="/research/pancreatic-reanalysis"
-								className="link-underline mt-8"
-							>
-								Explore the Analytics Lab
-								<span aria-hidden="true">→</span>
-							</Link>
-						</div>
-
-						{/* Decorative proof figure: PDAC prime vs boost half-life (Nature 2025 aggregates) */}
-						<figure className="border border-line bg-mist/30 px-6 py-7 sm:px-8">
-							<p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-accent">
-								From the lab
-							</p>
-							<p className="mt-3 font-display text-2xl text-ink">
-								Vaccine clone half-life
-							</p>
-							<p className="mt-2 text-sm text-ink-muted">
-								Median days after prime versus boost (published PDAC kinetics)
-							</p>
-							<svg
-								viewBox="0 0 360 160"
-								className="mt-6 h-40 w-full"
-								role="img"
-								aria-label="Bar chart comparing prime half-life of about 42 days with boost half-life of about 297 days"
-							>
-								<rect
-									x="48"
-									y="88"
-									width="100"
-									height="48"
-									fill="#1F6F6A"
-									opacity="0.85"
-								/>
-								<rect
-									x="200"
-									y="28"
-									width="100"
-									height="108"
-									fill="#15202B"
-									opacity="0.9"
-								/>
-								<text
-									x="98"
-									y="152"
-									textAnchor="middle"
-									fill="#5D6B78"
-									fontSize="12"
-									fontFamily="system-ui, sans-serif"
-								>
-									Prime
-								</text>
-								<text
-									x="250"
-									y="152"
-									textAnchor="middle"
-									fill="#5D6B78"
-									fontSize="12"
-									fontFamily="system-ui, sans-serif"
-								>
-									Boost
-								</text>
-								<text
-									x="98"
-									y="80"
-									textAnchor="middle"
-									fill="#15202B"
-									fontSize="14"
-									fontFamily="system-ui, sans-serif"
-									fontWeight="600"
-								>
-									~42 d
-								</text>
-								<text
-									x="250"
-									y="20"
-									textAnchor="middle"
-									fill="#15202B"
-									fontSize="14"
-									fontFamily="system-ui, sans-serif"
-									fontWeight="600"
-								>
-									~297 d
-								</text>
-							</svg>
-							<figcaption className="mt-2 text-xs text-ink-muted">
-								Illustrative medians from Nature 2025 source data · full
-								interactive figures in the lab
-							</figcaption>
-						</figure>
+					<div className="max-w-xl">
+						<div className="mb-5 h-px w-14 bg-accent" aria-hidden="true" />
+						<p className="eyebrow">Research Analytics Lab</p>
+						<h2 className="mt-3 font-display text-display-md text-ink">
+							Modernity you can inspect
+						</h2>
+						<p className="mt-4 text-lg leading-relaxed text-ink-soft">
+							Interactive reanalyses of published neoantigen vaccine trials —
+							clone kinetics, persistence, and classifiers — built as open
+							computational work beside consultant care.
+						</p>
+						<Link
+							to="/research/pancreatic-reanalysis"
+							className="link-underline mt-8"
+						>
+							Explore the Analytics Lab
+							<span aria-hidden="true">→</span>
+						</Link>
 					</div>
 
 					<div className="mt-16 max-w-3xl">
