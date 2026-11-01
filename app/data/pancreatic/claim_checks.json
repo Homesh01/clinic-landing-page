@@ -1,0 +1,49 @@
+{
+  "paper": {
+    "title": "RNA neoantigen vaccines prime long-lived CD8+ T cells in pancreatic cancer",
+    "doi": "10.1038/s41586-024-08508-4"
+  },
+  "methodsContrastWithMelanoma": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan.",
+  "checks": [
+    {
+      "id": "clone_persistence_high",
+      "claim": "A large share of primed vaccine clones remain detectable years later (paper reports ~86% of clones per patient at ~3 years).",
+      "metric": "median clonePersistenceFraction (Fig 2e)",
+      "value": 0.8571,
+      "passes": true
+    },
+    {
+      "id": "boost_extends_half_life",
+      "claim": "Post-boost clone half-lives are longer than post-prime half-lives.",
+      "metric": "Wilcoxon signed-rank on paired half-life differences",
+      "value": {
+        "pApprox": 0.0,
+        "W": 36.0,
+        "n": 65
+      },
+      "passes": true
+    },
+    {
+      "id": "multi_year_lifespan",
+      "claim": "Estimated post-boost lifespans commonly span multiple years.",
+      "metric": "mean post-boost lifespan (years) among modelled clones",
+      "value": 11.425,
+      "passes": true
+    },
+    {
+      "id": "decade_scale_clones",
+      "claim": "A subset of clones has decade-scale estimated lifespans.",
+      "metric": "count of clones with post-boost lifespan \u2265 10 years",
+      "value": 20,
+      "n": 65,
+      "passes": true
+    },
+    {
+      "id": "largely_de_novo",
+      "claim": "Vaccine-induced CloneTrack clones are largely absent from pre-vaccine tissues.",
+      "metric": "De novo count in Fig 2g CloneTrack origin panel",
+      "value": 77,
+      "passes": true
+    }
+  ]
+}

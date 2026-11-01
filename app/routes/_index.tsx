@@ -216,12 +216,12 @@ export default function Index() {
 			<CalloutBanner
 				eyebrow="Appointments"
 				title="Book a consultation, or explore the Analytics Lab"
-				body="View available slots and request a consultation at a time that suits you. Clinics at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic. The Research Analytics Lab includes a reanalysis of published NeoVaxMI trial data."
+				body="View available slots and request a consultation at a time that suits you. Clinics at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic. The Research Analytics Lab includes reanalyses of published NeoVaxMI melanoma and PDAC mRNA vaccine trial data."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
 					{
 						label: "Research Analytics Lab",
-						to: "/research/neovaxmi-reanalysis",
+						to: "/research/pancreatic-reanalysis",
 						variant: "outline",
 					},
 				]}

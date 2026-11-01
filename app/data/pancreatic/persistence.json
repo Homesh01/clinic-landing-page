@@ -1,0 +1,283 @@
+{
+  "paper": {
+    "title": "RNA neoantigen vaccines prime long-lived CD8+ T cells in pancreatic cancer",
+    "doi": "10.1038/s41586-024-08508-4"
+  },
+  "patients": [
+    {
+      "patientId": "P1",
+      "followUpYears": 3.8274,
+      "clonesAtPriming": 28,
+      "peakPctBloodAtPriming": 10.361957,
+      "clonesAtLastFollowUp": 24,
+      "pctBloodAtLastFollowUp": 1.116613,
+      "clonePersistenceFraction": 0.857143
+    },
+    {
+      "patientId": "P5",
+      "followUpYears": 3.1397,
+      "clonesAtPriming": 2,
+      "peakPctBloodAtPriming": 0.23751,
+      "clonesAtLastFollowUp": 2,
+      "pctBloodAtLastFollowUp": 0.059529,
+      "clonePersistenceFraction": 1.0
+    },
+    {
+      "patientId": "P6",
+      "followUpYears": 3.0959,
+      "clonesAtPriming": 7,
+      "peakPctBloodAtPriming": 0.49938,
+      "clonesAtLastFollowUp": 6,
+      "pctBloodAtLastFollowUp": 0.083811,
+      "clonePersistenceFraction": 0.857143
+    },
+    {
+      "patientId": "P14",
+      "followUpYears": 2.7589,
+      "clonesAtPriming": 10,
+      "peakPctBloodAtPriming": 4.20646,
+      "clonesAtLastFollowUp": 8,
+      "pctBloodAtLastFollowUp": 0.063484,
+      "clonePersistenceFraction": 0.8
+    },
+    {
+      "patientId": "P11",
+      "followUpYears": 2.7452,
+      "clonesAtPriming": 2,
+      "peakPctBloodAtPriming": 4.033586,
+      "clonesAtLastFollowUp": 2,
+      "pctBloodAtLastFollowUp": 1.789942,
+      "clonePersistenceFraction": 1.0
+    },
+    {
+      "patientId": "P10",
+      "followUpYears": 2.6411,
+      "clonesAtPriming": 9,
+      "peakPctBloodAtPriming": 1.698435,
+      "clonesAtLastFollowUp": 5,
+      "pctBloodAtLastFollowUp": 0.005699,
+      "clonePersistenceFraction": 0.555556
+    },
+    {
+      "patientId": "P29",
+      "followUpYears": 2.326,
+      "clonesAtPriming": 15,
+      "peakPctBloodAtPriming": 9.858502,
+      "clonesAtLastFollowUp": 15,
+      "pctBloodAtLastFollowUp": 0.881259,
+      "clonePersistenceFraction": 1.0
+    },
+    {
+      "patientId": "P25",
+      "followUpYears": 1.8164,
+      "clonesAtPriming": 6,
+      "peakPctBloodAtPriming": 1.35837,
+      "clonesAtLastFollowUp": null,
+      "pctBloodAtLastFollowUp": null,
+      "clonePersistenceFraction": null
+    }
+  ],
+  "persistenceFractionSummary": {
+    "n": 7,
+    "min": 0.555556,
+    "median": 0.857143,
+    "mean": 0.86712,
+    "p25": 0.828572,
+    "p75": 1.0,
+    "max": 1.0
+  },
+  "followUpYearsSummary": {
+    "n": 8,
+    "min": 1.8164,
+    "median": 2.75205,
+    "mean": 2.793825,
+    "p25": 2.562325,
+    "p75": 3.10685,
+    "max": 3.8274
+  },
+  "bootstrapMedianPersistenceCI": {
+    "n": 7,
+    "statistic": "median",
+    "estimate": 0.857143,
+    "ci95": [
+      0.8,
+      1.0
+    ],
+    "nBoot": 2000
+  },
+  "patientLifespanSummaryFig5a": [
+    {
+      "patientId": "P1",
+      "lifespanYearsAfterSurgery": 12.6483,
+      "onsetWeeksAfterSurgery": 11.5714,
+      "cumulativeTcellsPctObs": 0.848716
+    },
+    {
+      "patientId": "P5",
+      "lifespanYearsAfterSurgery": 8.3453,
+      "onsetWeeksAfterSurgery": 13.5714,
+      "cumulativeTcellsPctObs": 0.030298
+    },
+    {
+      "patientId": "P6",
+      "lifespanYearsAfterSurgery": 15.5078,
+      "onsetWeeksAfterSurgery": 10.0,
+      "cumulativeTcellsPctObs": 0.084468
+    },
+    {
+      "patientId": "P10",
+      "lifespanYearsAfterSurgery": 4.121,
+      "onsetWeeksAfterSurgery": 15.0,
+      "cumulativeTcellsPctObs": 0.067634
+    },
+    {
+      "patientId": "P11",
+      "lifespanYearsAfterSurgery": 29.6085,
+      "onsetWeeksAfterSurgery": 17.0,
+      "cumulativeTcellsPctObs": 0.469456
+    },
+    {
+      "patientId": "P14",
+      "lifespanYearsAfterSurgery": 8.5064,
+      "onsetWeeksAfterSurgery": 34.8571,
+      "cumulativeTcellsPctObs": 0.023259
+    },
+    {
+      "patientId": "P25",
+      "lifespanYearsAfterSurgery": 1.5396,
+      "onsetWeeksAfterSurgery": 11.1429,
+      "cumulativeTcellsPctObs": 0.00736
+    },
+    {
+      "patientId": "P29",
+      "lifespanYearsAfterSurgery": 9.7636,
+      "onsetWeeksAfterSurgery": 12.7143,
+      "cumulativeTcellsPctObs": 0.522324
+    }
+  ],
+  "longLivedBoost": {
+    "longLivedBoostClones": [
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 10.064
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 16.0357
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 10.4258
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 19.0711
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 14.4925
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 13.5341
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 14.1074
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 21.3051
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 11.6738
+      },
+      {
+        "patientId": "P1",
+        "lifespanYearsPostBoost": 100.0
+      },
+      {
+        "patientId": "P6",
+        "lifespanYearsPostBoost": 39.6843
+      },
+      {
+        "patientId": "P6",
+        "lifespanYearsPostBoost": 100.0
+      },
+      {
+        "patientId": "P6",
+        "lifespanYearsPostBoost": 11.0798
+      },
+      {
+        "patientId": "P11",
+        "lifespanYearsPostBoost": 22.2747
+      },
+      {
+        "patientId": "P11",
+        "lifespanYearsPostBoost": 19.7507
+      },
+      {
+        "patientId": "P29",
+        "lifespanYearsPostBoost": 10.8446
+      },
+      {
+        "patientId": "P29",
+        "lifespanYearsPostBoost": 30.43
+      },
+      {
+        "patientId": "P29",
+        "lifespanYearsPostBoost": 23.482
+      },
+      {
+        "patientId": "P29",
+        "lifespanYearsPostBoost": 11.9713
+      },
+      {
+        "patientId": "P29",
+        "lifespanYearsPostBoost": 10.5389
+      }
+    ],
+    "primedClonePersistenceByPatient": [
+      {
+        "patientId": "P1",
+        "pctPrimedClonesPersisting": 85.7
+      },
+      {
+        "patientId": "P5",
+        "pctPrimedClonesPersisting": 100.0
+      },
+      {
+        "patientId": "P6",
+        "pctPrimedClonesPersisting": 85.7143
+      },
+      {
+        "patientId": "P10",
+        "pctPrimedClonesPersisting": 55.5
+      },
+      {
+        "patientId": "P11",
+        "pctPrimedClonesPersisting": 100.0
+      },
+      {
+        "patientId": "P14",
+        "pctPrimedClonesPersisting": 80.0
+      },
+      {
+        "patientId": "P29",
+        "pctPrimedClonesPersisting": 100.0
+      }
+    ]
+  },
+  "tissueOrigin": {
+    "cloneTrackOriginCounts": {
+      "Tumor": 1,
+      "Adjacent": 1,
+      "Malignant DLN": 0,
+      "Benign DLN": 0,
+      "Pre-treatment blood": 0,
+      "De novo": 77
+    },
+    "interpretation": "Published CloneTrack origin tally: vaccine-induced clones are largely de novo (undetectable in pre-vaccination tissues)."
+  }
+}

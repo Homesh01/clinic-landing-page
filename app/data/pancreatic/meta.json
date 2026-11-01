@@ -1,0 +1,31 @@
+{
+  "paper": {
+    "title": "RNA neoantigen vaccines prime long-lived CD8+ T cells in pancreatic cancer",
+    "authors": "Sethna, Guasp, Balachandran et al.",
+    "journal": "Nature",
+    "year": 2025,
+    "doi": "10.1038/s41586-024-08508-4",
+    "pdf": "s41586-024-08508-4.pdf",
+    "vaccine": "Autogene cevumeran (individualized mRNA\u2013lipoplex neoantigen vaccine)",
+    "indication": "Pancreatic ductal adenocarcinoma (PDAC)",
+    "trialContext": "Phase 1: surgery, atezolizumab (anti\u2013PD-L1), autogene cevumeran, mFOLFIRINOX; extended ~3.2-year median follow-up",
+    "nRespondersWithVaccineTcells": 8,
+    "nNonRespondersWithoutVaccineTcells": 8,
+    "source_note": "Aggregates from Nature supplemental source tables (MOESM5\u201315). De-identified published patient IDs. Not Personalised Cancer Care clinical data.",
+    "methodsNote": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan."
+  },
+  "datasetLabel": "PDAC autogene cevumeran / Nature 2025 source data",
+  "rawFolder": "data-analysis-raw/pancreatic",
+  "processedFolder": "data-analysis-processed/pancreatic",
+  "filesUsed": [
+    "41586_2024_8508_MOESM5_ESM.xlsx",
+    "41586_2024_8508_MOESM8_ESM.xlsx",
+    "41586_2024_8508_MOESM11_ESM.xlsx",
+    "s41586-024-08508-4.pdf"
+  ],
+  "stats": [
+    "bootstrap median 95% CI (half-life, lifespan, persistence)",
+    "Wilcoxon signed-rank (paired prime vs boost half-life)",
+    "Spearman correlation (peak frequency vs lifespan)"
+  ]
+}

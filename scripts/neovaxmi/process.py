@@ -20,8 +20,8 @@ import openpyxl
 from pyxlsb import open_workbook
 
 ROOT = Path(__file__).resolve().parents[2]
-RAW = ROOT / "data-analysis-raw"
-OUT = ROOT / "data-analysis-processed"
+RAW = ROOT / "data-analysis-raw" / "melanoma"
+OUT = ROOT / "data-analysis-processed" / "melanoma"
 APP = ROOT / "app" / "data" / "neovaxmi"
 
 PAPER = {
@@ -771,9 +771,13 @@ def process_s4_s5() -> dict:
     for row in s5d:
         if not row or row[0] is None:
             continue
+        pid = clean_str(row[0])
+        # Skip sheet headers / category labels (e.g. "IE: IMP-expanded")
+        if not (pid.startswith("P") and pid[1:].isdigit()):
+            continue
         overlaps.append(
             {
-                "patientId": clean_str(row[0]),
+                "patientId": pid,
                 "tcrb": clean_str(row[1]),
                 "pbmcType": clean_str(row[2]),
                 "tumorType": clean_str(row[3]),
@@ -815,15 +819,28 @@ def process_s4_s5() -> dict:
     }
 
 
+def is_patient_id(pid: str) -> bool:
+    """True for trial IDs like P101; false for sheet headers / category labels."""
+    return bool(pid) and pid.startswith("P") and pid[1:].isdigit()
+
+
 def build_cross_layer(s1, s3, s45) -> dict:
     """Join mutation burden, TCR expansion, and reactive TIL evidence per patient."""
     mut = {p["patientId"]: p for p in s1["patients"]}
     tcr = {p["patientId"]: p for p in s3["patients"]}
-    reactive = Counter(r["patientId"] for r in s45["reactiveTcrs"])
-    overlaps = Counter(r["patientId"] for r in s45["bloodTumorOverlaps"])
+    reactive = Counter(
+        r["patientId"] for r in s45["reactiveTcrs"] if is_patient_id(r["patientId"])
+    )
+    overlaps = Counter(
+        r["patientId"]
+        for r in s45["bloodTumorOverlaps"]
+        if is_patient_id(r["patientId"])
+    )
 
     rows = []
     for pid in sorted(set(mut) | set(tcr) | set(reactive) | set(overlaps)):
+        if not is_patient_id(pid):
+            continue
         m = mut.get(pid, {})
         t = tcr.get(pid, {})
         rows.append(
@@ -1105,7 +1122,7 @@ def main():
 
     readme = f"""# NeoVaxMI processed aggregates
 
-Derived from `data-analysis-raw/` supplemental tables for:
+Derived from `data-analysis-raw/melanoma/` supplemental tables for:
 
 **{PAPER['title']}** ({PAPER['authors']}; {PAPER['journal']} {PAPER['year']}; DOI {PAPER['doi']}; {PAPER['trial']}).
 

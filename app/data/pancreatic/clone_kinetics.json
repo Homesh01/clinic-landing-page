@@ -1,0 +1,441 @@
+{
+  "paper": {
+    "title": "RNA neoantigen vaccines prime long-lived CD8+ T cells in pancreatic cancer",
+    "authors": "Sethna, Guasp, Balachandran et al.",
+    "journal": "Nature",
+    "year": 2025,
+    "doi": "10.1038/s41586-024-08508-4",
+    "pdf": "s41586-024-08508-4.pdf",
+    "vaccine": "Autogene cevumeran (individualized mRNA\u2013lipoplex neoantigen vaccine)",
+    "indication": "Pancreatic ductal adenocarcinoma (PDAC)",
+    "trialContext": "Phase 1: surgery, atezolizumab (anti\u2013PD-L1), autogene cevumeran, mFOLFIRINOX; extended ~3.2-year median follow-up",
+    "nRespondersWithVaccineTcells": 8,
+    "nNonRespondersWithoutVaccineTcells": 8,
+    "source_note": "Aggregates from Nature supplemental source tables (MOESM5\u201315). De-identified published patient IDs. Not Personalised Cancer Care clinical data.",
+    "methodsNote": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan."
+  },
+  "nClonesParsed": 79,
+  "primeHalfLifeDays": {
+    "summary": {
+      "n": 79,
+      "min": 15.759924,
+      "median": 41.518411,
+      "mean": 80.548289,
+      "p25": 32.514385,
+      "p75": 61.230435,
+      "max": 1825.0
+    },
+    "bootstrapMedianCI": {
+      "n": 79,
+      "statistic": "median",
+      "estimate": 41.518411,
+      "ci95": [
+        38.14008,
+        46.063938
+      ],
+      "nBoot": 2000
+    }
+  },
+  "boostHalfLifeDays": {
+    "summary": {
+      "n": 65,
+      "min": 70.391579,
+      "median": 297.205118,
+      "mean": 405.435462,
+      "p25": 199.121089,
+      "p75": 448.015131,
+      "max": 1825.0
+    },
+    "bootstrapMedianCI": {
+      "n": 65,
+      "statistic": "median",
+      "estimate": 297.205118,
+      "ci95": [
+        249.676129,
+        378.404025
+      ],
+      "nBoot": 2000
+    }
+  },
+  "primeLifespanYears": {
+    "summary": {
+      "n": 79,
+      "min": 0.307541,
+      "median": 1.079403,
+      "mean": 2.877914,
+      "p25": 0.784177,
+      "p75": 1.903791,
+      "max": 100.0
+    },
+    "bootstrapMedianCI": {
+      "n": 79,
+      "statistic": "median",
+      "estimate": 1.079403,
+      "ci95": [
+        0.929773,
+        1.337571
+      ],
+      "nBoot": 2000
+    }
+  },
+  "boostLifespanYears": {
+    "summary": {
+      "n": 65,
+      "min": 1.540388,
+      "median": 7.720342,
+      "mean": 11.425362,
+      "p25": 3.321883,
+      "p75": 10.844566,
+      "max": 100.0
+    },
+    "bootstrapMedianCI": {
+      "n": 65,
+      "statistic": "median",
+      "estimate": 7.720342,
+      "ci95": [
+        5.786589,
+        8.95856
+      ],
+      "nBoot": 2000
+    }
+  },
+  "wilcoxonHalfLifeBoostMinusPrime": {
+    "n": 65,
+    "W": 36.0,
+    "Wpositive": 2109.0,
+    "Wnegative": 36.0,
+    "zApprox": -6.7735,
+    "pApprox": 0.0,
+    "alternative": "two-sided",
+    "method": "Wilcoxon signed-rank (normal approximation)",
+    "hypothesis": "boost half-life \u2212 prime half-life differs from 0"
+  },
+  "spearmanPeakPrimeFreqVsLifespan": {
+    "n": 79,
+    "rho": 0.367273,
+    "pApprox": 0.000783,
+    "method": "Spearman rank correlation"
+  },
+  "sampleClones": [
+    {
+      "peakFreqPrime": 0.0100930203125988,
+      "halfLifeDaysPrime": 31.3810247259995,
+      "lifespanYearsPrime": 1.0568853333494712,
+      "peakFreqBoost": 0.00165606381904473,
+      "halfLifeDaysBoost": 408.231693724867,
+      "lifespanYearsBoost": 10.064008787535753
+    },
+    {
+      "peakFreqPrime": 0.0094285895083212,
+      "halfLifeDaysPrime": 36.0039176616624,
+      "lifespanYearsPrime": 1.1406573376359836,
+      "peakFreqBoost": 0.000565485206503079,
+      "halfLifeDaysBoost": 728.275334466643,
+      "lifespanYearsBoost": 16.03565653904255
+    },
+    {
+      "peakFreqPrime": 0.00371764854774409,
+      "halfLifeDaysPrime": 44.6213317747271,
+      "lifespanYearsPrime": 1.3158617945952356,
+      "peakFreqBoost": 0.000949207310915884,
+      "halfLifeDaysBoost": 412.095925947322,
+      "lifespanYearsBoost": 10.425774960785315
+    },
+    {
+      "peakFreqPrime": 0.0321854440789473,
+      "halfLifeDaysPrime": 38.158810571116,
+      "lifespanYearsPrime": 1.3375714278618247,
+      "peakFreqBoost": 0.0021811572250833,
+      "halfLifeDaysBoost": 272.863790224685,
+      "lifespanYearsBoost": 7.527160571406521
+    },
+    {
+      "peakFreqPrime": 0.00177181547807378,
+      "halfLifeDaysPrime": 61.23751247039,
+      "lifespanYearsPrime": 1.8491523399274739,
+      "peakFreqBoost": 0.00272644653135413,
+      "halfLifeDaysBoost": 653.131171149918,
+      "lifespanYearsBoost": 19.071122968288275
+    },
+    {
+      "peakFreqPrime": 0.000894325657894736,
+      "halfLifeDaysPrime": 43.0999436652556,
+      "lifespanYearsPrime": 0.5754328991838247,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.00077516927165728,
+      "halfLifeDaysPrime": 39.0227306162259,
+      "lifespanYearsPrime": 0.929773435539926,
+      "peakFreqBoost": 0.000161567201858022,
+      "halfLifeDaysBoost": 220.669666983417,
+      "lifespanYearsBoost": 4.235495163031315
+    },
+    {
+      "peakFreqPrime": 0.00169271657280263,
+      "halfLifeDaysPrime": 37.5984178436702,
+      "lifespanYearsPrime": 1.0243570515998521,
+      "peakFreqBoost": 0.000262546703019287,
+      "halfLifeDaysBoost": 453.604041148573,
+      "lifespanYearsBoost": 9.147731659767699
+    },
+    {
+      "peakFreqPrime": 0.00107935855263157,
+      "halfLifeDaysPrime": 26.8566654907653,
+      "lifespanYearsPrime": 0.5678427327500164,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.000842927631578947,
+      "halfLifeDaysPrime": 36.8245259043247,
+      "lifespanYearsPrime": 0.7671534339555863,
+      "peakFreqBoost": 2.01959002322528e-05,
+      "halfLifeDaysBoost": 582.426969702661,
+      "lifespanYearsBoost": 6.190425867999179
+    },
+    {
+      "peakFreqPrime": 0.0192684933240523,
+      "halfLifeDaysPrime": 55.8474339545177,
+      "lifespanYearsPrime": 2.1522787327699615,
+      "peakFreqBoost": 0.0209633444410784,
+      "halfLifeDaysBoost": 380.521642721578,
+      "lifespanYearsBoost": 14.492499811615863
+    },
+    {
+      "peakFreqPrime": 0.000904605263157894,
+      "halfLifeDaysPrime": 34.6964894787665,
+      "lifespanYearsPrime": 0.6359363720861397,
+      "peakFreqBoost": 2.01959002322528e-05,
+      "halfLifeDaysBoost": 347.45224062094,
+      "lifespanYearsBoost": 3.4598992218158084
+    },
+    {
+      "peakFreqPrime": 0.00581825657894736,
+      "halfLifeDaysPrime": 44.5716738614983,
+      "lifespanYearsPrime": 1.3932077481450877,
+      "peakFreqBoost": 0.00129253761486418,
+      "halfLifeDaysBoost": 328.40895923136,
+      "lifespanYearsBoost": 8.511991754472657
+    },
+    {
+      "peakFreqPrime": 0.000727371145355819,
+      "halfLifeDaysPrime": 61.2233571105161,
+      "lifespanYearsPrime": 1.5138053371861233,
+      "peakFreqBoost": 0.000686660607896597,
+      "halfLifeDaysBoost": 358.859186995203,
+      "lifespanYearsBoost": 8.328459072033507
+    },
+    {
+      "peakFreqPrime": 0.00133634868421052,
+      "halfLifeDaysPrime": 38.1400798394721,
+      "lifespanYearsPrime": 1.0189234328259205,
+      "peakFreqBoost": 0.000100979501161264,
+      "halfLifeDaysBoost": 860.73008705646,
+      "lifespanYearsBoost": 13.534109075470795
+    },
+    {
+      "peakFreqPrime": 0.000709292763157894,
+      "halfLifeDaysPrime": 38.3619001115677,
+      "lifespanYearsPrime": 0.5715956577939177,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.00113075657894736,
+      "halfLifeDaysPrime": 40.5972436251895,
+      "lifespanYearsPrime": 0.8096860187216658,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.0130354995886856,
+      "halfLifeDaysPrime": 67.0669178879654,
+      "lifespanYearsPrime": 2.4432450083321533,
+      "peakFreqBoost": 0.00882560840149449,
+      "halfLifeDaysBoost": 414.864068033739,
+      "lifespanYearsBoost": 14.107419985984356
+    },
+    {
+      "peakFreqPrime": 0.0123077896601911,
+      "halfLifeDaysPrime": 44.5403889653605,
+      "lifespanYearsPrime": 1.5700588433024438,
+      "peakFreqBoost": 0.00349389074017974,
+      "halfLifeDaysBoost": 297.205117522445,
+      "lifespanYearsBoost": 8.958560075984794
+    },
+    {
+      "peakFreqPrime": 0.00224640890970069,
+      "halfLifeDaysPrime": 40.6881857523666,
+      "lifespanYearsPrime": 0.9971122999267562,
+      "peakFreqBoost": 0.000484701605574068,
+      "halfLifeDaysBoost": 146.970713291939,
+      "lifespanYearsBoost": 2.675954798251263
+    },
+    {
+      "peakFreqPrime": 0.0114218819211542,
+      "halfLifeDaysPrime": 46.0639375294974,
+      "lifespanYearsPrime": 1.6393402556023946,
+      "peakFreqBoost": 0.00363526204180551,
+      "halfLifeDaysBoost": 296.529680044857,
+      "lifespanYearsBoost": 9.031462864718273
+    },
+    {
+      "peakFreqPrime": 0.0141550164473684,
+      "halfLifeDaysPrime": 23.5024796660402,
+      "lifespanYearsPrime": 0.6913310955466055,
+      "peakFreqBoost": 0.000100979501161264,
+      "halfLifeDaysBoost": 432.275815549012,
+      "lifespanYearsBoost": 6.323346327677973
+    },
+    {
+      "peakFreqPrime": 0.00075934949060305,
+      "halfLifeDaysPrime": 38.5522396444235,
+      "lifespanYearsPrime": 0.7150790954541972,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.00796725138285095,
+      "halfLifeDaysPrime": 55.5137820070988,
+      "lifespanYearsPrime": 1.9758750440996578,
+      "peakFreqBoost": 0.0158941734827829,
+      "halfLifeDaysBoost": 567.604481804206,
+      "lifespanYearsBoost": 21.305110567897206
+    },
+    {
+      "peakFreqPrime": 0.00130550986842105,
+      "halfLifeDaysPrime": 31.9674344118714,
+      "lifespanYearsPrime": 0.7943260578159781,
+      "peakFreqBoost": 4.03918004645057e-05,
+      "halfLifeDaysBoost": 282.281474485956,
+      "lifespanYearsBoost": 3.3218832112202463
+    },
+    {
+      "peakFreqPrime": 0.00152138157894736,
+      "halfLifeDaysPrime": 26.8194168594953,
+      "lifespanYearsPrime": 0.5767606295403808,
+      "peakFreqBoost": 2.01959002322528e-05,
+      "halfLifeDaysBoost": 400.000973493778,
+      "lifespanYearsBoost": 4.079271646916877
+    },
+    {
+      "peakFreqPrime": 0.00786243118395241,
+      "halfLifeDaysPrime": 37.8298912358444,
+      "lifespanYearsPrime": 1.277355494488359,
+      "peakFreqBoost": 0.00212056952438654,
+      "halfLifeDaysBoost": 424.485965276708,
+      "lifespanYearsBoost": 11.673832452336713
+    },
+    {
+      "peakFreqPrime": 0.00221011513157894,
+      "halfLifeDaysPrime": 24.1315976129359,
+      "lifespanYearsPrime": 0.6229278886117013,
+      "peakFreqBoost": 2.01959002322528e-05,
+      "halfLifeDaysBoost": 1825.0,
+      "lifespanYearsBoost": 100.0
+    },
+    {
+      "peakFreqPrime": 0.000986836603274959,
+      "halfLifeDaysPrime": 455.077245601495,
+      "lifespanYearsPrime": 11.541722855592464,
+      "peakFreqBoost": null,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.00138826166223426,
+      "halfLifeDaysPrime": 411.15297237791,
+      "lifespanYearsPrime": 10.925121159783314,
+      "peakFreqBoost": null,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.00099944261853966,
+      "halfLifeDaysPrime": 47.1361885584082,
+      "lifespanYearsPrime": 0.6305427257024877,
+      "peakFreqBoost": 0.0,
+      "halfLifeDaysBoost": null,
+      "lifespanYearsBoost": null
+    },
+    {
+      "peakFreqPrime": 0.000692929552162196,
+      "halfLifeDaysPrime": 62.6291268103449,
+      "lifespanYearsPrime": 1.5319839455118245,
+      "peakFreqBoost": 0.000506508635972243,
+      "halfLifeDaysBoost": 484.806031054969,
+      "lifespanYearsBoost": 9.801751384455725
+    },
+    {
+      "peakFreqPrime": 0.000747574121974193,
+      "halfLifeDaysPrime": 26.1077621952954,
+      "lifespanYearsPrime": 0.603709204430063,
+      "peakFreqBoost": 8.44181059953738e-05,
+      "halfLifeDaysBoost": 205.591434238811,
+      "lifespanYearsBoost": 3.3766186919750685
+    },
+    {
+      "peakFreqPrime": 0.000834081868343385,
+      "halfLifeDaysPrime": 51.0456444008286,
+      "lifespanYearsPrime": 1.2688725047416822,
+      "peakFreqBoost": 0.000337672423981495,
+      "halfLifeDaysBoost": 355.21202486443,
+      "lifespanYearsBoost": 8.693363663366247
+    },
+    {
+      "peakFreqPrime": 0.000816952600076693,
+      "halfLifeDaysPrime": 1825.0,
+      "lifespanYearsPrime": 100.0,
+      "peakFreqBoost": 0.00106366813554171,
+      "halfLifeDaysBoost": 1564.53197838941,
+      "lifespanYearsBoost": 39.684345658642194
+    },
+    {
+      "peakFreqPrime": 0.00134825401105568,
+      "halfLifeDaysPrime": 44.6214129659018,
+      "lifespanYearsPrime": 0.8806636291974657,
+      "peakFreqBoost": 5.06508635972243e-05,
+      "halfLifeDaysBoost": 1825.0,
+      "lifespanYearsBoost": 100.0
+    },
+    {
+      "peakFreqPrime": 0.00255670349715174,
+      "halfLifeDaysPrime": 60.1135765953456,
+      "lifespanYearsPrime": 1.7045151304352029,
+      "peakFreqBoost": 0.000590926741967617,
+      "halfLifeDaysBoost": 448.015131389679,
+      "lifespanYearsBoost": 11.079794488872219
+    },
+    {
+      "peakFreqPrime": 0.00120582368178164,
+      "halfLifeDaysPrime": 21.4678575619097,
+      "lifespanYearsPrime": 0.5829684444045973,
+      "peakFreqBoost": 1.75782451637853e-05,
+      "halfLifeDaysBoost": 202.081121022519,
+      "lifespanYearsBoost": 1.9549924515907973
+    },
+    {
+      "peakFreqPrime": 0.00635838978075011,
+      "halfLifeDaysPrime": 40.8102693267149,
+      "lifespanYearsPrime": 1.3739255651322329,
+      "peakFreqBoost": 0.000580082090404914,
+      "halfLifeDaysBoost": 82.5056825626482,
+      "lifespanYearsBoost": 2.248296169464211
+    },
+    {
+      "peakFreqPrime": 0.00142105465299381,
+      "halfLifeDaysPrime": 36.4849169694811,
+      "lifespanYearsPrime": 0.9802603663744356,
+      "peakFreqBoost": 7.91021032370338e-05,
+      "halfLifeDaysBoost": 132.023522410577,
+      "lifespanYearsBoost": 2.2122034691059014
+    }
+  ]
+}

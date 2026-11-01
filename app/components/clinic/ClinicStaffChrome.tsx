@@ -3,11 +3,12 @@ import { Form, Link } from "@remix-run/react";
 const TOOLS = [
 	{ to: "/clinic/bookings", label: "Bookings" },
 	{ to: "/clinic/patients", label: "Patient contacts" },
+	{ to: "/clinic/admin", label: "Admin" },
 ] as const;
 
 type Props = {
 	staffEmail: string;
-	active?: "hub" | "bookings" | "patients";
+	active?: "hub" | "bookings" | "patients" | "admin";
 	authOk?: boolean;
 };
 
@@ -50,7 +51,8 @@ export function ClinicStaffChrome({
 				{TOOLS.map((tool) => {
 					const isActive =
 						(tool.to === "/clinic/bookings" && active === "bookings") ||
-						(tool.to === "/clinic/patients" && active === "patients");
+						(tool.to === "/clinic/patients" && active === "patients") ||
+						(tool.to === "/clinic/admin" && active === "admin");
 					return (
 						<Link
 							key={tool.to}

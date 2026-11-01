@@ -1,4 +1,5 @@
 import { createCookie, redirect } from "@remix-run/cloudflare";
+import { getSitePasswordGateState } from "~/utils/clinic-settings.server";
 
 const COOKIE_NAME = "site_access";
 
@@ -82,14 +83,18 @@ export async function requireSiteAccess(
 	request: Request,
 	env: Env | undefined,
 ): Promise<void> {
-	if (isLocalDevRequest(request)) return;
-
 	const password = getSitePassword(env);
 	if (!password) return;
 
 	const url = new URL(request.url);
 	if (url.pathname === "/login") return;
 	if (url.pathname === "/api/stripe-webhook") return;
+
+	// Staff toggle in /clinic/admin. Defaults: local off, production on.
+	const gate = await getSitePasswordGateState(env, {
+		isLocal: isLocalDevRequest(request),
+	});
+	if (!gate.enabled) return;
 
 	if (await hasSiteAccess(request, env, password)) return;
 

@@ -1,0 +1,673 @@
+{
+  "task": "Predict whether a vaccine-tracked clone has above-median post-boost estimated lifespan, using only priming-phase kinetics (no boost features).",
+  "labelPositive": "long-lived",
+  "longevityThresholdYears": 7.7203,
+  "n": 65,
+  "positiveRate": 0.5077,
+  "featureKeys": [
+    "logPeakPrime",
+    "halfLifeDaysPrime"
+  ],
+  "featureLabels": {
+    "logPeakPrime": "log10 peak prime frequency",
+    "halfLifeDaysPrime": "Prime half-life (days)"
+  },
+  "clones": [
+    {
+      "id": "clone-1",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.995936,
+      "peakFreqPrime": 0.01009302,
+      "halfLifeDaysPrime": 31.381025,
+      "lifespanYearsPrime": 1.056885,
+      "lifespanYearsBoost": 10.064009
+    },
+    {
+      "id": "clone-2",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.025507,
+      "peakFreqPrime": 0.00942859,
+      "halfLifeDaysPrime": 36.003918,
+      "lifespanYearsPrime": 1.140657,
+      "lifespanYearsBoost": 16.035657
+    },
+    {
+      "id": "clone-3",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.429615,
+      "peakFreqPrime": 0.00371765,
+      "halfLifeDaysPrime": 44.621332,
+      "lifespanYearsPrime": 1.315862,
+      "lifespanYearsBoost": 10.425775
+    },
+    {
+      "id": "clone-4",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -1.492327,
+      "peakFreqPrime": 0.03218544,
+      "halfLifeDaysPrime": 38.158811,
+      "lifespanYearsPrime": 1.337571,
+      "lifespanYearsBoost": 7.527161
+    },
+    {
+      "id": "clone-5",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.751336,
+      "peakFreqPrime": 0.00177182,
+      "halfLifeDaysPrime": 61.237512,
+      "lifespanYearsPrime": 1.849152,
+      "lifespanYearsBoost": 19.071123
+    },
+    {
+      "id": "clone-7",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.110044,
+      "peakFreqPrime": 0.00077517,
+      "halfLifeDaysPrime": 39.022731,
+      "lifespanYearsPrime": 0.929773,
+      "lifespanYearsBoost": 4.235495
+    },
+    {
+      "id": "clone-8",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.771159,
+      "peakFreqPrime": 0.00169272,
+      "halfLifeDaysPrime": 37.598418,
+      "lifespanYearsPrime": 1.024357,
+      "lifespanYearsBoost": 9.147732
+    },
+    {
+      "id": "clone-10",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.073695,
+      "peakFreqPrime": 0.00084293,
+      "halfLifeDaysPrime": 36.824526,
+      "lifespanYearsPrime": 0.767153,
+      "lifespanYearsBoost": 6.190426
+    },
+    {
+      "id": "clone-11",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.71513,
+      "peakFreqPrime": 0.01926849,
+      "halfLifeDaysPrime": 55.847434,
+      "lifespanYearsPrime": 2.152279,
+      "lifespanYearsBoost": 14.4925
+    },
+    {
+      "id": "clone-12",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.043061,
+      "peakFreqPrime": 0.00090461,
+      "halfLifeDaysPrime": 34.696489,
+      "lifespanYearsPrime": 0.635936,
+      "lifespanYearsBoost": 3.459899
+    },
+    {
+      "id": "clone-13",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.235132,
+      "peakFreqPrime": 0.00581826,
+      "halfLifeDaysPrime": 44.571674,
+      "lifespanYearsPrime": 1.393208,
+      "lifespanYearsBoost": 8.511992
+    },
+    {
+      "id": "clone-14",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -3.137647,
+      "peakFreqPrime": 0.00072737,
+      "halfLifeDaysPrime": 61.223357,
+      "lifespanYearsPrime": 1.513805,
+      "lifespanYearsBoost": 8.328459
+    },
+    {
+      "id": "clone-15",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.873755,
+      "peakFreqPrime": 0.00133635,
+      "halfLifeDaysPrime": 38.14008,
+      "lifespanYearsPrime": 1.018923,
+      "lifespanYearsBoost": 13.534109
+    },
+    {
+      "id": "clone-18",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.884839,
+      "peakFreqPrime": 0.0130355,
+      "halfLifeDaysPrime": 67.066918,
+      "lifespanYearsPrime": 2.443245,
+      "lifespanYearsBoost": 14.10742
+    },
+    {
+      "id": "clone-19",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.909785,
+      "peakFreqPrime": 0.01230779,
+      "halfLifeDaysPrime": 44.540389,
+      "lifespanYearsPrime": 1.570059,
+      "lifespanYearsBoost": 8.95856
+    },
+    {
+      "id": "clone-20",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.648318,
+      "peakFreqPrime": 0.00224641,
+      "halfLifeDaysPrime": 40.688186,
+      "lifespanYearsPrime": 0.997112,
+      "lifespanYearsBoost": 2.675955
+    },
+    {
+      "id": "clone-21",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.942224,
+      "peakFreqPrime": 0.01142188,
+      "halfLifeDaysPrime": 46.063938,
+      "lifespanYearsPrime": 1.63934,
+      "lifespanYearsBoost": 9.031463
+    },
+    {
+      "id": "clone-22",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -1.849059,
+      "peakFreqPrime": 0.01415502,
+      "halfLifeDaysPrime": 23.50248,
+      "lifespanYearsPrime": 0.691331,
+      "lifespanYearsBoost": 6.323346
+    },
+    {
+      "id": "clone-24",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.098637,
+      "peakFreqPrime": 0.00796725,
+      "halfLifeDaysPrime": 55.513782,
+      "lifespanYearsPrime": 1.975875,
+      "lifespanYearsBoost": 21.305111
+    },
+    {
+      "id": "clone-25",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.883887,
+      "peakFreqPrime": 0.00130551,
+      "halfLifeDaysPrime": 31.967434,
+      "lifespanYearsPrime": 0.794326,
+      "lifespanYearsBoost": 3.321883
+    },
+    {
+      "id": "clone-26",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.817476,
+      "peakFreqPrime": 0.00152138,
+      "halfLifeDaysPrime": 26.819417,
+      "lifespanYearsPrime": 0.576761,
+      "lifespanYearsBoost": 4.079272
+    },
+    {
+      "id": "clone-27",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.104388,
+      "peakFreqPrime": 0.00786243,
+      "halfLifeDaysPrime": 37.829891,
+      "lifespanYearsPrime": 1.277355,
+      "lifespanYearsBoost": 11.673832
+    },
+    {
+      "id": "clone-28",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.655389,
+      "peakFreqPrime": 0.00221012,
+      "halfLifeDaysPrime": 24.131598,
+      "lifespanYearsPrime": 0.622928,
+      "lifespanYearsBoost": 100
+    },
+    {
+      "id": "clone-32",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -3.158685,
+      "peakFreqPrime": 0.00069293,
+      "halfLifeDaysPrime": 62.629127,
+      "lifespanYearsPrime": 1.531984,
+      "lifespanYearsBoost": 9.801751
+    },
+    {
+      "id": "clone-33",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.125765,
+      "peakFreqPrime": 0.00074757,
+      "halfLifeDaysPrime": 26.107762,
+      "lifespanYearsPrime": 0.603709,
+      "lifespanYearsBoost": 3.376619
+    },
+    {
+      "id": "clone-34",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -3.078271,
+      "peakFreqPrime": 0.00083408,
+      "halfLifeDaysPrime": 51.045644,
+      "lifespanYearsPrime": 1.268873,
+      "lifespanYearsBoost": 8.693364
+    },
+    {
+      "id": "clone-35",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -3.087272,
+      "peakFreqPrime": 0.00081695,
+      "halfLifeDaysPrime": 1825,
+      "lifespanYearsPrime": 100,
+      "lifespanYearsBoost": 39.684346
+    },
+    {
+      "id": "clone-36",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.869906,
+      "peakFreqPrime": 0.00134825,
+      "halfLifeDaysPrime": 44.621413,
+      "lifespanYearsPrime": 0.880664,
+      "lifespanYearsBoost": 100
+    },
+    {
+      "id": "clone-37",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.59215,
+      "peakFreqPrime": 0.0025567,
+      "halfLifeDaysPrime": 60.113577,
+      "lifespanYearsPrime": 1.704515,
+      "lifespanYearsBoost": 11.079794
+    },
+    {
+      "id": "clone-38",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.918356,
+      "peakFreqPrime": 0.00120582,
+      "halfLifeDaysPrime": 21.467858,
+      "lifespanYearsPrime": 0.582968,
+      "lifespanYearsBoost": 1.954992
+    },
+    {
+      "id": "clone-39",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.196585,
+      "peakFreqPrime": 0.00635839,
+      "halfLifeDaysPrime": 40.810269,
+      "lifespanYearsPrime": 1.373926,
+      "lifespanYearsBoost": 2.248296
+    },
+    {
+      "id": "clone-40",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.847084,
+      "peakFreqPrime": 0.00142105,
+      "halfLifeDaysPrime": 36.484917,
+      "lifespanYearsPrime": 0.98026,
+      "lifespanYearsBoost": 2.212203
+    },
+    {
+      "id": "clone-41",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.96035,
+      "peakFreqPrime": 0.0010946,
+      "halfLifeDaysPrime": 42.09963,
+      "lifespanYearsPrime": 1.079403,
+      "lifespanYearsBoost": 2.424432
+    },
+    {
+      "id": "clone-42",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.858405,
+      "peakFreqPrime": 0.00138446,
+      "halfLifeDaysPrime": 22.237817,
+      "lifespanYearsPrime": 0.624013,
+      "lifespanYearsBoost": 1.726222
+    },
+    {
+      "id": "clone-43",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.037382,
+      "peakFreqPrime": 0.00091652,
+      "halfLifeDaysPrime": 51.223559,
+      "lifespanYearsPrime": 1.367895,
+      "lifespanYearsBoost": 2.376634
+    },
+    {
+      "id": "clone-44",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.499,
+      "peakFreqPrime": 0.00316857,
+      "halfLifeDaysPrime": 41.724619,
+      "lifespanYearsPrime": 1.250061,
+      "lifespanYearsBoost": 1.865735
+    },
+    {
+      "id": "clone-45",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.103286,
+      "peakFreqPrime": 0.00078734,
+      "halfLifeDaysPrime": 105.433881,
+      "lifespanYearsPrime": 2.679531,
+      "lifespanYearsBoost": 1.724432
+    },
+    {
+      "id": "clone-46",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.178389,
+      "peakFreqPrime": 0.00663048,
+      "halfLifeDaysPrime": 34.639043,
+      "lifespanYearsPrime": 1.164997,
+      "lifespanYearsBoost": 4.341188
+    },
+    {
+      "id": "clone-47",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.903055,
+      "peakFreqPrime": 0.0125,
+      "halfLifeDaysPrime": 115.769413,
+      "lifespanYearsPrime": 4.209109,
+      "lifespanYearsBoost": 22.274734
+    },
+    {
+      "id": "clone-48",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.550463,
+      "peakFreqPrime": 0.02815278,
+      "halfLifeDaysPrime": 90.443718,
+      "lifespanYearsPrime": 3.620183,
+      "lifespanYearsBoost": 19.750676
+    },
+    {
+      "id": "clone-49",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.401896,
+      "peakFreqPrime": 0.00396273,
+      "halfLifeDaysPrime": 21.612348,
+      "lifespanYearsPrime": 0.64231,
+      "lifespanYearsBoost": 5.5004
+    },
+    {
+      "id": "clone-50",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.866271,
+      "peakFreqPrime": 0.0013596,
+      "halfLifeDaysPrime": 35.575714,
+      "lifespanYearsPrime": 0.849198,
+      "lifespanYearsBoost": 2.347782
+    },
+    {
+      "id": "clone-51",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.016524,
+      "peakFreqPrime": 0.00096167,
+      "halfLifeDaysPrime": 28.316513,
+      "lifespanYearsPrime": 0.619821,
+      "lifespanYearsBoost": 1.716564
+    },
+    {
+      "id": "clone-53",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.056078,
+      "peakFreqPrime": 0.00878764,
+      "halfLifeDaysPrime": 27.298736,
+      "lifespanYearsPrime": 0.830212,
+      "lifespanYearsBoost": 5.006661
+    },
+    {
+      "id": "clone-55",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -1.816587,
+      "peakFreqPrime": 0.01525401,
+      "halfLifeDaysPrime": 22.878209,
+      "lifespanYearsPrime": 0.816676,
+      "lifespanYearsBoost": 5.786589
+    },
+    {
+      "id": "clone-56",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.362002,
+      "peakFreqPrime": 0.00434408,
+      "halfLifeDaysPrime": 42.652871,
+      "lifespanYearsPrime": 1.348148,
+      "lifespanYearsBoost": 7.166146
+    },
+    {
+      "id": "clone-57",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -3.087907,
+      "peakFreqPrime": 0.00081576,
+      "halfLifeDaysPrime": 82.085813,
+      "lifespanYearsPrime": 2.168543,
+      "lifespanYearsBoost": 5.181422
+    },
+    {
+      "id": "clone-58",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.373761,
+      "peakFreqPrime": 0.00422801,
+      "halfLifeDaysPrime": 26.361222,
+      "lifespanYearsPrime": 0.775645,
+      "lifespanYearsBoost": 2.144
+    },
+    {
+      "id": "clone-61",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.498907,
+      "peakFreqPrime": 0.00316925,
+      "halfLifeDaysPrime": 26.145181,
+      "lifespanYearsPrime": 0.807161,
+      "lifespanYearsBoost": 1.540388
+    },
+    {
+      "id": "clone-63",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.303398,
+      "peakFreqPrime": 0.00497181,
+      "halfLifeDaysPrime": 34.47032,
+      "lifespanYearsPrime": 1.001771,
+      "lifespanYearsBoost": 2.977704
+    },
+    {
+      "id": "clone-64",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.596657,
+      "peakFreqPrime": 0.0025303,
+      "halfLifeDaysPrime": 26.666959,
+      "lifespanYearsPrime": 0.717011,
+      "lifespanYearsBoost": 2.150251
+    },
+    {
+      "id": "clone-65",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.626347,
+      "peakFreqPrime": 0.02363932,
+      "halfLifeDaysPrime": 64.728901,
+      "lifespanYearsPrime": 2.238655,
+      "lifespanYearsBoost": 10.844566
+    },
+    {
+      "id": "clone-66",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.721499,
+      "peakFreqPrime": 0.00189789,
+      "halfLifeDaysPrime": 77.995216,
+      "lifespanYearsPrime": 2.087886,
+      "lifespanYearsBoost": 30.429976
+    },
+    {
+      "id": "clone-67",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.274488,
+      "peakFreqPrime": 0.0053141,
+      "halfLifeDaysPrime": 53.956808,
+      "lifespanYearsPrime": 1.305425,
+      "lifespanYearsBoost": 9.343297
+    },
+    {
+      "id": "clone-68",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.537556,
+      "peakFreqPrime": 0.00289931,
+      "halfLifeDaysPrime": 74.110318,
+      "lifespanYearsPrime": 2.136656,
+      "lifespanYearsBoost": 6.871281
+    },
+    {
+      "id": "clone-69",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.965733,
+      "peakFreqPrime": 0.0010811,
+      "halfLifeDaysPrime": 41.518411,
+      "lifespanYearsPrime": 1.051221,
+      "lifespanYearsBoost": 8.103009
+    },
+    {
+      "id": "clone-71",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.574895,
+      "peakFreqPrime": 0.02661268,
+      "halfLifeDaysPrime": 112.36805,
+      "lifespanYearsPrime": 3.926545,
+      "lifespanYearsBoost": 23.482046
+    },
+    {
+      "id": "clone-72",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.655148,
+      "peakFreqPrime": 0.00221134,
+      "halfLifeDaysPrime": 30.661709,
+      "lifespanYearsPrime": 0.872118,
+      "lifespanYearsBoost": 2.910483
+    },
+    {
+      "id": "clone-73",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.812269,
+      "peakFreqPrime": 0.00153975,
+      "halfLifeDaysPrime": 106.642136,
+      "lifespanYearsPrime": 2.833018,
+      "lifespanYearsBoost": 11.971293
+    },
+    {
+      "id": "clone-74",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.382453,
+      "peakFreqPrime": 0.00414421,
+      "halfLifeDaysPrime": 83.961667,
+      "lifespanYearsPrime": 2.61272,
+      "lifespanYearsBoost": 10.538921
+    },
+    {
+      "id": "clone-75",
+      "y": 0,
+      "label": "shorter-lived",
+      "logPeakPrime": -2.441476,
+      "peakFreqPrime": 0.00361746,
+      "halfLifeDaysPrime": 59.897762,
+      "lifespanYearsPrime": 1.749504,
+      "lifespanYearsBoost": 5.86737
+    },
+    {
+      "id": "clone-76",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.200149,
+      "peakFreqPrime": 0.00630641,
+      "halfLifeDaysPrime": 84.474753,
+      "lifespanYearsPrime": 2.713373,
+      "lifespanYearsBoost": 8.500122
+    },
+    {
+      "id": "clone-77",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.740518,
+      "peakFreqPrime": 0.01817434,
+      "halfLifeDaysPrime": 77.524582,
+      "lifespanYearsPrime": 2.821598,
+      "lifespanYearsBoost": 7.720342
+    },
+    {
+      "id": "clone-78",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -1.751667,
+      "peakFreqPrime": 0.01771367,
+      "halfLifeDaysPrime": 117.562199,
+      "lifespanYearsPrime": 4.278301,
+      "lifespanYearsBoost": 8.590494
+    },
+    {
+      "id": "clone-79",
+      "y": 1,
+      "label": "long-lived",
+      "logPeakPrime": -2.216233,
+      "peakFreqPrime": 0.00607709,
+      "halfLifeDaysPrime": 59.597563,
+      "lifespanYearsPrime": 1.958429,
+      "lifespanYearsBoost": 7.920848
+    }
+  ],
+  "featureNote": "Dropped peakFreqPrime and lifespanYearsPrime as near-collinear with logPeakPrime and halfLifeDaysPrime.",
+  "limitations": [
+    "Lifespan values are kinetic-model extrapolations from the paper (some capped), not observed clone survival.",
+    "Clone-level splits are not patient-grouped; clones from the same patient can appear in train and test.",
+    "n is small; a single hold-out AUC is unstable — prefer leave-one-out AUC on the page."
+  ]
+}

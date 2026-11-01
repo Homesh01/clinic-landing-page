@@ -1,6 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
-import { BloodIcon, ThyroidIcon } from "~/components/ConditionIcons";
 import { CalloutBanner } from "~/components/CalloutBanner";
 import { conditions, conditionsPage } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
@@ -72,15 +71,6 @@ export default function ConditionsPage() {
 							className="scroll-mt-28 grid gap-10 border-b border-line py-14 first:pt-10 lg:grid-cols-[280px_1fr] lg:gap-12"
 						>
 							<div>
-								<div
-									className="mb-5 flex h-16 w-16 items-center justify-center rounded-xl bg-cream text-accent"
-								>
-									{condition.icon === "thyroid" ? (
-										<ThyroidIcon />
-									) : (
-										<BloodIcon />
-									)}
-								</div>
 								<p className="text-xs font-semibold uppercase tracking-wide text-accent">
 									Condition
 								</p>

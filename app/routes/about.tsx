@@ -101,13 +101,23 @@ export default function AboutPage() {
 								<Link to="/book" className="btn-primary">
 									Book a consultation
 								</Link>
-								<Link
-									to="/research/neovaxmi-reanalysis"
-									className="btn-secondary"
-								>
-									Research Analytics Lab
-								</Link>
 							</div>
+						</div>
+
+						<div className="mt-8 border border-line bg-cream/50 px-6 py-6 sm:px-7">
+							<p className="eyebrow">Research</p>
+							<p className="mt-3 font-display text-2xl text-ink sm:text-[1.65rem]">
+								Research Analytics Lab
+							</p>
+							<p className="mt-2 max-w-prose text-[0.97rem] text-ink-soft">
+								Open reanalyses of published neoantigen vaccine trial data.
+							</p>
+							<Link
+								to="/research/pancreatic-reanalysis"
+								className="btn-secondary mt-5"
+							>
+								Explore the lab
+							</Link>
 						</div>
 					</div>
 

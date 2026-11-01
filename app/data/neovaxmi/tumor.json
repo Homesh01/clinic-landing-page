@@ -10,7 +10,7 @@
     "n_enrolled": 11,
     "n_vaccinated": 10,
     "n_fully_vaccinated": 9,
-    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+    "source_note": "Aggregates derived from Cell supplemental Data S1–S5 (de-identified patient IDs P101–P111). Not clinical care data."
   },
   "tumorGroupComposition": [
     {
@@ -211,7 +211,7 @@
       "timepoint": "PD",
       "group": "B/Plasma",
       "nCells": 0,
-      "fraction": 0.0
+      "fraction": 0
     },
     {
       "sample": "P104_Tumor_PD_2.5mgIpi",
@@ -809,12 +809,6 @@
       "tcrb": "TRBV6-2/3/5/6;TRBJ2-1;CASTPTGRSNEQFF",
       "pbmcType": "Existing",
       "tumorType": "Pre-treatment"
-    },
-    {
-      "patientId": "IE: IMP-expanded",
-      "tcrb": "",
-      "pbmcType": "",
-      "tumorType": ""
     }
   ],
   "reconstructedCount": 96

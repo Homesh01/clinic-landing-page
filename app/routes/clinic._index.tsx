@@ -277,6 +277,17 @@ export default function ClinicHubPage() {
 											</p>
 										</Link>
 									</li>
+									<li>
+										<Link
+											to="/clinic/admin"
+											className="block border border-line bg-white px-6 py-5 transition-colors hover:border-accent"
+										>
+											<p className="font-display text-2xl text-ink">Admin</p>
+											<p className="mt-2 text-ink-soft">
+												Turn the public site password gate on or off.
+											</p>
+										</Link>
+									</li>
 								</ul>
 							</div>
 						</>

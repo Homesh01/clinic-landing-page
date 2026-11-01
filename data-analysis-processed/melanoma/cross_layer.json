@@ -10,22 +10,11 @@
     "n_enrolled": 11,
     "n_vaccinated": 10,
     "n_fully_vaccinated": 9,
-    "source_note": "Aggregates derived from Cell supplemental Data S1\u2013S5 (de-identified patient IDs P101\u2013P111). Not clinical care data."
+    "source_note": "Aggregates derived from Cell supplemental Data S1–S5 (de-identified patient IDs P101–P111). Not clinical care data."
   },
   "tier": "A",
-  "narrative": "Mutation load \u2192 circulating TCR expansion after vaccine (distinct from PD-1) \u2192 IMP-expanded / reactive clonotypes detectable in tumor.",
+  "narrative": "Mutation load → circulating TCR expansion after vaccine (distinct from PD-1) → IMP-expanded / reactive clonotypes detectable in tumor.",
   "patients": [
-    {
-      "patientId": "IE: IMP-expanded",
-      "codingMutations": null,
-      "neoantigenProxy": null,
-      "expandedAfterNivolumab": null,
-      "expandedAfterVaccine": null,
-      "impExpandedTotal": null,
-      "pctImpExpandedPostVaccine": null,
-      "nReactiveTcrs": 0,
-      "nBloodTumorOverlaps": 1
-    },
     {
       "patientId": "P101",
       "codingMutations": 385,

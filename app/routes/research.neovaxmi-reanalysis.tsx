@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
 import {
 	Bar,
@@ -89,7 +90,8 @@ function Stat({
 export default function NeoVaxmiReanalysisPage() {
 	const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
 	const [selectedPatient, setSelectedPatient] = useState<string>("all");
-	const [mlThreshold, setMlThreshold] = useState(0.5);
+	// Class-weighted training shifts scores; 0.5 under-calls the majority class.
+	const [mlThreshold, setMlThreshold] = useState(0.3);
 	const mutRef = useRef<HTMLDivElement>(null);
 	const siteRef = useRef<HTMLDivElement>(null);
 	const tcrRef = useRef<HTMLDivElement>(null);
@@ -281,6 +283,13 @@ export default function NeoVaxmiReanalysisPage() {
 						>
 							PMC12351686 ↗
 						</a>
+						{" · "}
+						<Link
+							to="/research/pancreatic-reanalysis"
+							className="font-medium text-accent hover:underline"
+						>
+							PDAC vaccine lab
+						</Link>
 					</p>
 				</div>
 			</PageHero>
@@ -613,7 +622,7 @@ export default function NeoVaxmiReanalysisPage() {
 					<ChartCard
 						title="Patient overview across mutation, blood and tumour data"
 						datasetLabel={DATASET}
-						explanation="Each point is one patient. The horizontal axis is coding mutation burden, the vertical axis is how many blood T cell clones expanded after vaccine, and larger points mean more vaccine reactive T cell receptors were found in that patient’s tumour samples."
+						explanation="Each point is one patient. The horizontal axis is coding mutation burden; the vertical axis is how many blood T cell clones expanded after vaccine. Tumour-reactive TCR counts are in the previous section, not encoded in point size here."
 						chartRef={crossRef}
 						onExportPng={() =>
 							exportSvgAsPng(crossRef.current, "neovaxmi-cross-layer.png")
@@ -673,14 +682,18 @@ export default function NeoVaxmiReanalysisPage() {
 							Machine learning: post vaccine clone classifier
 						</h3>
 						<p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-soft">
-							We train a model on{" "}
-							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} vaccine peptide
-							expanded T cell clones to predict whether a clone belongs to the
-							post vaccine blood repertoire rather than an earlier category.{" "}
-							{NEOVAXMI_CLASS_COUNTS["Post-Vaccine"]?.toLocaleString()} of those
-							clones are post vaccine (base rate{" "}
-							{Math.round(NEOVAXMI_POSITIVE_RATE * 1000) / 10}%), so the model
-							uses class weighting and a 75% train / 25% test split.
+							Logistic model on{" "}
+							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} vaccine-peptide
+							expanded T cell clones: predict post-vaccine repertoire category
+							vs earlier (existing / post-nivolumab) from in vitro peptide-pool
+							expansion features. Base rate is high (
+							{NEOVAXMI_CLASS_COUNTS["Post-Vaccine"]?.toLocaleString()} /{" "}
+							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} ={" "}
+							{Math.round(NEOVAXMI_POSITIVE_RATE * 1000) / 10}% post-vaccine), so
+							prefer AUC and F1 over raw accuracy; class weighting is used.
+							Train/test is a random clone-level 75/25 split — patients appear in
+							both sides, so this is exploratory ranking, not a patient-held-out
+							prospective test.
 						</p>
 						<div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 							<Stat
@@ -696,7 +709,7 @@ export default function NeoVaxmiReanalysisPage() {
 							<Stat
 								label="Hold out accuracy"
 								value={mlTestMetrics.accuracy}
-								hint={`Majority baseline ${mlTestMetrics.baselineAccuracy}`}
+								hint={`Majority baseline ${mlTestMetrics.baselineAccuracy} · tune threshold`}
 							/>
 							<Stat
 								label="Train / test clones"

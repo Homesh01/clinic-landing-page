@@ -33,6 +33,10 @@ export const nav: readonly NavItem[] = [
 				to: "/research/neovaxmi-reanalysis",
 				label: "NeoVaxMI melanoma reanalysis",
 			},
+			{
+				to: "/research/pancreatic-reanalysis",
+				label: "PDAC vaccine reanalysis",
+			},
 		],
 	},
 	{ to: "/conferences", label: "Conferences" },
@@ -98,8 +102,8 @@ export const homePlatform = {
 		},
 		{
 			title: "Research software",
-			text: "Interactive reanalysis of published NeoVaxMI melanoma neoantigen vaccine trial data: mutations, vaccine site immunity, TCR dynamics and tumour reactivity.",
-			to: "/research/neovaxmi-reanalysis",
+			text: "Interactive reanalyses of published neoantigen vaccine trial data — NeoVaxMI melanoma (mutations, vaccine site, TCR dynamics) and PDAC mRNA vaccine longevity kinetics.",
+			to: "/research/pancreatic-reanalysis",
 			linkLabel: "Explore the Analytics Lab",
 		},
 		{
@@ -192,7 +196,6 @@ export const conditionsPage = {
 export const conditions = [
 	{
 		slug: "thyroid-cancer",
-		icon: "thyroid" as const,
 		title: "Thyroid Cancer",
 		summary:
 			"Expert diagnosis, treatment planning and ongoing care for patients with thyroid cancer.",
@@ -224,7 +227,6 @@ export const conditions = [
 	},
 	{
 		slug: "haematological-cancers",
-		icon: "blood" as const,
 		title: "Lymphoma, Leukaemia & Myeloma",
 		summary:
 			"Radiotherapy planning and delivery for lymphoma, leukaemia and myeloma.",
@@ -918,7 +920,7 @@ export const privacyNotice = {
 				"Website enquiries are by email only. The Contact page displays an email address and does not submit a web form to Cloudflare or another form processor.",
 				"The website may set strictly necessary cookies for site access control and for authorised clinic-staff tools. These cookies are functional and are not used for advertising.",
 				"PCC does not use Google Analytics, Meta Pixel or similar marketing trackers on the website. If that position changes, this notice will be updated and any required consent arrangements put in place.",
-				"The Research Analytics Lab page presents aggregates derived from published, de identified clinical trial supplemental tables (Cell 2025 Data S1 to S5; NCT03929029). It does not upload Personalised Cancer Care patient records and does not send identifiable patient information to external analytics or AI services.",
+				"The Research Analytics Lab pages present aggregates derived from published, de identified clinical trial supplemental tables (including Cell 2025 NeoVaxMI melanoma Data S1 to S5; NCT03929029, and Nature 2025 pancreatic mRNA neoantigen vaccine source data). They do not upload Personalised Cancer Care patient records and do not send identifiable patient information to external analytics or AI services.",
 				"When you book online, the information you enter is used to arrange the appointment. Self-pay checkout is handled by Stripe; free-text appointment notes are not sent to Stripe. Calendar invitations and clinic correspondence are handled through Google Workspace.",
 			],
 		},

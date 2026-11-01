@@ -1,0 +1,44 @@
+{
+  "paper": {
+    "title": "RNA neoantigen vaccines prime long-lived CD8+ T cells in pancreatic cancer",
+    "authors": "Sethna, Guasp, Balachandran et al.",
+    "journal": "Nature",
+    "year": 2025,
+    "doi": "10.1038/s41586-024-08508-4",
+    "pdf": "s41586-024-08508-4.pdf",
+    "vaccine": "Autogene cevumeran (individualized mRNA\u2013lipoplex neoantigen vaccine)",
+    "indication": "Pancreatic ductal adenocarcinoma (PDAC)",
+    "trialContext": "Phase 1: surgery, atezolizumab (anti\u2013PD-L1), autogene cevumeran, mFOLFIRINOX; extended ~3.2-year median follow-up",
+    "nRespondersWithVaccineTcells": 8,
+    "nNonRespondersWithoutVaccineTcells": 8,
+    "source_note": "Aggregates from Nature supplemental source tables (MOESM5\u201315). De-identified published patient IDs. Not Personalised Cancer Care clinical data.",
+    "methodsNote": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan."
+  },
+  "tiers": {
+    "A": [
+      "clone_kinetics.json",
+      "persistence.json",
+      "claim_checks.json"
+    ],
+    "B": [
+      "bootstrap CIs",
+      "Wilcoxon signed-rank prime vs boost half-life",
+      "Spearman peak frequency vs lifespan"
+    ],
+    "C_skipped": [
+      "Full PhenoTrack single-cell phenotype graphs",
+      "Per-clone TCR sequence tables",
+      "Clinical RFS modeling beyond published responder/non-responder summary"
+    ]
+  },
+  "files": {
+    "claim_checks.json": "1865 bytes",
+    "clone_kinetics.json": "14305 bytes",
+    "manifest.json": "2112 bytes",
+    "meta.json": "1704 bytes",
+    "ml_clones.json": "17651 bytes",
+    "persistence.json": "6833 bytes"
+  },
+  "methodsContrastWithMelanoma": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan.",
+  "uiBundle": "app/data/pancreatic/"
+}

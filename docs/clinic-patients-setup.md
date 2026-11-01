@@ -17,6 +17,8 @@ npx wrangler d1 migrations apply pcc-clinic-patients --local
 npx wrangler d1 migrations apply pcc-clinic-patients --remote
 ```
 
+Migrations include patient contacts (`0001`) and clinic settings such as the public password-gate toggle (`0002`).
+
 ### Recovery
 
 - Use D1 **Time Travel** / point-in-time restore where your Cloudflare plan supports it.

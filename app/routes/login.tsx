@@ -5,6 +5,7 @@ import type {
 } from "@remix-run/cloudflare";
 import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import { json, redirect } from "@remix-run/cloudflare";
+import { getSitePasswordGateState } from "~/utils/clinic-settings.server";
 import {
 	createSiteAccessHeaders,
 	getSitePassword,
@@ -24,16 +25,21 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-	if (isLocalDevRequest(request)) {
-		throw redirect("/");
-	}
-
-	const password = getSitePassword(context.cloudflare.env);
+	const env = context.cloudflare.env;
+	const password = getSitePassword(env);
 	if (!password) {
 		throw redirect("/");
 	}
 
-	if (await hasSiteAccess(request, context.cloudflare.env, password)) {
+	// When the public gate is off (local default), login is unnecessary.
+	const gate = await getSitePasswordGateState(env, {
+		isLocal: isLocalDevRequest(request),
+	});
+	if (!gate.enabled) {
+		throw redirect("/");
+	}
+
+	if (await hasSiteAccess(request, env, password)) {
 		const url = new URL(request.url);
 		const redirectTo = url.searchParams.get("redirectTo") || "/";
 		throw redirect(safeRedirectTo(redirectTo));
@@ -43,12 +49,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
-	if (isLocalDevRequest(request)) {
+	const env = context.cloudflare.env;
+	const password = getSitePassword(env);
+	if (!password) {
 		throw redirect("/");
 	}
 
-	const password = getSitePassword(context.cloudflare.env);
-	if (!password) {
+	const gate = await getSitePasswordGateState(env, {
+		isLocal: isLocalDevRequest(request),
+	});
+	if (!gate.enabled) {
 		throw redirect("/");
 	}
 
@@ -64,11 +74,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 
 	return redirect(redirectTo, {
-		headers: await createSiteAccessHeaders(
-			request,
-			context.cloudflare.env,
-			password,
-		),
+		headers: await createSiteAccessHeaders(request, env, password),
 	});
 }
 
