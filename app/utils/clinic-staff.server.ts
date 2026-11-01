@@ -13,7 +13,7 @@ export async function requireClinicStaff(
 	await requireSiteAccess(request, env);
 	const staff = await getClinicStaffSession(request, env);
 	if (!staff) {
-		throw redirect("/clinic");
+		throw redirect("/admin");
 	}
 	return staff;
 }

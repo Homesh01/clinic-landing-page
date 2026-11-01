@@ -39,6 +39,7 @@ import {
 import { IN_PERSON_CLINIC } from "~/utils/clinic-location";
 import { sendPatientBookingConfirmation } from "~/utils/booking-email.server";
 import { generateBookingRef } from "~/utils/booking-ref";
+import { getPublicSiteOrigin } from "~/utils/public-url.server";
 import { requireSiteAccess } from "~/utils/site-auth.server";
 import {
 	consultationAmountPence,
@@ -370,7 +371,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			);
 		}
 
-		const origin = new URL(request.url).origin;
+		const origin = getPublicSiteOrigin(request, env);
 		const bookingRef = generateBookingRef();
 		const session = await createBookingCheckoutSession({
 			stripe,

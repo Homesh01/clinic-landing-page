@@ -20,9 +20,17 @@ export type SmsMessageRecord = {
 	status: string;
 	twilioSid: string | null;
 	errorCode: string | null;
+	templateSlug: string | null;
 	sentByEmail: string;
 	createdAt: string;
 	updatedAt: string;
+};
+
+export type PatientBookingLink = {
+	patientId: string;
+	bookingRef: string;
+	linkedAt: string;
+	linkedByEmail: string;
 };
 
 type PatientRow = {
@@ -45,9 +53,17 @@ type SmsRow = {
 	status: string;
 	twilio_sid: string | null;
 	error_code: string | null;
+	template_slug: string | null;
 	sent_by_email: string;
 	created_at: string;
 	updated_at: string;
+};
+
+type PatientBookingRow = {
+	patient_id: string;
+	booking_ref: string;
+	linked_at: string;
+	linked_by_email: string;
 };
 
 function mapPatient(row: PatientRow): PatientRecord {
@@ -73,9 +89,19 @@ function mapSms(row: SmsRow): SmsMessageRecord {
 		status: row.status,
 		twilioSid: row.twilio_sid,
 		errorCode: row.error_code,
+		templateSlug: row.template_slug ?? null,
 		sentByEmail: row.sent_by_email,
 		createdAt: row.created_at,
 		updatedAt: row.updated_at,
+	};
+}
+
+function mapPatientBooking(row: PatientBookingRow): PatientBookingLink {
+	return {
+		patientId: row.patient_id,
+		bookingRef: row.booking_ref,
+		linkedAt: row.linked_at,
+		linkedByEmail: row.linked_by_email,
 	};
 }
 
@@ -221,6 +247,7 @@ export async function insertSmsMessage(
 		status: string;
 		twilioSid?: string | null;
 		errorCode?: string | null;
+		templateSlug?: string | null;
 		sentByEmail: string;
 	},
 ): Promise<SmsMessageRecord> {
@@ -230,8 +257,8 @@ export async function insertSmsMessage(
 		.prepare(
 			`INSERT INTO sms_messages (
 				id, patient_id, to_e164, body, status, twilio_sid, error_code,
-				sent_by_email, created_at, updated_at
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+				template_slug, sent_by_email, created_at, updated_at
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		)
 		.bind(
 			id,
@@ -241,6 +268,7 @@ export async function insertSmsMessage(
 			input.status,
 			input.twilioSid ?? null,
 			input.errorCode ?? null,
+			input.templateSlug ?? null,
 			input.sentByEmail,
 			at,
 			at,
@@ -253,6 +281,117 @@ export async function insertSmsMessage(
 		.first<SmsRow>();
 	if (!row) throw new Error("SMS audit insert failed.");
 	return mapSms(row);
+}
+
+export async function listBookingsForPatient(
+	db: D1Database,
+	patientId: string,
+): Promise<PatientBookingLink[]> {
+	const { results } = await db
+		.prepare(
+			`SELECT * FROM patient_bookings
+			 WHERE patient_id = ?
+			 ORDER BY linked_at DESC`,
+		)
+		.bind(patientId)
+		.all<PatientBookingRow>();
+	return (results ?? []).map(mapPatientBooking);
+}
+
+export async function getPatientByBookingRef(
+	db: D1Database,
+	bookingRef: string,
+): Promise<PatientRecord | null> {
+	const link = await db
+		.prepare(`SELECT * FROM patient_bookings WHERE booking_ref = ?`)
+		.bind(bookingRef.trim().toUpperCase())
+		.first<PatientBookingRow>();
+	if (!link) return null;
+	return getPatientById(db, link.patient_id);
+}
+
+export async function linkPatientBooking(
+	db: D1Database,
+	input: {
+		patientId: string;
+		bookingRef: string;
+		staffEmail: string;
+	},
+): Promise<PatientBookingLink> {
+	const bookingRef = input.bookingRef.trim().toUpperCase();
+	const at = nowIso();
+	await db
+		.prepare(
+			`INSERT INTO patient_bookings (patient_id, booking_ref, linked_at, linked_by_email)
+			 VALUES (?, ?, ?, ?)
+			 ON CONFLICT(booking_ref) DO UPDATE SET
+				patient_id = excluded.patient_id,
+				linked_at = excluded.linked_at,
+				linked_by_email = excluded.linked_by_email`,
+		)
+		.bind(input.patientId, bookingRef, at, input.staffEmail)
+		.run();
+	return {
+		patientId: input.patientId,
+		bookingRef,
+		linkedAt: at,
+		linkedByEmail: input.staffEmail,
+	};
+}
+
+export async function unlinkPatientBooking(
+	db: D1Database,
+	bookingRef: string,
+): Promise<boolean> {
+	const result = await db
+		.prepare(`DELETE FROM patient_bookings WHERE booking_ref = ?`)
+		.bind(bookingRef.trim().toUpperCase())
+		.run();
+	return (result.meta?.changes ?? 0) > 0;
+}
+
+/** Soft-match contacts by email or phone digits for booking link suggestions. */
+export async function findPatientsMatchingContact(
+	db: D1Database,
+	input: { email?: string; phone?: string },
+): Promise<PatientRecord[]> {
+	const email = input.email?.trim().toLowerCase() ?? "";
+	const phoneDigits = (input.phone ?? "").replace(/\D/g, "");
+	if (!email && phoneDigits.length < 7) return [];
+
+	const seen = new Set<string>();
+	const out: PatientRecord[] = [];
+
+	if (email) {
+		const { results } = await db
+			.prepare(
+				`SELECT * FROM patients WHERE email = ? COLLATE NOCASE LIMIT 10`,
+			)
+			.bind(email)
+			.all<PatientRow>();
+		for (const row of results ?? []) {
+			if (seen.has(row.id)) continue;
+			seen.add(row.id);
+			out.push(mapPatient(row));
+		}
+	}
+
+	if (phoneDigits.length >= 7) {
+		const like = `%${phoneDigits.slice(-9)}%`;
+		const { results } = await db
+			.prepare(
+				`SELECT * FROM patients WHERE phone_e164 LIKE ? LIMIT 10`,
+			)
+			.bind(like)
+			.all<PatientRow>();
+		for (const row of results ?? []) {
+			if (seen.has(row.id)) continue;
+			seen.add(row.id);
+			out.push(mapPatient(row));
+		}
+	}
+
+	return out;
 }
 
 export async function updateSmsMessageStatus(

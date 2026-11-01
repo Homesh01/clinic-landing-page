@@ -5,9 +5,11 @@ import type {
 } from "@remix-run/cloudflare";
 import {
 	Form,
+	Link,
 	useActionData,
 	useLoaderData,
 	useNavigation,
+	useSearchParams,
 } from "@remix-run/react";
 import { json } from "@remix-run/cloudflare";
 import { useEffect, useMemo, useState } from "react";
@@ -28,16 +30,30 @@ import {
 	findBookingByRef,
 	getAvailableDays,
 	getBookingConfig,
+	listManagedBookingsInRange,
 	rescheduleBookingEvent,
+	type ManagedBooking,
 } from "~/utils/google-calendar.server";
+import {
+	findPatientsMatchingContact,
+	getPatientByBookingRef,
+	getPatientById,
+	getPatientsDb,
+	linkPatientBooking,
+	searchPatients,
+	unlinkPatientBooking,
+	type PatientRecord,
+} from "~/utils/patients.server";
 import { logServerError } from "~/utils/safe-log.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
+import { recordStaffActivity } from "~/utils/staff-activity.server";
 import {
 	formatGbpFromPence,
 	getStripeConfig,
 	refundPaymentIntent,
 	resolvePaymentIntentForBooking,
 } from "~/utils/stripe.server";
+import { partitionUpcomingBookings } from "~/utils/upcoming-bookings";
 
 function paymentLabel(booking: {
 	paymentMethod: string;
@@ -72,38 +88,126 @@ function isPaidBooking(booking: {
 
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
-		title: clinicPageTitle("Clinic bookings"),
+		title: clinicPageTitle("Admin bookings"),
 		description: "Staff tools for clinic booking management.",
-		path: "/clinic/bookings",
+		path: "/admin/bookings",
 		noIndex: true,
 	});
 };
+
+async function loadPatientLinkContext(
+	env: Env,
+	booking: ManagedBooking,
+): Promise<{
+	linkedPatient: PatientRecord | null;
+	suggestedPatients: PatientRecord[];
+}> {
+	const db = getPatientsDb(env);
+	if (!db) return { linkedPatient: null, suggestedPatients: [] };
+	try {
+		const linkedPatient = await getPatientByBookingRef(db, booking.bookingRef);
+		const suggestedPatients = linkedPatient
+			? []
+			: await findPatientsMatchingContact(db, {
+					email: booking.email,
+					phone: booking.phone,
+				});
+		return { linkedPatient, suggestedPatients };
+	} catch (error) {
+		logServerError("Patient link context error", error);
+		return { linkedPatient: null, suggestedPatients: [] };
+	}
+}
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
 	const env = context.cloudflare.env;
 	const staff = await requireClinicStaff(request, env);
 	const config = getBookingConfig(env);
+	const url = new URL(request.url);
+	const refParam = normalizeBookingRef(url.searchParams.get("ref") ?? "");
 
-	return json({
-		configured: Boolean(config),
-		stripeConfigured: Boolean(getStripeConfig(env)),
-		staff,
-	});
+	let upcoming: ManagedBooking[] = [];
+	let upcomingError: string | null = null;
+	if (config) {
+		try {
+			const timeMin = new Date(Date.now() - 60 * 60 * 1000);
+			const timeMax = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000);
+			upcoming = await listManagedBookingsInRange(config, timeMin, timeMax);
+		} catch (error) {
+			logServerError("Upcoming bookings load error", error);
+			upcomingError = "Could not load upcoming bookings from Google Calendar.";
+		}
+	}
+
+	const { today, todayBookings, laterBookings } =
+		partitionUpcomingBookings(upcoming);
+
+	let preloadedLookup: {
+		booking: ManagedBooking;
+		days: Awaited<ReturnType<typeof getAvailableDays>>;
+		linkedPatient: PatientRecord | null;
+		suggestedPatients: PatientRecord[];
+	} | null = null;
+
+	if (config && isValidBookingRef(refParam)) {
+		try {
+			const booking = await findBookingByRef(config, refParam);
+			if (booking) {
+				const days = await getAvailableDays(config);
+				const availableDays = days.map((day) => ({
+					...day,
+					times:
+						day.iso === booking.dateIso
+							? day.times.filter((time) => time !== booking.timeLabel)
+							: day.times,
+				}));
+				const linkCtx = await loadPatientLinkContext(env, booking);
+				preloadedLookup = {
+					booking,
+					days: availableDays,
+					...linkCtx,
+				};
+			}
+		} catch (error) {
+			logServerError("Preload booking by ref error", error);
+		}
+	}
+
+	return json(
+		{
+			configured: Boolean(config),
+			stripeConfigured: Boolean(getStripeConfig(env)),
+			staff,
+			todayIso: today,
+			todayBookings,
+			laterBookings,
+			upcomingError,
+			initialRef: isValidBookingRef(refParam) ? refParam : "",
+			patientsDbConfigured: Boolean(getPatientsDb(env)),
+			preloadedLookup,
+		},
+		{
+			headers: {
+				"Cache-Control": "private, no-store",
+			},
+		},
+	);
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	const env = context.cloudflare.env;
-	await requireClinicStaff(request, env);
+	const staff = await requireClinicStaff(request, env);
 	const config = getBookingConfig(env);
 	const formData = await request.formData();
 	const intent = String(formData.get("intent") ?? "");
+	const db = getPatientsDb(env);
 
 	if (!config) {
 		return json(
 			{
 				ok: false as const,
 				intent,
-				error: "Clinic tools are not configured.",
+				error: "Admin tools are not configured.",
 			},
 			{ status: 503 },
 		);
@@ -126,6 +230,157 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 
 	try {
+		if (intent === "link-patient" || intent === "unlink-patient") {
+			if (!db) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error: "Patient database is not configured.",
+						bookingRef,
+					},
+					{ status: 503 },
+				);
+			}
+			if (intent === "unlink-patient") {
+				await unlinkPatientBooking(db, bookingRef);
+				try {
+					await recordStaffActivity(db, {
+						actorEmail: staff.email,
+						action: "unlink_booking",
+						entityType: "booking",
+						entityId: bookingRef,
+						summary: `Unlinked patient from booking ${bookingRef}`,
+					});
+				} catch (logError) {
+					logServerError("Activity log error", logError);
+				}
+				const booking = await findBookingByRef(config, bookingRef);
+				const days = booking ? await getAvailableDays(config) : [];
+				const availableDays = booking
+					? days.map((day) => ({
+							...day,
+							times:
+								day.iso === booking.dateIso
+									? day.times.filter((time) => time !== booking.timeLabel)
+									: day.times,
+						}))
+					: [];
+				const linkCtx = booking
+					? await loadPatientLinkContext(env, booking)
+					: { linkedPatient: null, suggestedPatients: [] };
+				return json({
+					ok: true as const,
+					intent: "lookup" as const,
+					booking,
+					days: availableDays,
+					...linkCtx,
+					linkMessage: "Booking unlinked from patient contact.",
+				});
+			}
+
+			const patientId = String(formData.get("patientId") ?? "").trim();
+			const patient = patientId ? await getPatientById(db, patientId) : null;
+			if (!patient) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error: "Select a patient contact to link.",
+						bookingRef,
+					},
+					{ status: 400 },
+				);
+			}
+			await linkPatientBooking(db, {
+				patientId: patient.id,
+				bookingRef,
+				staffEmail: staff.email,
+			});
+			try {
+				await recordStaffActivity(db, {
+					actorEmail: staff.email,
+					action: "link_booking",
+					entityType: "booking",
+					entityId: bookingRef,
+					summary: `Linked ${patient.name} to booking ${bookingRef}`,
+				});
+			} catch (logError) {
+				logServerError("Activity log error", logError);
+			}
+			const booking = await findBookingByRef(config, bookingRef);
+			const days = booking ? await getAvailableDays(config) : [];
+			const availableDays = booking
+				? days.map((day) => ({
+						...day,
+						times:
+							day.iso === booking.dateIso
+								? day.times.filter((time) => time !== booking.timeLabel)
+								: day.times,
+					}))
+				: [];
+			const linkCtx = booking
+				? await loadPatientLinkContext(env, booking)
+				: {
+						linkedPatient: patient,
+						suggestedPatients: [] as PatientRecord[],
+					};
+			return json({
+				ok: true as const,
+				intent: "lookup" as const,
+				booking,
+				days: availableDays,
+				...linkCtx,
+				linkMessage: `Linked to ${patient.name}.`,
+			});
+		}
+
+		if (intent === "search-patients-for-link") {
+			if (!db) {
+				return json(
+					{
+						ok: false as const,
+						intent,
+						error: "Patient database is not configured.",
+						bookingRef,
+					},
+					{ status: 503 },
+				);
+			}
+			const q = String(formData.get("q") ?? "").trim();
+			const booking = await findBookingByRef(config, bookingRef);
+			if (!booking) {
+				return json(
+					{
+						ok: false as const,
+						intent: "lookup",
+						error: "No upcoming booking matched that reference.",
+						bookingRef,
+					},
+					{ status: 404 },
+				);
+			}
+			const days = await getAvailableDays(config);
+			const availableDays = days.map((day) => ({
+				...day,
+				times:
+					day.iso === booking.dateIso
+						? day.times.filter((time) => time !== booking.timeLabel)
+						: day.times,
+			}));
+			const linkCtx = await loadPatientLinkContext(env, booking);
+			const searchResults = q ? await searchPatients(db, q) : [];
+			return json({
+				ok: true as const,
+				intent: "lookup" as const,
+				booking,
+				days: availableDays,
+				...linkCtx,
+				patientSearchResults: searchResults,
+				patientSearchQuery: q,
+			});
+		}
+
 		if (intent === "lookup") {
 			const booking = await findBookingByRef(config, bookingRef);
 			if (!booking) {
@@ -147,11 +402,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						? day.times.filter((time) => time !== booking.timeLabel)
 						: day.times,
 			}));
+			const linkCtx = await loadPatientLinkContext(env, booking);
 			return json({
 				ok: true as const,
 				intent: "lookup" as const,
 				booking,
 				days: availableDays,
+				...linkCtx,
 			});
 		}
 
@@ -211,6 +468,19 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				});
 			} catch (emailError) {
 				logServerError("Insurance confirm email error", emailError);
+			}
+			if (db) {
+				try {
+					await recordStaffActivity(db, {
+						actorEmail: staff.email,
+						action: "confirm_booking",
+						entityType: "booking",
+						entityId: booking.bookingRef,
+						summary: `Confirmed insurance booking ${booking.bookingRef} (${booking.name})`,
+					});
+				} catch (logError) {
+					logServerError("Activity log error", logError);
+				}
 			}
 			return json({
 				ok: true as const,
@@ -277,6 +547,19 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				});
 			} catch (emailError) {
 				logServerError("Clinic reschedule email error", emailError);
+			}
+			if (db) {
+				try {
+					await recordStaffActivity(db, {
+						actorEmail: staff.email,
+						action: "reschedule_booking",
+						entityType: "booking",
+						entityId: booking.bookingRef,
+						summary: `Rescheduled ${booking.bookingRef} to ${booking.dateIso} ${booking.timeLabel}`,
+					});
+				} catch (logError) {
+					logServerError("Activity log error", logError);
+				}
 			}
 			return json({
 				ok: true as const,
@@ -399,6 +682,20 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				logServerError("Clinic cancel email error", emailError);
 			}
 
+			if (db) {
+				try {
+					await recordStaffActivity(db, {
+						actorEmail: staff.email,
+						action: "cancel_booking",
+						entityType: "booking",
+						entityId: booking.bookingRef,
+						summary: `Cancelled booking ${booking.bookingRef} (${booking.name})`,
+					});
+				} catch (logError) {
+					logServerError("Activity log error", logError);
+				}
+			}
+
 			return json({
 				ok: true as const,
 				intent: "cancel" as const,
@@ -424,7 +721,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				{ status: 409 },
 			);
 		}
-		logServerError("Clinic tools error", error);
+		logServerError("Admin tools error", error);
 		return json(
 			{
 				ok: false as const,
@@ -437,19 +734,118 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 }
 
+function UpcomingTable({
+	title,
+	bookings,
+}: {
+	title: string;
+	bookings: ManagedBooking[];
+}) {
+	if (bookings.length === 0) {
+		return (
+			<div>
+				<h3 className="text-sm font-semibold text-ink">{title}</h3>
+				<p className="mt-2 text-sm text-ink-soft">None.</p>
+			</div>
+		);
+	}
+	return (
+		<div>
+			<h3 className="text-sm font-semibold text-ink">{title}</h3>
+			<div className="mt-3 overflow-x-auto border border-line">
+				<table className="min-w-full text-left text-sm">
+					<thead className="bg-cream/50 text-ink-muted">
+						<tr>
+							<th className="px-3 py-2 font-medium">When</th>
+							<th className="px-3 py-2 font-medium">Patient</th>
+							<th className="px-3 py-2 font-medium">Status</th>
+							<th className="px-3 py-2 font-medium">Ref</th>
+						</tr>
+					</thead>
+					<tbody>
+						{bookings.map((row) => (
+							<tr key={row.eventId} className="border-t border-line">
+								<td className="px-3 py-2 text-ink">
+									{formatBookingDate(row.dateIso)} · {row.timeLabel}
+								</td>
+								<td className="px-3 py-2 text-ink-soft">
+									{row.name}
+									<span className="block text-xs text-ink-muted">
+										{row.type}
+										{row.appointmentFormat !== "unknown"
+											? ` · ${row.appointmentFormat}`
+											: ""}
+									</span>
+								</td>
+								<td className="px-3 py-2 text-ink-soft">
+									{row.pendingAuth
+										? "Pending auth"
+										: row.status === "tentative"
+											? "Tentative"
+											: "Confirmed"}
+								</td>
+								<td className="px-3 py-2">
+									<Link
+										to={`/admin/bookings?ref=${encodeURIComponent(row.bookingRef)}`}
+										className="font-medium text-accent-deep underline-offset-2 hover:underline"
+									>
+										{row.bookingRef}
+									</Link>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
+}
+
 export default function ClinicBookingsPage() {
-	const { configured, stripeConfigured, staff } =
-		useLoaderData<typeof loader>();
+	const {
+		configured,
+		stripeConfigured,
+		staff,
+		todayBookings,
+		laterBookings,
+		upcomingError,
+		initialRef,
+		patientsDbConfigured,
+		preloadedLookup,
+	} = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
+	const [searchParams] = useSearchParams();
 	const submitting = navigation.state === "submitting";
 
 	const lookedUp =
 		actionData && actionData.ok && actionData.intent === "lookup"
 			? actionData
-			: null;
+			: preloadedLookup
+				? {
+						ok: true as const,
+						intent: "lookup" as const,
+						...preloadedLookup,
+					}
+				: null;
 	const booking = lookedUp?.booking ?? null;
 	const days = lookedUp?.days ?? [];
+	const linkedPatient =
+		lookedUp && "linkedPatient" in lookedUp
+			? (lookedUp.linkedPatient as PatientRecord | null)
+			: null;
+	const suggestedPatients =
+		lookedUp && "suggestedPatients" in lookedUp
+			? (lookedUp.suggestedPatients as PatientRecord[])
+			: [];
+	const patientSearchResults =
+		lookedUp && "patientSearchResults" in lookedUp
+			? (lookedUp.patientSearchResults as PatientRecord[])
+			: [];
+	const linkMessage =
+		lookedUp && "linkMessage" in lookedUp && lookedUp.linkMessage
+			? String(lookedUp.linkMessage)
+			: null;
 	const confirmed =
 		actionData && actionData.ok && actionData.intent === "confirm"
 			? actionData
@@ -466,7 +862,7 @@ export default function ClinicBookingsPage() {
 	const bookingRefDefault =
 		actionData && "bookingRef" in actionData && actionData.bookingRef
 			? String(actionData.bookingRef)
-			: "";
+			: initialRef || searchParams.get("ref") || "";
 
 	const bookableDays = useMemo(
 		() => days.filter((day) => day.times.length > 0),
@@ -505,17 +901,45 @@ export default function ClinicBookingsPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Clinic"
+				eyebrow="Admin"
 				title="Bookings"
 				summary="Look up and manage appointments."
 			/>
 
 			<section className="section-pad">
-				<div className="site-container max-w-2xl space-y-8">
+				<div className="site-container max-w-4xl space-y-8">
 					<ClinicStaffChrome
 						staffEmail={staff.email}
 						active="bookings"
 					/>
+
+					{configured ? (
+						<div className="space-y-6 border border-line bg-white px-5 py-6 sm:px-6">
+							<div>
+								<p className="eyebrow">Schedule</p>
+								<h2 className="mt-2 font-display text-2xl text-ink">
+									Upcoming appointments
+								</h2>
+								<p className="mt-2 text-sm text-ink-soft">
+									Today and the next seven days from Google Calendar (managed
+									bookings only).
+								</p>
+							</div>
+							{upcomingError ? (
+								<p className="text-sm text-red-700" role="alert">
+									{upcomingError}
+								</p>
+							) : (
+								<div className="space-y-6">
+									<UpcomingTable title="Today" bookings={todayBookings} />
+									<UpcomingTable
+										title="Next 7 days"
+										bookings={laterBookings}
+									/>
+								</div>
+							)}
+						</div>
+					) : null}
 
 					{!configured ? (
 						<div className="border border-line bg-cream/70 px-6 py-8">
@@ -550,7 +974,7 @@ export default function ClinicBookingsPage() {
 							) : null}
 							<p className="mt-6">
 								<a
-									href="/clinic/bookings"
+									href="/admin/bookings"
 									className="font-semibold text-accent-deep"
 								>
 									Look up another booking
@@ -576,7 +1000,7 @@ export default function ClinicBookingsPage() {
 							) : null}
 							<p className="mt-6">
 								<a
-									href="/clinic/bookings"
+									href="/admin/bookings"
 									className="font-semibold text-accent-deep"
 								>
 									Look up another booking
@@ -620,7 +1044,7 @@ export default function ClinicBookingsPage() {
 							)}
 							<p className="mt-6">
 								<a
-									href="/clinic/bookings"
+									href="/admin/bookings"
 									className="font-semibold text-accent-deep"
 								>
 									Look up another booking
@@ -645,12 +1069,193 @@ export default function ClinicBookingsPage() {
 											{booking.timeLabel} (UK time)
 											<br />
 											{booking.email}
+											{booking.phone ? (
+												<>
+													<br />
+													{booking.phone}
+												</>
+											) : null}
 											<br />
 											{booking.type} · {booking.bookingRef}
 											<br />
 											{paymentLabel(booking)}
 										</p>
 									</div>
+
+									{patientsDbConfigured ? (
+										<div className="border border-line bg-white px-6 py-6">
+											<h3 className="font-display text-xl text-ink">
+												Patient contact
+											</h3>
+											{linkMessage ? (
+												<p className="mt-2 text-sm text-accent-deep" role="status">
+													{linkMessage}
+												</p>
+											) : null}
+											{linkedPatient ? (
+												<div className="mt-3 space-y-3">
+													<p className="text-ink-soft">
+														Linked to{" "}
+														<Link
+															to={`/admin/patients/${linkedPatient.id}`}
+															className="font-semibold text-accent-deep underline-offset-2 hover:underline"
+														>
+															{linkedPatient.name}
+														</Link>{" "}
+														({linkedPatient.email})
+													</p>
+													<Form method="post">
+														<input
+															type="hidden"
+															name="intent"
+															value="unlink-patient"
+														/>
+														<input
+															type="hidden"
+															name="bookingRef"
+															value={booking.bookingRef}
+														/>
+														<button
+															type="submit"
+															className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+															disabled={submitting}
+														>
+															Unlink
+														</button>
+													</Form>
+												</div>
+											) : (
+												<div className="mt-3 space-y-4">
+													<p className="text-sm text-ink-soft">
+														No contact linked yet.
+													</p>
+													<p>
+														<Link
+															to={`/admin/patients?new=1&name=${encodeURIComponent(booking.name)}&email=${encodeURIComponent(booking.email)}&phone=${encodeURIComponent(booking.phone)}&bookingRef=${encodeURIComponent(booking.bookingRef)}`}
+															className="btn-secondary"
+														>
+															Create contact from booking
+														</Link>
+													</p>
+													{suggestedPatients.length > 0 ? (
+														<ul className="space-y-2">
+															{suggestedPatients.map((patient) => (
+																<li
+																	key={patient.id}
+																	className="flex flex-wrap items-center justify-between gap-2 border border-line px-3 py-2 text-sm"
+																>
+																	<span>
+																		{patient.name} · {patient.email}
+																	</span>
+																	<Form method="post">
+																		<input
+																			type="hidden"
+																			name="intent"
+																			value="link-patient"
+																		/>
+																		<input
+																			type="hidden"
+																			name="bookingRef"
+																			value={booking.bookingRef}
+																		/>
+																		<input
+																			type="hidden"
+																			name="patientId"
+																			value={patient.id}
+																		/>
+																		<button
+																			type="submit"
+																			className="font-semibold text-accent-deep"
+																			disabled={submitting}
+																		>
+																			Link
+																		</button>
+																	</Form>
+																</li>
+															))}
+														</ul>
+													) : null}
+													<Form
+														method="post"
+														className="flex flex-wrap items-end gap-2"
+													>
+														<input
+															type="hidden"
+															name="intent"
+															value="search-patients-for-link"
+														/>
+														<input
+															type="hidden"
+															name="bookingRef"
+															value={booking.bookingRef}
+														/>
+														<label className="grow text-sm">
+															<span className="mb-1 block font-semibold text-ink">
+																Search contacts
+															</span>
+															<input
+																name="q"
+																className="input-field"
+																placeholder="Name, email or phone"
+																defaultValue={
+																	lookedUp &&
+																	"patientSearchQuery" in lookedUp &&
+																	lookedUp.patientSearchQuery
+																		? String(lookedUp.patientSearchQuery)
+																		: ""
+																}
+															/>
+														</label>
+														<button
+															type="submit"
+															className="btn-secondary"
+															disabled={submitting}
+														>
+															Search
+														</button>
+													</Form>
+													{patientSearchResults.length > 0 ? (
+														<ul className="space-y-2">
+															{patientSearchResults.map((patient) => (
+																<li
+																	key={patient.id}
+																	className="flex flex-wrap items-center justify-between gap-2 border border-line px-3 py-2 text-sm"
+																>
+																	<span>
+																		{patient.name} · {patient.email}
+																	</span>
+																	<Form method="post">
+																		<input
+																			type="hidden"
+																			name="intent"
+																			value="link-patient"
+																		/>
+																		<input
+																			type="hidden"
+																			name="bookingRef"
+																			value={booking.bookingRef}
+																		/>
+																		<input
+																			type="hidden"
+																			name="patientId"
+																			value={patient.id}
+																		/>
+																		<button
+																			type="submit"
+																			className="font-semibold text-accent-deep"
+																			disabled={submitting}
+																		>
+																			Link
+																		</button>
+																	</Form>
+																</li>
+															))}
+														</ul>
+													) : null}
+												</div>
+											)}
+										</div>
+									) : null}
 
 									{mode === "choose" ? (
 										<div className="flex flex-wrap gap-3">
@@ -683,7 +1288,7 @@ export default function ClinicBookingsPage() {
 												type="button"
 												className="px-2 py-3 text-[0.95rem] text-ink-muted underline-offset-4 hover:text-ink hover:underline"
 												onClick={() => {
-													window.location.assign("/clinic/bookings");
+													window.location.assign("/admin/bookings");
 												}}
 											>
 												Look up a different booking

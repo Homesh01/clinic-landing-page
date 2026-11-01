@@ -6,6 +6,10 @@
 SITE_PASSWORD=preview
 SITE_COOKIE_SECRET=replace-with-long-random-string
 
+# Canonical public origin (required in production for Stripe + staff magic links)
+# Example: https://www.example.com
+PUBLIC_SITE_URL=
+
 # Google Workspace booking + staff magic-link email
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
@@ -16,7 +20,7 @@ BOOKING_FROM_EMAIL=
 BOOKING_FROM_NAME=Personalised Cancer Care
 BOOKING_BCC_EMAIL=
 
-# Staff allowlist (comma-separated) + dedicated cookie secret (preferred over SITE_PASSWORD)
+# Staff allowlist (comma-separated) + dedicated cookie secret (required; do not reuse SITE_PASSWORD)
 CLINIC_STAFF_EMAILS=you@example.com
 CLINIC_STAFF_COOKIE_SECRET=replace-with-long-random-string
 

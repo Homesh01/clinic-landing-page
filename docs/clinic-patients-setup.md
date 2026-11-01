@@ -17,7 +17,7 @@ npx wrangler d1 migrations apply pcc-clinic-patients --local
 npx wrangler d1 migrations apply pcc-clinic-patients --remote
 ```
 
-Migrations include patient contacts (`0001`) and clinic settings such as the public password-gate toggle (`0002`).
+Migrations include patient contacts (`0001`), clinic settings such as the public password-gate toggle (`0002`), and admin portal extras (`0003`: SMS template slug, booking↔patient links, staff activity log).
 
 ### Recovery
 
@@ -43,8 +43,11 @@ Delivery-status webhooks are **not** used in v1; staff see Twilio’s immediate 
 
 ## 3. Already required for staff login
 
+Staff tools live at `/admin` (legacy `/clinic` URLs redirect there).
+
 - `CLINIC_STAFF_EMAILS`
-- Prefer `CLINIC_STAFF_COOKIE_SECRET` (or `SITE_COOKIE_SECRET`) — avoid relying on `SITE_PASSWORD` as the staff cookie/HMAC secret
+- `CLINIC_STAFF_COOKIE_SECRET` (required — dedicated secret; never reuse `SITE_PASSWORD`)
+- `PUBLIC_SITE_URL` (canonical `https://…` origin for magic links and Stripe redirects in production)
 - Google Workspace booking email config (magic-link delivery)
 
 ## 4. Testing

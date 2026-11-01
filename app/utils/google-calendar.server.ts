@@ -976,6 +976,53 @@ export async function createBookingEvent(
 	};
 }
 
+/**
+ * List managed (bookingRef) calendar events in a time window.
+ * Used for staff upcoming-bookings dashboard (today + next days).
+ */
+export async function listManagedBookingsInRange(
+	config: BookingConfig,
+	timeMin: Date,
+	timeMax: Date,
+): Promise<ManagedBooking[]> {
+	const accessToken = await getAccessToken(config);
+	const bookings: ManagedBooking[] = [];
+	let pageToken: string | undefined;
+
+	do {
+		const params = new URLSearchParams({
+			singleEvents: "true",
+			showDeleted: "false",
+			orderBy: "startTime",
+			maxResults: "100",
+			timeMin: timeMin.toISOString(),
+			timeMax: timeMax.toISOString(),
+		});
+		if (pageToken) params.set("pageToken", pageToken);
+
+		const response = await fetch(
+			`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?${params}`,
+			{ headers: { Authorization: `Bearer ${accessToken}` } },
+		);
+		const data = (await response.json()) as {
+			items?: CalendarEventPayload[];
+			nextPageToken?: string;
+			error?: { message?: string };
+		};
+		if (!response.ok) {
+			throw new Error(data.error?.message || "Could not list calendar bookings");
+		}
+
+		for (const item of data.items ?? []) {
+			const booking = managedBookingFromEvent(item, config.timeZone);
+			if (booking) bookings.push(booking);
+		}
+		pageToken = data.nextPageToken;
+	} while (pageToken);
+
+	return bookings;
+}
+
 async function listEventsByBookingRef(
 	config: BookingConfig,
 	accessToken: string,

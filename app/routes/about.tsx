@@ -104,13 +104,15 @@ export default function AboutPage() {
 							</div>
 						</div>
 
-						<div className="mt-8 border border-line bg-cream/50 px-6 py-6 sm:px-7">
-							<p className="eyebrow">Research</p>
+						<div className="mt-8 border border-line border-l-2 border-l-accent bg-white px-6 py-6 sm:px-7">
+							<div className="mb-4 h-px w-12 bg-accent" aria-hidden="true" />
+							<p className="eyebrow">Research Analytics Lab</p>
 							<p className="mt-3 font-display text-2xl text-ink sm:text-[1.65rem]">
-								Research Analytics Lab
+								Computational oncology in the open
 							</p>
 							<p className="mt-2 max-w-prose text-[0.97rem] text-ink-soft">
-								Open reanalyses of published neoantigen vaccine trial data.
+								Interactive reanalyses of published neoantigen vaccine trial
+								data — methods you can inspect beside consultant care.
 							</p>
 							<Link
 								to="/research/pancreatic-reanalysis"

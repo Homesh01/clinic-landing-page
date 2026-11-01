@@ -90,9 +90,9 @@ export const appointments = [
 /** Homepage section: clinical practice + software spine + future offerings. */
 export const homePlatform = {
 	eyebrow: "Practice & platform",
-	title: "Oncology care with a software spine",
+	title: "Consultant oncology with a computational core",
 	lede:
-		"Personalised Cancer Care is a clinical practice and a growing computational platform. Patients see a consultant oncologist today; beneath that sits research software for cancer analytics, and the groundwork for advanced diagnostics and personalised cancer vaccines.",
+		"Patients see a consultant oncologist today. Alongside that sits an open Research Analytics Lab — interactive reanalyses of published neoantigen vaccine trials — and the groundwork for advanced diagnostics and personalised cancer vaccines.",
 	pillars: [
 		{
 			title: "Consultant-led care",
@@ -101,10 +101,10 @@ export const homePlatform = {
 			linkLabel: "View consultations",
 		},
 		{
-			title: "Research software",
-			text: "Interactive reanalyses of published neoantigen vaccine trial data — NeoVaxMI melanoma (mutations, vaccine site, TCR dynamics) and PDAC mRNA vaccine longevity kinetics.",
+			title: "Research Analytics Lab",
+			text: "Open computational work on published trial data: NeoVaxMI melanoma immunology and PDAC mRNA vaccine clone longevity — methods you can inspect, not a black box.",
 			to: "/research/pancreatic-reanalysis",
-			linkLabel: "Explore the Analytics Lab",
+			linkLabel: "Open the lab",
 		},
 		{
 			title: "Diagnostics & vaccines ahead",

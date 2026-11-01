@@ -17,18 +17,20 @@ import {
 	getSitePasswordGateState,
 	setSitePasswordGateEnabled,
 } from "~/utils/clinic-settings.server";
+import { getPatientsDb } from "~/utils/patients.server";
 import {
 	getSitePassword,
 	isLocalDevRequest,
 } from "~/utils/site-auth.server";
 import { logServerError } from "~/utils/safe-log.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
+import { recordStaffActivity } from "~/utils/staff-activity.server";
 
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
-		title: clinicPageTitle("Clinic admin"),
-		description: "Clinic administration settings.",
-		path: "/clinic/admin",
+		title: clinicPageTitle("Admin settings"),
+		description: "Administration settings.",
+		path: "/admin/settings",
 		noIndex: true,
 	});
 };
@@ -81,6 +83,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	try {
 		const gate = await setSitePasswordGateEnabled(env, enable, staff.email);
+		const db = getPatientsDb(env);
+		if (db) {
+			try {
+				await recordStaffActivity(db, {
+					actorEmail: staff.email,
+					action: enable ? "enable_site_gate" : "disable_site_gate",
+					entityType: "settings",
+					entityId: "site_password_gate",
+					summary: enable
+						? "Enabled public site password gate"
+						: "Disabled public site password gate",
+				});
+			} catch (logError) {
+				logServerError("Activity log error", logError);
+			}
+		}
 		return json({ ok: true as const, gate });
 	} catch (error) {
 		logServerError("Site gate toggle error", error);
@@ -122,14 +140,14 @@ export default function ClinicAdminPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Clinic"
-				title="Admin"
+				eyebrow="Admin"
+				title="Settings"
 				summary="Site-wide settings for authorised staff."
 			/>
 
 			<section className="section-pad">
 				<div className="site-container max-w-2xl space-y-8">
-					<ClinicStaffChrome staffEmail={staff.email} active="admin" />
+					<ClinicStaffChrome staffEmail={staff.email} active="settings" />
 
 					<div className="border border-line bg-white px-6 py-7">
 						<p className="eyebrow">Public site access</p>
@@ -139,7 +157,7 @@ export default function ClinicAdminPage() {
 						<p className="mt-3 text-ink-soft">
 							When the gate is on, visitors must enter the site password before
 							using the public website. Staff tools at{" "}
-							<code className="text-sm">/clinic</code> still require your magic
+							<code className="text-sm">/admin</code> still require your magic
 							link sign-in either way. Default before anyone changes it:{" "}
 							{isLocal
 								? "off on local development"

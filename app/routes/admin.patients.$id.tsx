@@ -15,11 +15,17 @@ import { useEffect, useState } from "react";
 import { ClinicStaffChrome } from "~/components/clinic/ClinicStaffChrome";
 import { PatientContactForm } from "~/components/clinic/PatientContactForm";
 import { PageHero } from "~/components/PageHero";
+import {
+	SMS_TEMPLATES,
+	applySmsTemplate,
+	getSmsTemplate,
+} from "~/data/sms-templates";
 import { requireClinicStaff } from "~/utils/clinic-staff.server";
 import {
 	getPatientById,
 	getPatientsDb,
 	insertSmsMessage,
+	listBookingsForPatient,
 	listSmsForPatient,
 	updatePatient,
 	updateSmsMessageStatus,
@@ -32,13 +38,14 @@ import {
 } from "~/utils/patient-validation";
 import { logServerError } from "~/utils/safe-log.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
+import { recordStaffActivity } from "~/utils/staff-activity.server";
 import { getTwilioConfig, sendTwilioSms } from "~/utils/twilio-sms.server";
 
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("Patient contact"),
 		description: "Staff patient contact record.",
-		path: "/clinic/patients",
+		path: "/admin/patients",
 		noIndex: true,
 	});
 };
@@ -58,12 +65,17 @@ export async function loader({ request, context, params }: LoaderFunctionArgs) {
 		throw json({ error: "Not found" }, { status: 404 });
 	}
 
-	const messages = await listSmsForPatient(db, patient.id, 100);
+	const [messages, linkedBookings] = await Promise.all([
+		listSmsForPatient(db, patient.id, 100),
+		listBookingsForPatient(db, patient.id),
+	]);
 	return json(
 		{
 			staff,
 			patient,
 			messages,
+			linkedBookings,
+			smsTemplates: SMS_TEMPLATES,
 			twilioConfigured: Boolean(getTwilioConfig(env)),
 			maxSmsBody: MAX_SMS_BODY,
 		},
@@ -119,6 +131,17 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 					},
 					{ status: 404 },
 				);
+			}
+			try {
+				await recordStaffActivity(db, {
+					actorEmail: staff.email,
+					action: "update_patient",
+					entityType: "patient",
+					entityId: updated.id,
+					summary: `Updated patient contact ${updated.name}`,
+				});
+			} catch (logError) {
+				logServerError("Activity log error", logError);
 			}
 			return json({
 				ok: true as const,
@@ -188,6 +211,11 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 			);
 		}
 
+		const templateSlugRaw = String(formData.get("templateSlug") ?? "").trim();
+		const templateSlug = getSmsTemplate(templateSlugRaw)
+			? templateSlugRaw
+			: null;
+
 		let auditId: string | null = null;
 		try {
 			const audit = await insertSmsMessage(db, {
@@ -195,6 +223,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 				toE164: patient.phoneE164,
 				body: validated.body,
 				status: "sending",
+				templateSlug,
 				sentByEmail: staff.email,
 			});
 			auditId = audit.id;
@@ -210,6 +239,19 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 					twilioSid: result.sid,
 					errorCode: null,
 				});
+				try {
+					await recordStaffActivity(db, {
+						actorEmail: staff.email,
+						action: "send_sms",
+						entityType: "patient",
+						entityId: patient.id,
+						summary: `Sent SMS to ${patient.name}${
+							templateSlug ? ` (${templateSlug})` : ""
+						}`,
+					});
+				} catch (logError) {
+					logServerError("Activity log error", logError);
+				}
 				return json({
 					ok: true as const,
 					intent: "send-sms" as const,
@@ -288,8 +330,15 @@ function formatSmsStatus(status: string): string {
 }
 
 export default function ClinicPatientDetailPage() {
-	const { staff, patient, messages, twilioConfigured, maxSmsBody } =
-		useLoaderData<typeof loader>();
+	const {
+		staff,
+		patient,
+		messages,
+		linkedBookings,
+		smsTemplates,
+		twilioConfigured,
+		maxSmsBody,
+	} = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const submitting = navigation.state === "submitting";
@@ -297,6 +346,7 @@ export default function ClinicPatientDetailPage() {
 		"idle",
 	);
 	const [smsDraft, setSmsDraft] = useState("");
+	const [templateSlug, setTemplateSlug] = useState("");
 
 	useEffect(() => {
 		if (actionData && actionData.ok && actionData.intent === "send-sms") {
@@ -333,7 +383,7 @@ export default function ClinicPatientDetailPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Clinic"
+				eyebrow="Admin"
 				title={displayPatient.name}
 				summary="Contact details and administrative SMS."
 			/>
@@ -347,7 +397,7 @@ export default function ClinicPatientDetailPage() {
 
 					<p>
 						<Link
-							to="/clinic/patients"
+							to="/admin/patients"
 							className="text-sm font-semibold text-accent-deep underline-offset-4 hover:underline"
 						>
 							← All patients
@@ -393,6 +443,34 @@ export default function ClinicPatientDetailPage() {
 					</div>
 
 					<div className="border border-line bg-white px-6 py-7">
+						<h2 className="font-display text-2xl text-ink">
+							Linked bookings
+						</h2>
+						{linkedBookings.length === 0 ? (
+							<p className="mt-3 text-sm text-ink-soft">
+								No booking references linked. Link from a booking lookup.
+							</p>
+						) : (
+							<ul className="mt-3 space-y-2">
+								{linkedBookings.map((link) => (
+									<li key={link.bookingRef} className="text-sm">
+										<Link
+											to={`/admin/bookings?ref=${encodeURIComponent(link.bookingRef)}`}
+											className="font-semibold text-accent-deep underline-offset-2 hover:underline"
+										>
+											{link.bookingRef}
+										</Link>
+										<span className="text-ink-muted">
+											{" "}
+											· linked {formatWhen(link.linkedAt)}
+										</span>
+									</li>
+								))}
+							</ul>
+						)}
+					</div>
+
+					<div className="border border-line bg-white px-6 py-7">
 						<div className="flex flex-wrap items-center justify-between gap-3">
 							<h2 className="font-display text-2xl text-ink">SMS</h2>
 							{smsMode === "idle" ? (
@@ -402,6 +480,7 @@ export default function ClinicPatientDetailPage() {
 									disabled={!twilioConfigured}
 									onClick={() => {
 										setSmsMode("compose");
+										setTemplateSlug("");
 										setSmsDraft(
 											actionData &&
 												!actionData.ok &&
@@ -450,13 +529,44 @@ export default function ClinicPatientDetailPage() {
 							<div className="mt-6 space-y-4">
 								<label className="block">
 									<span className="mb-2 block text-sm font-semibold text-ink">
+										Template
+									</span>
+									<select
+										className="input-field"
+										value={templateSlug}
+										onChange={(event) => {
+											const slug = event.target.value;
+											setTemplateSlug(slug);
+											const template = getSmsTemplate(slug);
+											if (template) {
+												setSmsDraft(
+													applySmsTemplate(template, {
+														name: displayPatient.name,
+													}),
+												);
+											}
+										}}
+									>
+										<option value="">Custom message</option>
+										{smsTemplates.map((template) => (
+											<option key={template.slug} value={template.slug}>
+												{template.label}
+											</option>
+										))}
+									</select>
+								</label>
+								<label className="block">
+									<span className="mb-2 block text-sm font-semibold text-ink">
 										Message to {displayPatient.phoneE164}
 									</span>
 									<textarea
 										rows={4}
 										maxLength={maxSmsBody}
 										value={smsDraft}
-										onChange={(event) => setSmsDraft(event.target.value)}
+										onChange={(event) => {
+											setSmsDraft(event.target.value);
+											setTemplateSlug("");
+										}}
 										className="input-field"
 										placeholder="Short administrative message…"
 									/>
@@ -479,6 +589,7 @@ export default function ClinicPatientDetailPage() {
 										onClick={() => {
 											setSmsMode("idle");
 											setSmsDraft("");
+											setTemplateSlug("");
 										}}
 									>
 										Cancel
@@ -495,6 +606,9 @@ export default function ClinicPatientDetailPage() {
 								</p>
 								<p className="mt-3 text-sm text-ink-soft">
 									To: {displayPatient.phoneE164}
+									{templateSlug
+										? ` · template ${getSmsTemplate(templateSlug)?.label ?? templateSlug}`
+										: ""}
 								</p>
 								{smsError ? (
 									<p className="mt-3 text-sm text-red-700" role="alert">
@@ -505,6 +619,11 @@ export default function ClinicPatientDetailPage() {
 									<input type="hidden" name="intent" value="send-sms" />
 									<input type="hidden" name="confirmed" value="yes" />
 									<input type="hidden" name="body" value={smsDraft} />
+									<input
+										type="hidden"
+										name="templateSlug"
+										value={templateSlug}
+									/>
 									<button
 										type="submit"
 										className="btn-primary"
@@ -530,32 +649,45 @@ export default function ClinicPatientDetailPage() {
 						) : null}
 
 						<div className="mt-8">
-							<h3 className="text-sm font-semibold text-ink">Recent SMS</h3>
+							<h3 className="text-sm font-semibold text-ink">
+								SMS history
+							</h3>
+							<p className="mt-1 text-xs text-ink-muted">
+								Status reflects Twilio accept/reject only (no delivery
+								webhook).
+							</p>
 							{messages.length === 0 ? (
 								<p className="mt-3 text-sm text-ink-soft">No messages yet.</p>
 							) : (
 								<div className="mt-3 max-h-80 overflow-y-auto overscroll-contain border border-line pr-1">
 									<ul className="space-y-3 p-3">
-										{messages.map((message) => (
-											<li
-												key={message.id}
-												className="border border-line bg-white px-4 py-3 text-sm"
-											>
-												<p className="font-semibold text-ink">
-													{formatSmsStatus(message.status)}
-													{message.errorCode
-														? ` (${message.errorCode})`
-														: ""}
-												</p>
-												<p className="mt-1 whitespace-pre-wrap text-ink-soft">
-													{message.body}
-												</p>
-												<p className="mt-2 text-xs text-ink-muted">
-													{formatWhen(message.createdAt)} ·{" "}
-													{message.sentByEmail}
-												</p>
-											</li>
-										))}
+										{messages.map((message) => {
+											const template = getSmsTemplate(message.templateSlug);
+											return (
+												<li
+													key={message.id}
+													className="border border-line bg-white px-4 py-3 text-sm"
+												>
+													<p className="font-semibold text-ink">
+														{formatSmsStatus(message.status)}
+														{message.errorCode
+															? ` (${message.errorCode})`
+															: ""}
+														{template ? ` · ${template.label}` : ""}
+													</p>
+													<p className="mt-1 whitespace-pre-wrap text-ink-soft">
+														{message.body}
+													</p>
+													<p className="mt-2 text-xs text-ink-muted">
+														{formatWhen(message.createdAt)} ·{" "}
+														{message.sentByEmail}
+														{message.twilioSid
+															? ` · ${message.twilioSid}`
+															: ""}
+													</p>
+												</li>
+											);
+										})}
 									</ul>
 								</div>
 							)}

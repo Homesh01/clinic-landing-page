@@ -79,7 +79,7 @@ function Stat({
 	hint?: string;
 }) {
 	return (
-		<div className="border border-line bg-cream/40 px-4 py-4">
+		<div className="border border-line border-l-2 border-l-accent bg-white px-4 py-4">
 			<p className="text-sm text-ink-muted">{label}</p>
 			<p className="mt-1 font-display text-3xl text-ink">{value}</p>
 			{hint ? <p className="mt-1 text-xs text-ink-muted">{hint}</p> : null}
@@ -262,6 +262,7 @@ export default function NeoVaxmiReanalysisPage() {
 	return (
 		<>
 			<PageHero
+				tone="lab"
 				eyebrow="Research Analytics Lab"
 				title="NeoVaxMI reanalysis"
 				summary="A multi adjuvant personal neoantigen vaccine (NeoVaxMI) in melanoma: mutation fuel, vaccine site immune remodeling, circulating TCR expansion beyond PD1 blockade, and vaccine linked T cells in tumour."

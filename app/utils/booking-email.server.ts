@@ -1369,18 +1369,18 @@ export async function sendInsuranceBookingConfirmedEmail(
 	});
 }
 
-/** One-time staff sign-in link for /clinic (expires in minutes). */
+/** One-time staff sign-in link for /admin (expires in minutes). */
 export async function sendClinicStaffMagicLinkEmail(
 	config: BookingConfig,
 	input: { email: string; magicLinkUrl: string; expiresMinutes: number },
 ): Promise<void> {
 	const accessToken = await getAccessToken(config);
 	const { fromEmail, fromName } = resolveBookingSender(config);
-	const subject = `${CLINIC_BRAND}: clinic staff sign-in link`;
-	const lead = `Use this link to sign in to clinic booking tools. It expires in ${input.expiresMinutes} minutes and can only be used by authorised staff.`;
+	const subject = `${CLINIC_BRAND}: admin staff sign-in link`;
+	const lead = `Use this link to sign in to admin booking tools. It expires in ${input.expiresMinutes} minutes and can only be used by authorised staff.`;
 
 	const text = [
-		"Clinic staff sign-in",
+		"Admin staff sign-in",
 		"",
 		lead,
 		"",
@@ -1392,9 +1392,9 @@ export async function sendClinicStaffMagicLinkEmail(
 	].join("\n");
 
 	const html = wrapBookingEmailHtml({
-		title: "Clinic staff sign-in",
+		title: "Admin staff sign-in",
 		statusPill: "Staff access",
-		heading: "Sign in to clinic tools",
+		heading: "Sign in to admin tools",
 		leadHtml: escapeHtml(lead),
 		detailRowsHtml: detailRow({
 			icon: "&#128274;",
@@ -1404,7 +1404,7 @@ export async function sendClinicStaffMagicLinkEmail(
 			last: true,
 		}),
 		noteHtml: "If you did not request this link, you can ignore this email.",
-		primaryCta: { href: input.magicLinkUrl, label: "Sign in to clinic tools" },
+		primaryCta: { href: input.magicLinkUrl, label: "Sign in to admin tools" },
 	});
 
 	await sendBookingMime(accessToken, {

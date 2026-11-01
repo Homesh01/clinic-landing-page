@@ -16,7 +16,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 	);
 
 	if (!verified) {
-		throw redirect("/clinic?auth=expired");
+		throw redirect("/admin?auth=expired");
 	}
 
 	const headers = await createClinicStaffSessionHeaders(
@@ -24,5 +24,5 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 		context.cloudflare.env,
 		verified.email,
 	);
-	throw redirect("/clinic?auth=ok", { headers });
+	throw redirect("/admin?auth=ok", { headers });
 }

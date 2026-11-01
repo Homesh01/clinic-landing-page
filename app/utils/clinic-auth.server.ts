@@ -8,13 +8,12 @@ export type ClinicStaffSession = {
 	email: string;
 };
 
+/**
+ * Staff session cookies must use a dedicated secret — never SITE_PASSWORD
+ * (knowing the site password must not allow minting staff sessions).
+ */
 function getStaffCookieSecret(env: Env | undefined): string | undefined {
-	return (
-		env?.CLINIC_STAFF_COOKIE_SECRET?.trim() ||
-		env?.SITE_COOKIE_SECRET?.trim() ||
-		env?.SITE_PASSWORD?.trim() ||
-		undefined
-	);
+	return env?.CLINIC_STAFF_COOKIE_SECRET?.trim() || undefined;
 }
 
 export function getClinicStaffEmails(env: Env | undefined): string[] {
@@ -39,10 +38,10 @@ export function isAllowedClinicStaffEmail(
 	return getClinicStaffEmails(env).includes(normalised);
 }
 
-function staffCookie(secret: string, secure: boolean) {
+function staffCookie(secret: string, secure: boolean, path = "/") {
 	return createCookie(COOKIE_NAME, {
 		httpOnly: true,
-		path: "/clinic",
+		path,
 		sameSite: "lax",
 		secure,
 		secrets: [secret],
@@ -189,20 +188,18 @@ export async function clearClinicStaffSessionHeaders(
 	const headers = new Headers();
 	if (!secret) return headers;
 	const secure = request.url.startsWith("https:");
-	// Clear current path (/clinic) and any legacy path=/ cookies.
-	const clinicScoped = staffCookie(secret, secure);
-	const legacySiteScoped = createCookie(COOKIE_NAME, {
-		httpOnly: true,
-		path: "/",
-		sameSite: "lax",
-		secure,
-		secrets: [secret],
-		maxAge: SESSION_MAX_AGE_SEC,
-	});
-	headers.append("Set-Cookie", await clinicScoped.serialize("", { maxAge: 0 }));
+	// Clear site-scoped cookie and any legacy path-scoped cookies from older builds.
+	const siteScoped = staffCookie(secret, secure, "/");
+	const legacyClinicScoped = staffCookie(secret, secure, "/clinic");
+	const legacyAdminScoped = staffCookie(secret, secure, "/admin");
+	headers.append("Set-Cookie", await siteScoped.serialize("", { maxAge: 0 }));
 	headers.append(
 		"Set-Cookie",
-		await legacySiteScoped.serialize("", { maxAge: 0 }),
+		await legacyClinicScoped.serialize("", { maxAge: 0 }),
+	);
+	headers.append(
+		"Set-Cookie",
+		await legacyAdminScoped.serialize("", { maxAge: 0 }),
 	);
 	return headers;
 }

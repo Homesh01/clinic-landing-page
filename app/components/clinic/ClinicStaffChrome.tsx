@@ -1,14 +1,15 @@
 import { Form, Link } from "@remix-run/react";
 
 const TOOLS = [
-	{ to: "/clinic/bookings", label: "Bookings" },
-	{ to: "/clinic/patients", label: "Patient contacts" },
-	{ to: "/clinic/admin", label: "Admin" },
+	{ to: "/admin/bookings", label: "Bookings", active: "bookings" },
+	{ to: "/admin/patients", label: "Patient contacts", active: "patients" },
+	{ to: "/admin/activity", label: "Activity", active: "activity" },
+	{ to: "/admin/settings", label: "Settings", active: "settings" },
 ] as const;
 
 type Props = {
 	staffEmail: string;
-	active?: "hub" | "bookings" | "patients" | "admin";
+	active?: "hub" | "bookings" | "patients" | "activity" | "settings";
 	authOk?: boolean;
 };
 
@@ -28,14 +29,15 @@ export function ClinicStaffChrome({
 				<div className="flex flex-wrap items-center gap-4">
 					{active !== "hub" ? (
 						<Link
-							to="/clinic"
+							to="/admin"
+							prefetch="none"
 							className="underline-offset-4 hover:underline"
 						>
-							Clinic home
+							Admin home
 						</Link>
 					) : null}
-					{/* ?index posts to clinic._index (layout has no action). */}
-					<Form method="post" action="/clinic?index">
+					{/* ?index posts to admin._index (layout has no action). */}
+					<Form method="post" action="/admin?index">
 						<input type="hidden" name="intent" value="logout" />
 						<button
 							type="submit"
@@ -47,12 +49,9 @@ export function ClinicStaffChrome({
 				</div>
 			</div>
 
-			<nav aria-label="Clinic tools" className="flex flex-wrap gap-2">
+			<nav aria-label="Admin tools" className="flex flex-wrap gap-2">
 				{TOOLS.map((tool) => {
-					const isActive =
-						(tool.to === "/clinic/bookings" && active === "bookings") ||
-						(tool.to === "/clinic/patients" && active === "patients") ||
-						(tool.to === "/clinic/admin" && active === "admin");
+					const isActive = tool.active === active;
 					return (
 						<Link
 							key={tool.to}

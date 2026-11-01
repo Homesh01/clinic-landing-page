@@ -21,12 +21,12 @@ export function ChartCard({
 	datasetLabel = "Synthetic demonstration data",
 }: ChartCardProps) {
 	return (
-		<section className="border border-line bg-white">
+		<section className="border border-line border-t-2 border-t-accent/70 bg-white">
 			<div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
 				<div>
 					<h3 className="font-display text-xl text-ink sm:text-2xl">{title}</h3>
-					<p className="mt-1 text-sm text-ink-muted">
-						Dataset: {datasetLabel}
+					<p className="mt-1 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+						Dataset · {datasetLabel}
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2">

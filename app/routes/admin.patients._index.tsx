@@ -16,10 +16,12 @@ import { ClinicStaffChrome } from "~/components/clinic/ClinicStaffChrome";
 import { PatientContactForm } from "~/components/clinic/PatientContactForm";
 import { PageHero } from "~/components/PageHero";
 import { requireClinicStaff } from "~/utils/clinic-staff.server";
+import { isValidBookingRef, normalizeBookingRef } from "~/utils/booking-ref";
 import {
 	createPatient,
 	getPatientsDb,
 	isPatientsDbConfigured,
+	linkPatientBooking,
 	searchPatients,
 } from "~/utils/patients.server";
 import {
@@ -28,12 +30,13 @@ import {
 } from "~/utils/patient-validation";
 import { logServerError } from "~/utils/safe-log.server";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
+import { recordStaffActivity } from "~/utils/staff-activity.server";
 
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("Patient contacts"),
 		description: "Staff patient contact directory.",
-		path: "/clinic/patients",
+		path: "/admin/patients",
 		noIndex: true,
 	});
 };
@@ -129,7 +132,34 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	try {
 		const patient = await createPatient(db, validated.data, staff.email);
-		throw redirect(`/clinic/patients/${patient.id}`);
+		const bookingRef = normalizeBookingRef(
+			String(formData.get("bookingRef") ?? ""),
+		);
+		if (isValidBookingRef(bookingRef)) {
+			try {
+				await linkPatientBooking(db, {
+					patientId: patient.id,
+					bookingRef,
+					staffEmail: staff.email,
+				});
+			} catch (linkError) {
+				logServerError("Patient create booking link error", linkError);
+			}
+		}
+		try {
+			await recordStaffActivity(db, {
+				actorEmail: staff.email,
+				action: "create_patient",
+				entityType: "patient",
+				entityId: patient.id,
+				summary: `Created patient contact ${patient.name}${
+					isValidBookingRef(bookingRef) ? ` (linked ${bookingRef})` : ""
+				}`,
+			});
+		} catch (logError) {
+			logServerError("Activity log error", logError);
+		}
+		throw redirect(`/admin/patients/${patient.id}`);
 	} catch (error) {
 		if (error instanceof Response) throw error;
 		logServerError("Patient create error", error);
@@ -152,6 +182,9 @@ export default function ClinicPatientsPage() {
 	const submitting = navigation.state === "submitting";
 	const [searchParams] = useSearchParams();
 	const showAdd = searchParams.get("new") === "1";
+	const prefillBookingRef = normalizeBookingRef(
+		searchParams.get("bookingRef") ?? "",
+	);
 
 	const failedCreate =
 		actionData && !actionData.ok && actionData.intent === "create"
@@ -169,13 +202,20 @@ export default function ClinicPatientsPage() {
 					email: string;
 					phone: string;
 				})
-			: undefined;
+			: showAdd
+				? {
+						name: searchParams.get("name") ?? "",
+						postalAddress: "",
+						email: searchParams.get("email") ?? "",
+						phone: searchParams.get("phone") ?? "",
+					}
+				: undefined;
 	const createError = failedCreate?.error ?? null;
 
 	return (
 		<>
 			<PageHero
-				eyebrow="Clinic"
+				eyebrow="Admin"
 				title="Patient contacts"
 				summary="Name, address, email and telephone only — no clinical notes."
 			/>
@@ -222,13 +262,13 @@ export default function ClinicPatientsPage() {
 								</Form>
 								{showAdd ? (
 									<Link
-										to="/clinic/patients"
+										to="/admin/patients"
 										className="text-sm text-ink-muted underline-offset-4 hover:underline"
 									>
 										Cancel add
 									</Link>
 								) : (
-									<Link to="/clinic/patients?new=1" className="btn-primary">
+									<Link to="/admin/patients?new=1" className="btn-primary">
 										Add patient
 									</Link>
 								)}
@@ -244,6 +284,22 @@ export default function ClinicPatientsPage() {
 										clinical notes here.
 									</p>
 									<Form method="post" className="mt-6 space-y-5">
+										{isValidBookingRef(prefillBookingRef) ? (
+											<input
+												type="hidden"
+												name="bookingRef"
+												value={prefillBookingRef}
+											/>
+										) : null}
+										{isValidBookingRef(prefillBookingRef) ? (
+											<p className="text-sm text-ink-soft">
+												Will link booking{" "}
+												<span className="font-semibold text-ink">
+													{prefillBookingRef}
+												</span>{" "}
+												after save.
+											</p>
+										) : null}
 										<PatientContactForm
 											intent="create"
 											submitLabel="Save patient"
@@ -272,7 +328,7 @@ export default function ClinicPatientsPage() {
 										{patients.map((patient) => (
 											<li key={patient.id}>
 												<Link
-													to={`/clinic/patients/${patient.id}`}
+													to={`/admin/patients/${patient.id}`}
 													className="block px-6 py-4 transition-colors hover:bg-cream/40"
 												>
 													<p className="font-semibold text-ink">

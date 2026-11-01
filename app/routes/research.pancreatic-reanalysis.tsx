@@ -68,7 +68,7 @@ function Stat({
 	hint?: string;
 }) {
 	return (
-		<div className="border border-line bg-cream/40 px-4 py-4">
+		<div className="border border-line border-l-2 border-l-accent bg-white px-4 py-4">
 			<p className="text-sm text-ink-muted">{label}</p>
 			<p className="mt-1 font-display text-3xl text-ink">{value}</p>
 			{hint ? <p className="mt-1 text-xs text-ink-muted">{hint}</p> : null}
@@ -193,6 +193,7 @@ export default function PancreaticReanalysisPage() {
 	return (
 		<>
 			<PageHero
+				tone="lab"
 				eyebrow="Research Analytics Lab"
 				title="PDAC vaccine reanalysis"
 				summary="RNA neoantigen vaccines and long-lived CD8+ T cells in pancreatic cancer: clone half-life after prime versus boost, persistence years later, and a priming-phase model of longevity."

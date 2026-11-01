@@ -3,6 +3,8 @@
 interface Env {
 	SITE_PASSWORD?: string;
 	SITE_COOKIE_SECRET?: string;
+	/** Canonical https://… origin for Stripe redirects and staff magic links. */
+	PUBLIC_SITE_URL?: string;
 	GOOGLE_CLIENT_ID?: string;
 	GOOGLE_CLIENT_SECRET?: string;
 	GOOGLE_REFRESH_TOKEN?: string;
