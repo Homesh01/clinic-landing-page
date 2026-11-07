@@ -1,4 +1,11 @@
-import { contact, faqPage, locations, site } from "~/data/content";
+import {
+	contact,
+	faqPage,
+	getBlogArticles,
+	getBlogShortPosts,
+	locations,
+	site,
+} from "~/data/content";
 
 export const SITE_ORIGIN = "https://personalisedcancercare.com";
 export const CLINIC_BRAND = "Personalised Cancer Care";
@@ -18,10 +25,12 @@ const PUBLIC_PATHS = [
 	"/book",
 ] as const;
 
-export type PublicPath = (typeof PUBLIC_PATHS)[number];
-
-export function getPublicPaths(): readonly PublicPath[] {
-	return PUBLIC_PATHS;
+export function getPublicPaths(): readonly string[] {
+	const articlePaths = getBlogArticles().map(
+		(article) => `/article/${article.slug}`,
+	);
+	const postPaths = getBlogShortPosts().map((post) => `/blog/${post.slug}`);
+	return [...PUBLIC_PATHS, ...articlePaths, ...postPaths];
 }
 
 /** Browser tab / OG title: clinic brand is primary. */

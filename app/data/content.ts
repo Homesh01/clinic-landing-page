@@ -754,21 +754,352 @@ export const conferenceYearLabels: Record<number, string> = {
 	2025: "Past",
 };
 
-export type BlogPost = {
-	/** ISO date (YYYY-MM-DD), newest posts should be added at the top of the list */
+export type BlogEntryKind = "post" | "article";
+
+export type BlogArticleBlock =
+	| { readonly type: "heading"; readonly text: string }
+	| { readonly type: "paragraph"; readonly text: ProseParagraph }
+	| {
+			readonly type: "flow";
+			readonly items: readonly string[];
+			readonly caption?: string;
+	  }
+	| {
+			readonly type: "steps";
+			readonly items: readonly {
+				readonly title: string;
+				readonly body: string;
+			}[];
+			readonly caption?: string;
+	  }
+	| {
+			readonly type: "compare";
+			readonly items: readonly {
+				readonly title: string;
+				readonly purpose: string;
+				readonly design: ProseParagraph;
+			}[];
+			readonly caption?: string;
+	  }
+	| {
+			readonly type: "questions";
+			readonly items: readonly string[];
+	  }
+	| {
+			readonly type: "sources";
+			readonly items: readonly {
+				readonly text: string;
+				readonly href: string;
+			}[];
+	  };
+
+type BlogPostBase = {
+	/** ISO date (YYYY-MM-DD), newest entries at the top of the list */
 	readonly date: string;
-	/** Body paragraphs. */
+};
+
+export type BlogShortPost = BlogPostBase & {
+	readonly kind?: "post";
+	/** URL segment under /blog/ */
+	readonly slug: string;
+	/** Optional heading on the post page and listing */
+	readonly title?: string;
 	readonly paragraphs: readonly string[];
 };
 
+export type BlogArticle = BlogPostBase & {
+	readonly kind: "article";
+	/** URL segment under /article/ */
+	readonly slug: string;
+	readonly title: string;
+	/** Short dek under the title */
+	readonly lede: string;
+	/** Series label, e.g. Patient guide */
+	readonly series?: string;
+	readonly blocks: readonly BlogArticleBlock[];
+};
+
+export type BlogPost = BlogShortPost | BlogArticle;
+
+export function isBlogArticle(post: BlogPost): post is BlogArticle {
+	return post.kind === "article";
+}
+
+export function articlePath(slug: string): string {
+	return `/article/${slug}`;
+}
+
+export function blogPostPath(slug: string): string {
+	return `/blog/${slug}`;
+}
+
 /**
- * Add new posts at the top of this list.
- * date: YYYY-MM-DD
- * paragraphs: one string per paragraph
+ * Add new entries at the top of this list.
+ * Posts: paragraphs only.
+ * Articles: slug + structured blocks; linked from /blog to /article/:slug
  */
 export const blogPosts: readonly BlogPost[] = [
 	{
+		date: "2026-11-07",
+		kind: "article",
+		slug: "what-are-personalised-cancer-vaccines",
+		title: "What are personalised cancer vaccines?",
+		lede: "How researchers use information from a person's tumour to design a vaccine for them.",
+		blocks: [
+			{
+				type: "heading",
+				text: "A vaccine made for one person",
+			},
+			{
+				type: "paragraph",
+				text: "A personalised cancer vaccine is a type of immunotherapy. Immunotherapy uses the immune system to help fight cancer. A personalised vaccine is designed around features of an individual's tumour, with the aim of helping their immune system recognise and attack cancer cells.",
+			},
+			{
+				type: "paragraph",
+				text: "Even two people with the same type of cancer can have tumours with different DNA changes. This means the targets selected for one person's vaccine may differ from those selected for another.",
+			},
+			{
+				type: "heading",
+				text: "What is a neoantigen?",
+			},
+			{
+				type: "paragraph",
+				text: "A change in a cancer cell's DNA can change one of the proteins the cell makes. The cell may display a tiny piece of that altered protein on its surface, like a label. An altered protein fragment that the immune system can recognise as new is called a neoantigen.",
+			},
+			{
+				type: "flow",
+				items: [
+					"DNA changes: a tumour cell carries a change in its genetic instructions.",
+					"Protein changes: the change can alter a protein the cell makes.",
+					"A fragment is shown: the cell may display a tiny piece of that altered protein.",
+				],
+				caption: "How a tumour change can create an immune target",
+			},
+			{
+				type: "heading",
+				text: "Where this fits in cancer care",
+			},
+			{
+				type: "paragraph",
+				text: "Personalised neoantigen vaccines are being studied as a way to treat cancer or reduce the chance of it returning after treatment.",
+			},
+			{
+				type: "heading",
+				text: "From tumour sample to follow up",
+			},
+			{
+				type: "paragraph",
+				text: "A typical research pathway is shown below. The exact tests, vaccine and schedule depend on the study.",
+			},
+			{
+				type: "steps",
+				items: [
+					{
+						title: "Collect tumour tissue",
+						body: "A biopsy or surgery provides tumour tissue. The team checks whether the sample is suitable for testing.",
+					},
+					{
+						title: "Profile tumour DNA and RNA",
+						body: "DNA tests look for changes in the tumour, often by comparing it with DNA from a blood sample. RNA tests can show which altered genetic instructions are being used.",
+					},
+					{
+						title: "Shortlist possible neoantigens",
+						body: "Computer programmes estimate which DNA changes could create pieces of protein that the person's immune system is likely to see. The predictions help researchers choose targets to study.",
+					},
+					{
+						title: "Design and make the vaccine",
+						body: "The team selects targets and makes an individual vaccine, for example using messenger RNA (mRNA) or short protein fragments. The batch undergoes quality checks.",
+					},
+					{
+						title: "Give the vaccine and look for immune activity",
+						body: "The vaccine aims to help immune cells show the selected fragments to T cells. Some T cells may then recognise cancer cells displaying the same fragments.",
+					},
+					{
+						title: "Monitor safety and cancer outcomes",
+						body: "The team checks for side effects and may use scans, blood tests and specialist assessments. Research tests may also look for a T cell response.",
+					},
+				],
+				caption: "Six steps in a personalised cancer vaccine study",
+			},
+			{
+				type: "heading",
+				text: "How researchers choose the targets",
+			},
+			{
+				type: "paragraph",
+				text: "A DNA change can generate several possible targets. Researchers look for evidence that the tumour uses the altered instructions. They also consider a person's HLA type. HLA molecules act like holders that display protein fragments on cell surfaces, where T cells can inspect them.",
+			},
+			{
+				type: "paragraph",
+				text: "A computer programme can estimate how well a fragment might fit the person's HLA molecules. This helps narrow the list. An immune response in a laboratory test and an improvement in a patient's cancer are separate outcomes, which researchers assess in different ways.",
+			},
+			{
+				type: "heading",
+				text: "How the vaccine carries the message",
+			},
+			{
+				type: "paragraph",
+				text: "mRNA vaccines carry temporary instructions that some cells can use to make the selected fragments. Peptide vaccines deliver manufactured protein fragments. Researchers are also studying dendritic cell vaccines, which use immune cells prepared to present selected targets.",
+			},
+			{
+				type: "paragraph",
+				text: "The aim is to build up T cells that can spot cancer cells carrying the selected targets. A vaccine can include several targets, giving T cells more than one feature to look for. Researchers are also studying how long these immune responses last.",
+			},
+			{
+				type: "heading",
+				text: "Two uses of vaccination",
+			},
+			{
+				type: "compare",
+				items: [
+					{
+						title: "Routine preventive vaccine",
+						purpose:
+							"Reduce the risk of an infection or illness it can cause.",
+						design: [
+							"A standard formulation for eligible groups. The ",
+							{
+								text: "HPV vaccine",
+								href: "https://www.nhs.uk/vaccinations/hpv-vaccine/",
+							},
+							" helps protect against infections that can cause several cancers.",
+						],
+					},
+					{
+						title: "Personalised cancer vaccine",
+						purpose:
+							"Help the immune system respond to cancer after diagnosis.",
+						design:
+							"A vaccine made using information from one person's tumour. Trials may test it after surgery or in people with active disease.",
+					},
+				],
+				caption: "Preventive vaccination and personalised cancer vaccination",
+			},
+			{
+				type: "heading",
+				text: "Which cancers are being studied?",
+			},
+			{
+				type: "paragraph",
+				text: "Researchers are investigating personalised vaccines in melanoma, lung, bowel, pancreatic and kidney cancers, as well as other solid tumours. Some trials start after surgery and ask whether the vaccine can help reduce the chance of the cancer returning. Others study advanced disease, sometimes alongside established treatments such as checkpoint inhibitors, which help immune cells stay active against cancer.",
+			},
+			{
+				type: "heading",
+				text: "What have trials found so far?",
+			},
+			{
+				type: "paragraph",
+				text: [
+					"Melanoma. In the phase 3 ",
+					{
+						text: "INTerpath-001",
+						href: "https://www.esmo.org/insights-by-esmo/all-news/first-positive-phase-iii-trial-data-for-an-individualised-mrna-based-neoantigen-therapy",
+					},
+					" trial, adding the personalised mRNA vaccine intismeran autogene to pembrolizumab after surgery for high risk melanoma improved the length of time people lived without the cancer returning, compared with pembrolizumab alone. These results apply to the group and treatment combination studied.",
+				],
+			},
+			{
+				type: "paragraph",
+				text: [
+					"Pancreatic cancer. A small early stage ",
+					{
+						text: "study of a personalised mRNA vaccine",
+						href: "https://www.nature.com/articles/s41586-023-06063-y",
+					},
+					" given as part of a combination regimen after surgery found a vaccine targeted T cell response in 8 of 16 people who received it. Larger controlled studies are needed to establish whether the vaccine improves cancer outcomes.",
+				],
+			},
+			{
+				type: "heading",
+				text: "What are the practical limits?",
+			},
+			{
+				type: "paragraph",
+				text: "Some tissue samples yield too little usable material. Some tumours have few suitable targets, and cancer cells can find ways to escape immune detection. Designing, making and checking each vaccine takes time. Trial teams consider whether this fits with the timing of other treatment.",
+			},
+			{
+				type: "paragraph",
+				text: "Side effects vary with the vaccine and any treatments given alongside it. Examples can include a sore injection site, fatigue or fever. Checkpoint inhibitors can also cause immune related side effects. The study team explains the expected risks, how side effects are monitored and who to contact if symptoms develop.",
+			},
+			{
+				type: "heading",
+				text: "How teams follow up",
+			},
+			{
+				type: "paragraph",
+				text: "Scans and clinical reviews help assess the cancer. In some studies, blood tests look for circulating tumour DNA (ctDNA), which consists of tiny pieces of DNA shed by cancer cells.",
+			},
+			{
+				type: "heading",
+				text: "Can I access a personalised cancer vaccine?",
+			},
+			{
+				type: "paragraph",
+				text: [
+					"Personalised neoantigen vaccines remain an emerging area of research. In England, the ",
+					{
+						text: "NHS Cancer Vaccine Launch Pad",
+						href: "https://www.england.nhs.uk/cancer/nhs-cancer-vaccine-launch-pad/",
+					},
+					" helps people receiving NHS cancer care to be assessed for possible referral to participating vaccine and immunotherapy trials. Referral is a step towards assessment by the trial team. Each study has its own eligibility criteria and recruitment status.",
+				],
+			},
+			{
+				type: "paragraph",
+				text: "Your oncology team can explain which trials may be relevant where you live in the UK. Eligibility can depend on the cancer type and stage, previous treatments, your general health and whether suitable tumour tissue is available. A trial may randomly assign participants to different treatment groups.",
+			},
+			{
+				type: "heading",
+				text: "Questions for your oncology team",
+			},
+			{
+				type: "questions",
+				items: [
+					"Is there a trial relevant to my cancer type and stage?",
+					"Could stored tissue be used, or would the study require a new biopsy?",
+					"How would study visits and vaccine preparation fit with my current care?",
+					"What are the possible side effects and how would they be monitored?",
+				],
+			},
+			{
+				type: "paragraph",
+				text: "As studies mature, researchers are working out who is most likely to benefit, which targets to choose, and how best to combine vaccines with existing treatments.",
+			},
+			{
+				type: "heading",
+				text: "About this guide",
+			},
+			{
+				type: "paragraph",
+				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team.",
+			},
+			{
+				type: "sources",
+				items: [
+					{
+						text: "NHS England. NHS Cancer Vaccine Launch Pad.",
+						href: "https://www.england.nhs.uk/cancer/nhs-cancer-vaccine-launch-pad/",
+					},
+					{
+						text: "ESMO Congress 2026. Phase 3 INTerpath-001 melanoma results.",
+						href: "https://www.esmo.org/insights-by-esmo/all-news/first-positive-phase-iii-trial-data-for-an-individualised-mrna-based-neoantigen-therapy",
+					},
+					{
+						text: "Rojas and colleagues, Nature (2023). Personalised RNA neoantigen vaccines in pancreatic cancer.",
+						href: "https://www.nature.com/articles/s41586-023-06063-y",
+					},
+					{
+						text: "NHS. HPV vaccine.",
+						href: "https://www.nhs.uk/vaccinations/hpv-vaccine/",
+					},
+				],
+			},
+		],
+	},
+	{
 		date: "2026-09-01",
+		slug: "colorectal-vaccine-trial-more-than-cold-tumours",
+		title: "A colorectal vaccine trial is about more than cold tumours",
 		paragraphs: [
 			"The BioNTech/Roche decision to terminate their colorectal cancer vaccine trial last week is being framed simply as evidence that “colorectal cancer is a cold tumour.”",
 			"As an oncologist, I think the driving factors are more complicated.",
@@ -783,6 +1114,8 @@ export const blogPosts: readonly BlogPost[] = [
 	},
 	{
 		date: "2026-08-24",
+		slug: "merck-moderna-phase-iii-and-delivery-infrastructure",
+		title: "Positive Phase III data still need delivery infrastructure",
 		paragraphs: [
 			"Merck and Moderna’s recent positive Phase III readout marks an important step towards personalised cancer care. As a practising oncologist, it is encouraging to see this approach move closer to clinical practice.",
 			"Beyond a supportive regulatory environment, a key constraint is the infrastructure needed to deliver such treatments at scale. Manufacturing and distributing personalised vaccines for tens of thousands of patients will require a significant evolution of the healthcare ecosystem.",
@@ -790,12 +1123,39 @@ export const blogPosts: readonly BlogPost[] = [
 	},
 	{
 		date: "2026-08-12",
+		slug: "rare-tumours-and-personalised-vaccine-access",
+		title: "Rare tumours and access to personalised vaccines",
 		paragraphs: [
 			"Recently a fellow oncologist asked my advice about a patient with anaplastic thyroid cancer, a rare and highly aggressive form of cancer. They were exploring whether a personalised mRNA vaccine could be developed for their patient.",
 			"Only a handful of centres worldwide are currently capable of developing and administering such treatments. We need the clinical and manufacturing infrastructure, supported by appropriate ethical and regulatory frameworks, to ensure that patients with ultra-rare tumours have the opportunity to access them.",
 		],
 	},
 ];
+
+export function getBlogArticleBySlug(slug: string): BlogArticle | undefined {
+	return blogPosts.find(
+		(post): post is BlogArticle => isBlogArticle(post) && post.slug === slug,
+	);
+}
+
+export function getBlogArticles(): readonly BlogArticle[] {
+	return blogPosts.filter(isBlogArticle);
+}
+
+export function getBlogShortPostBySlug(
+	slug: string,
+): BlogShortPost | undefined {
+	return blogPosts.find(
+		(post): post is BlogShortPost =>
+			!isBlogArticle(post) && post.slug === slug,
+	);
+}
+
+export function getBlogShortPosts(): readonly BlogShortPost[] {
+	return blogPosts.filter(
+		(post): post is BlogShortPost => !isBlogArticle(post),
+	);
+}
 
 export const blog = {
 	intro:
