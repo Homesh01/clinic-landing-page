@@ -209,7 +209,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 								ok: false as const,
 								intent,
 								error:
-									"Automatic refund is temporarily unavailable. Your appointment was not cancelled — please contact the clinic team.",
+									"Automatic refund is temporarily unavailable. Your appointment was not cancelled, please contact the clinic team.",
 								email,
 								bookingRef,
 							},
@@ -259,7 +259,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 							{
 								ok: false as const,
 								intent,
-								error: `We could not process the Stripe refund (${refundError instanceof Error ? refundError.message : "unknown error"}). Your appointment was not cancelled — please contact the clinic team.`,
+								error: `We could not process the Stripe refund (${refundError instanceof Error ? refundError.message : "unknown error"}). Your appointment was not cancelled, please contact the clinic team.`,
 								email,
 								bookingRef,
 							},
@@ -520,7 +520,7 @@ export default function ManageBookingPage() {
 							<h2 className="mt-3 font-display text-3xl text-ink">
 								{cancelled.refundStatus === "refunded" ||
 								cancelled.refundStatus === "already_refunded"
-									? "Cancelled — refund started"
+									? "Cancelled, refund started"
 									: "Your appointment has been cancelled"}
 							</h2>
 							<p className="mt-3 text-ink-soft">
@@ -568,7 +568,7 @@ export default function ManageBookingPage() {
 							</p>
 							{rescheduled.pendingAuth ? (
 								<p className="mt-3 text-ink-soft">
-									This request is still pending insurer authorisation — please
+									This request is still pending insurer authorisation, please
 									do not attend until you receive confirmation.
 								</p>
 							) : null}

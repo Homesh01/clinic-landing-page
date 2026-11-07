@@ -9,7 +9,7 @@ export type ClinicStaffSession = {
 };
 
 /**
- * Staff session cookies must use a dedicated secret — never SITE_PASSWORD
+ * Staff session cookies must use a dedicated secret, never SITE_PASSWORD
  * (knowing the site password must not allow minting staff sessions).
  */
 function getStaffCookieSecret(env: Env | undefined): string | undefined {

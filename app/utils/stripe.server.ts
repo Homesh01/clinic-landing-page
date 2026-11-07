@@ -180,7 +180,7 @@ export async function createBookingCheckoutSession(input: {
 		"line_items[0][quantity]": "1",
 		"line_items[0][price_data][currency]": "gbp",
 		"line_items[0][price_data][unit_amount]": String(amount),
-		"line_items[0][price_data][product_data][name]": `Consultation — ${input.booking.type}`,
+		"line_items[0][price_data][product_data][name]": `Consultation: ${input.booking.type}`,
 		"line_items[0][price_data][product_data][description]": `${site.name} · ${input.booking.dateIso} ${input.booking.timeLabel} (UK time)`,
 		"payment_intent_data[description]": `${site.name} consultation (${input.booking.type})`,
 	};
@@ -546,7 +546,7 @@ export async function fulfillPaidCheckoutSession(input: {
 			paymentMethod: "self-pay",
 			stripeSessionId: session.id,
 			stripePaymentIntentId: paymentIntentId,
-			// Administrative payment marker only — free-text notes are not stored in Stripe.
+			// Administrative payment marker only, free-text notes are not stored in Stripe.
 			notes: "Payment: Self-pay",
 		});
 		await patchBookingPaymentDetails(calendarConfig, created.eventId, {
@@ -601,7 +601,7 @@ export async function fulfillPaidCheckoutSession(input: {
 		}
 
 		if (error instanceof BookingConflictError) {
-			// Brief retry — the winner may still be writing Stripe metadata.
+			// Brief retry, the winner may still be writing Stripe metadata.
 			await new Promise((resolve) => setTimeout(resolve, 800));
 			const again = await readFulfilledBooking(input.stripe, session.id);
 			if (again) {

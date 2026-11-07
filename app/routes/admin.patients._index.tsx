@@ -217,7 +217,7 @@ export default function ClinicPatientsPage() {
 			<PageHero
 				eyebrow="Admin"
 				title="Patient contacts"
-				summary="Name, address, email and telephone only — no clinical notes."
+				summary="Name, address, email and telephone only, no clinical notes."
 			/>
 
 			<section className="section-pad">

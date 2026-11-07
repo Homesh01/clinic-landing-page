@@ -11,8 +11,8 @@
     "trialContext": "Phase 1: surgery, atezolizumab (anti\u2013PD-L1), autogene cevumeran, mFOLFIRINOX; extended ~3.2-year median follow-up",
     "nRespondersWithVaccineTcells": 8,
     "nNonRespondersWithoutVaccineTcells": 8,
-    "source_note": "Aggregates from Nature supplemental source tables (MOESM5\u201315). De-identified published patient IDs. Not Personalised Cancer Care clinical data.",
-    "methodsNote": "Unlike the melanoma NeoVaxMI reanalysis (leave-one-out clone expansion and mutation-landscape tallies), this PDAC pass emphasises longevity kinetics: bootstrap CIs, Wilcoxon signed-rank on paired prime/boost half-lives, and Spearman correlation between peak clonal frequency and predicted lifespan."
+    "source_note": "Aggregates from Nature supplemental source tables (MOESM5 to 15). De identified published patient IDs. Not Personalised Cancer Care clinical data.",
+    "methodsNote": "This lab looks at how long vaccine trained T cell clones last after an mRNA neoantigen vaccine in pancreatic cancer. The figures compare the first dose with the booster, ask whether bigger early responses go with longer lasting clones, and show how many clones are still detectable years later."
   },
   "datasetLabel": "PDAC autogene cevumeran / Nature 2025 source data",
   "rawFolder": "data-analysis-raw/pancreatic",

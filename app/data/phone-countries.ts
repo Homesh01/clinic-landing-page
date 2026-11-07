@@ -6,7 +6,7 @@ export type PhoneCountry = {
 	dial: string;
 };
 
-/** Curated list for the booking form — UK first as clinic default. */
+/** Curated list for the booking form, UK first as clinic default. */
 export const PHONE_COUNTRIES: readonly PhoneCountry[] = [
 	{ iso: "GB", name: "United Kingdom", dial: "44" },
 	{ iso: "IE", name: "Ireland", dial: "353" },

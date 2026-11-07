@@ -1,10 +1,13 @@
 export const site = {
+	/** Patient-facing practice brand (hero identity). */
+	brand: "Personalised Cancer Care",
+	/** Named clinical lead; not the primary brand mark. */
 	name: "Dr Karen Sayal",
 	title: "Consultant Clinical Oncologist",
 	subtitle: "Translational AI Innovation Lead, UCLH",
 	/** Short brand line used in footers and secondary placements. */
 	brandLine:
-		"Clinical oncology, computational tools, and translational research for personalised cancer care.",
+		"Clinical oncology with a specialist team in data analysis and emerging technology, working toward more personalised cancer care.",
 	gmc: "7140353",
 	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
 	headshot: "/karen_sayal_image-nobg.png",
@@ -30,10 +33,6 @@ export const nav: readonly NavItem[] = [
 		label: "Research Analytics Lab",
 		children: [
 			{
-				to: "/research/neovaxmi-reanalysis",
-				label: "NeoVaxMI melanoma reanalysis",
-			},
-			{
 				to: "/research/pancreatic-reanalysis",
 				label: "PDAC vaccine reanalysis",
 			},
@@ -55,23 +54,38 @@ export const credentials = [
 	{
 		abbr: "MB BChir (Cantab)",
 		detail: "Gonville and Caius College, University of Cambridge",
+		href: "https://www.cam.ac.uk/",
+		logo: "/organisation-logos/cambridge.svg",
+		logoAlt: "University of Cambridge coat of arms",
 	},
 	{
 		abbr: "MRCP",
 		detail: "Member of the Royal College of Physicians",
+		href: "https://www.rcp.ac.uk/",
+		logo: "/organisation-logos/rcp.svg",
+		logoAlt: "Royal College of Physicians",
 	},
 	{
 		abbr: "FRCR",
 		detail: "Fellow of the Royal College of Radiologists",
+		href: "https://www.rcr.ac.uk/",
+		logo: "/organisation-logos/rcr.svg",
+		logoAlt: "Royal College of Radiologists",
 	},
 	{
 		abbr: "DPhil (Oxon)",
 		detail:
 			"University of Oxford / Oxford CRUK Cancer Centre; CRUK Clinical Research Training Fellowship",
+		href: "https://www.ox.ac.uk/",
+		logo: "/organisation-logos/oxford.svg",
+		logoAlt: "University of Oxford",
 	},
 	{
 		abbr: "GMC",
 		detail: `Registration No. ${site.gmc}`,
+		href: site.gmcVerifyUrl,
+		logo: "/organisation-logos/gmc.svg",
+		logoAlt: "General Medical Council",
 	},
 ] as const;
 
@@ -87,68 +101,114 @@ export const appointments = [
 	},
 ] as const;
 
-/** Homepage section: clinical practice + software spine + future offerings. */
+/** Homepage section: clinical practice, analytics team, and direction of travel. */
 export const homePlatform = {
-	eyebrow: "Practice & platform",
-	title: "Consultant oncology with a computational core",
+	eyebrow: "How we work",
+	title: "Clinic care with serious analytical depth",
 	lede:
-		"Patients see a consultant oncologist today. Alongside that sits an open Research Analytics Lab — interactive reanalyses of published neoantigen vaccine trials — and the groundwork for advanced diagnostics and personalised cancer vaccines.",
+		"Patients see a consultant oncologist, supported by specialists in data analysis and new technology. Alongside appointments we publish open work on neoantigen vaccine science, and we keep building the foundations for what comes next in personalised care.",
 	pillars: [
 		{
-			title: "Consultant-led care",
+			title: "Consultant care",
 			text: "Thyroid cancer and haematological malignancies, with clear plans, multidisciplinary coordination, and clinics across central London.",
 			to: "/consultations",
 			linkLabel: "View consultations",
 		},
 		{
-			title: "Research Analytics Lab",
-			text: "Open computational work on published trial data: NeoVaxMI melanoma immunology and PDAC mRNA vaccine clone longevity — methods you can inspect, not a black box.",
+			title: "Analytics and technology",
+			text: "A specialist team works with the clinic on data analysis and computational methods, including our Research Analytics Lab on published pancreatic mRNA neoantigen vaccine data.",
 			to: "/research/pancreatic-reanalysis",
-			linkLabel: "Open the lab",
+			linkLabel: "View the lab",
 		},
 		{
-			title: "Diagnostics & vaccines ahead",
-			text: "We are preparing the clinical and software pathways for advanced diagnostics and personalised cancer vaccines, so those offerings can sit naturally beside consultant care when they are ready for patients.",
+			title: "What we are building toward",
+			text: "We are preparing clinical and software pathways for advanced diagnostics and personalised cancer vaccines, so the practice is ready as those options mature.",
 			to: "/about",
 			linkLabel: "About the approach",
-		},
+		}
 	],
 } as const;
 
+/** Inline prose: plain string chunks or linked labels. */
+export type ProseLink = { readonly text: string; readonly href: string };
+export type ProseChunk = string | ProseLink;
+export type ProseParagraph = string | readonly ProseChunk[];
+
+export function isProseLink(chunk: ProseChunk): chunk is ProseLink {
+	return typeof chunk === "object" && "href" in chunk;
+}
+
 export const about = {
-	heroTitle: "A clinician building personalised oncology with technology enablement.",
+	heroTitle: "Personalised Cancer Care",
 	heroLede:
-		"Dr Karen Sayal is a Consultant Clinical Oncologist specialising in thyroid cancer and radiotherapy for haematological cancers. Alongside clinical practice, she leads translational AI research and develops analytical software for personalised therapy. The next generation of cancer care must embrace the latest AI advances to complement clinician lead decision making. Technology without clinician-led expertise makes mistakes.",
+		"A London consultant oncology practice for patients who want careful clinical care and a clear view of where personalised cancer treatment is heading. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and new technology. Tools help; clinical judgement still leads.",
 	sections: [
 		{
 			heading: "Where she practises",
 			paragraphs: [
-				"Dr Sayal sees patients at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, leading the development of AI-driven tools for personalised therapy, streamlined care delivery, and expanding the range of treatments available to patients.",
-			],
+				"Dr Sayal sees patients at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, developing AI tools for personalised therapy and improving how care is delivered.",
+			] satisfies readonly ProseParagraph[],
 		},
 		{
-			heading: "Clinical training & research",
+			heading: "Clinical training and research",
 			paragraphs: [
-				"Dr Sayal read medicine at Gonville and Caius College, University of Cambridge (MB BChir Cantab) and trained as a clinician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the Royal College of Radiologists (FRCR). She was the first NIHR-funded Academic Clinical Trainee in Clinical Oncology at the University of Oxford, and went on to complete a DPhil (Oxon) as a Cancer Research UK Clinical Research Training Fellow at the Oxford CRUK Cancer Centre.",
-				"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, techniques that map how individual cells within a tumour behave, and how they respond to treatment, including a research collaboration with the Broad Institute of MIT and Harvard.",
-			],
+				[
+					"Dr Sayal read medicine at ",
+					{ text: "Gonville and Caius College", href: "https://www.cai.cam.ac.uk/" },
+					", ",
+					{ text: "University of Cambridge", href: "https://www.cam.ac.uk/" },
+					" (MB BChir Cantab) and trained as a clinician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the ",
+					{
+						text: "Royal College of Radiologists",
+						href: "https://www.rcr.ac.uk/",
+					},
+					" (FRCR). She was the first NIHR funded Academic Clinical Trainee in Clinical Oncology at the ",
+					{ text: "University of Oxford", href: "https://www.ox.ac.uk/" },
+					", and went on to complete a DPhil (Oxon) as a ",
+					{
+						text: "Cancer Research UK",
+						href: "https://www.cancerresearchuk.org/",
+					},
+					" Clinical Research Training Fellow at the ",
+					{
+						text: "Oxford CRUK Cancer Centre",
+						href: "https://crukcentre.cancer.ox.ac.uk/",
+					},
+					".",
+				],
+				[
+					"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, methods that show how individual cells in a tumour behave and respond to treatment, including a research collaboration with the ",
+					{
+						text: "Broad Institute of MIT and Harvard",
+						href: "https://www.broadinstitute.org/",
+					},
+					".",
+				],
+			] satisfies readonly ProseParagraph[],
 		},
 		{
 			heading: "From research to industry AI",
 			paragraphs: [
-				"It was during her doctoral research that Dr Sayal taught herself linear algebra and statistical inference, the mathematical foundations of machine learning, a decision that shaped the next stage of her career. After her DPhil, she completed a postdoctoral fellowship in the AI division of GSK Pharmaceuticals, before being appointed Senior Director in AI Industrialised Clinical Development at Recursion Pharmaceuticals, a leading AI driven drug discovery company, where she led work applying artificial intelligence to accelerate clinical development and reduce its risk at scale.",
-			],
+				[
+					"During her doctorate she taught herself the mathematics behind machine learning. After her DPhil she completed a postdoctoral fellowship in the AI division of ",
+					{ text: "GSK Pharmaceuticals", href: "https://www.gsk.ai/" },
+					", then became Senior Director in AI Industrialised Clinical Development at ",
+					{ text: "Recursion Pharmaceuticals", href: "https://www.recursion.com/" },
+					", where she led work using artificial intelligence to speed up clinical development and reduce its risk.",
+				],
+			] satisfies readonly ProseParagraph[],
 		},
 		{
 			heading: "Bringing it together",
 			paragraphs: [
-				"Dr Sayal brings that experience directly into the care of her own patients. Because she is personally involved in developing and testing new AI driven technologies at UCLH, she can draw on firsthand knowledge of which emerging tools and treatments are genuinely ready to help, not simply what is already established practice, when she reviews a patient's scans, pathology and options. She continues to see and treat patients with thyroid cancer and haematological malignancies requiring radiotherapy throughout, with every treatment plan still built around the individual in front of her.",
-				"Personalised Cancer Care is therefore both a consultancy and a software-aware practice: clinical appointments today, research analytics in the open, and deliberate preparation for advanced diagnostics and personalised cancer vaccines as those modalities become appropriate to offer.",
-			],
+				"She brings that background into clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer and haematological cancers needing radiotherapy, with each plan built around the patient in front of her.",
+				"She does not do the computational work alone. Personalised Cancer Care has a specialist team for data analysis, software and evaluating new techniques, so clinical decisions stay grounded in evidence.",
+				"In short: consultations and treatment planning now, vaccine science analytics published openly, and careful preparation for advanced diagnostics and personalised cancer vaccines as those options become ready.",
+			] satisfies readonly ProseParagraph[],
 		},
 	],
 	belief:
-		"Technology and clinical expertise should work together to give every patient a treatment plan that is accurate, timely, and genuinely personal to them.",
+		"Good technology should support clinical expertise, so every patient gets a plan that is accurate, timely and personal.",
 	bottomCta:
 		"New patient reviews, second opinions, and ongoing monitoring appointments are available across HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic.",
 };
@@ -182,7 +242,7 @@ export const conditionsPage = {
 			{
 				title: "Continuity throughout treatment",
 				description:
-					"The same team follows your case from diagnosis through to follow-up care.",
+					"The same team follows your case from diagnosis through to follow up care.",
 			},
 		],
 	},
@@ -206,8 +266,8 @@ export const conditions = [
 			"Diagnosis and staging across all thyroid cancer types, including papillary, follicular, medullary and anaplastic, so you understand exactly what you are facing.",
 			"Radioactive iodine therapy, a treatment specific to thyroid cancer, planned around your individual case.",
 			"External beam radiotherapy, where this is the right option for your situation.",
-			"Systemic (medication-based) treatment, when appropriate.",
-			"Joined-up care with your endocrine surgeon and specialist nurses, so nothing falls between the gaps.",
+			"Systemic (medication based) treatment, when appropriate.",
+			"Joined up care with your endocrine surgeon and specialist nurses, so nothing falls between the gaps.",
 		],
 		whatToExpect: [
 			{
@@ -259,12 +319,12 @@ export const conditions = [
 export const consultationsPage = {
 	title: "Care built around you",
 	lede:
-		"Every patient's path is different. Whatever stage you are at, whether a new diagnosis, a second opinion, or ongoing monitoring, each appointment is designed to give you clarity, a clear range of treatment options, and a written plan you can return to — informed by specialist oncology and by ongoing work in analytics, diagnostics, and vaccine science.",
+		"Every patient arrives at a different stage. Whether you need a first plan, a second opinion or ongoing monitoring, the appointment should leave you with clear options and a written plan you can return to, shaped by specialist oncology and by our work in analytics, diagnostics and vaccine science.",
 	reassure: "You will always understand what is being recommended, and why.",
 	callout: {
-		title: "Ready to take the next step?",
+		title: "Ready for the next step?",
 		body:
-			"Book a consultation at a time that suits you, or speak with the clinic team about fees, insurance, and what to expect before your first visit.",
+			"Book a consultation when it suits you, or ask the clinic team about fees, insurance and what to expect before you come.",
 	},
 };
 
@@ -402,7 +462,7 @@ export const faqPage = {
 export const conferencesPage = {
 	title: "Selected talks and engagements",
 	lede:
-		"A record of invited talks, conference presentations, and advisory roles spanning clinical oncology, translational AI, and developments in cancer care.",
+		"Invited talks, conference presentations and advisory roles Dr Sayal has taken part in, across clinical oncology, translational AI and cancer care.",
 	sectionEyebrow: "Conferences & Presentations",
 } as const;
 
@@ -695,7 +755,7 @@ export const conferenceYearLabels: Record<number, string> = {
 };
 
 export type BlogPost = {
-	/** ISO date (YYYY-MM-DD) — newest posts should be added at the top of the list */
+	/** ISO date (YYYY-MM-DD), newest posts should be added at the top of the list */
 	readonly date: string;
 	/** Body paragraphs. */
 	readonly paragraphs: readonly string[];
@@ -739,12 +799,12 @@ export const blogPosts: readonly BlogPost[] = [
 
 export const blog = {
 	intro:
-		"Selected commentary and posts from Dr Sayal on oncology, translational AI, and developments in cancer care.",
+		"Short notes on oncology, translational AI and personalised cancer care, including diagnostics and vaccine treatments.",
 } as const;
 
 export const fees = {
 	intro:
-		"Dr Sayal accepts those funded through private medical insurance as well as self-funding patients. Self-pay consultation fees below apply to UK patients and are payable when you book online.",
+		"Dr Sayal accepts patients with private medical insurance and those who fund their own care. Self pay consultation fees below apply to UK patients and are payable when you book online.",
 	insurers:
 		"If you are using private medical insurance, you will need an authorisation code from your insurer before the appointment can be confirmed. The clinic checks the code, then bills your insurer.",
 	international:
@@ -755,7 +815,7 @@ export const fees = {
 		{ label: "New Patient Consultation", amount: "£350" },
 		{ label: "Second Opinion", amount: "£350" },
 		{ label: "Virtual Consultation", amount: "£350" },
-		{ label: "Follow-up / Monitoring", amount: "£250" },
+		{ label: "Follow up / Monitoring", amount: "£250" },
 	],
 };
 
@@ -800,7 +860,7 @@ export const contact = {
 export const booking = {
 	intro:
 		"Booking an appointment with Dr Sayal is simple. Choose an available time below via our secure form.",
-	note: "Times shown are free on the clinic calendar. Choose self-pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
+	note: "Times shown are free on the clinic calendar. Choose self pay to pay securely online when you book, or private insurance, where the clinic bills your insurer directly.",
 };
 
 export const privacyNotice = {
@@ -845,7 +905,7 @@ export const privacyNotice = {
 				"Records of administrative SMS messages sent to you through clinic tools, where applicable.",
 			],
 			closing: [
-				"Health information is particularly sensitive and receives additional protection under data-protection law.",
+				"Health information is particularly sensitive and receives additional protection under data protection law.",
 			],
 		},
 		{
@@ -860,7 +920,7 @@ export const privacyNotice = {
 				"Communicate with hospitals, GPs and other healthcare professionals involved in your care.",
 				"Arrange clinically appropriate investigations or referrals.",
 				"Issue invoices, liaise with insurers and administer payments.",
-				"Send administrative SMS messages where appropriate (for example appointment-related notices).",
+				"Send administrative SMS messages where appropriate (for example appointment related notices).",
 				"Meet applicable professional, legal and regulatory obligations.",
 				"Maintain the security and effective operation of our services.",
 			],
@@ -871,18 +931,18 @@ export const privacyNotice = {
 		{
 			heading: "4. Our lawful bases for processing",
 			paragraphs: [
-				"Under UK GDPR, we must have a lawful basis for using your personal information. Health information also requires an additional condition because it is special-category data.",
+				"Under UK GDPR, we must have a lawful basis for using your personal information. Health information also requires an additional condition because it is special category data.",
 				"In outline, we typically rely on the following Article 6 bases depending on the purpose:",
 			],
 			bullets: [
-				"Contract — arranging and providing consultations and related services you have requested.",
-				"Legal obligation — retaining or disclosing information where required by applicable law or regulation.",
-				"Legitimate interests — proportionate administration, security and related operational activities, balanced against your rights.",
-				"Consent — only where a particular activity genuinely requires consent.",
+				"Contract: arranging and providing consultations and related services you have requested.",
+				"Legal obligation: retaining or disclosing information where required by applicable law or regulation.",
+				"Legitimate interests: proportionate administration, security and related operational activities, balanced against your rights.",
+				"Consent: only where a particular activity genuinely requires consent.",
 			],
 			closing: [
 				"For health information, we also rely on the Article 9 UK GDPR healthcare condition: processing necessary for medical diagnosis, the provision of healthcare or treatment, or management of healthcare services, subject to applicable professional confidentiality safeguards.",
-				"Other lawful bases or conditions may apply in specific circumstances. The bases described above will be kept aligned with PCC’s approved lawful-bases assessment.",
+				"Other lawful bases or conditions may apply in specific circumstances. The bases described above will be kept aligned with PCC’s approved lawful bases assessment.",
 			],
 		},
 		{
@@ -907,7 +967,7 @@ export const privacyNotice = {
 			heading: "6. How we store and protect your information",
 			paragraphs: [
 				"PCC uses Google Workspace, including Gmail, Calendar and Drive, for aspects of patient correspondence, scheduling, administration and record-keeping.",
-				"The website is hosted on Cloudflare infrastructure. Online self-pay payments are processed by Stripe. Appointment booking uses Google Calendar. Authorised clinic staff may maintain a limited patient contact directory (name, postal address, email and telephone) in a Cloudflare D1 database used only for clinic administration.",
+				"The website is hosted on Cloudflare infrastructure. Online self pay payments are processed by Stripe. Appointment booking uses Google Calendar. Authorised clinic staff may maintain a limited patient contact directory (name, postal address, email and telephone) in a Cloudflare D1 database used only for clinic administration.",
 				"Where staff send administrative SMS messages through the clinic tools, message delivery is processed by Twilio. Message content and delivery metadata may be retained in the clinic systems as an audit record.",
 				"Google, Cloudflare, Stripe and Twilio provide services to PCC under their respective contractual terms. We use account authentication, access controls and other appropriate security measures to protect information.",
 				"Access to patient information is restricted according to professional and administrative responsibilities.",
@@ -928,8 +988,8 @@ export const privacyNotice = {
 			heading: "7. International transfers",
 			paragraphs: [
 				"Some technology providers, including Google, Cloudflare, Stripe and Twilio, may process information outside the United Kingdom.",
-				"Where personal information is transferred to a country without applicable UK adequacy protection, we rely on appropriate safeguards where required, such as contractual transfer mechanisms recognised under UK data-protection law.",
-				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses. Cloudflare, Stripe and Twilio publish their own UK GDPR / international-transfer documentation; PCC relies on the contractual arrangements applicable to its accounts.",
+				"Where personal information is transferred to a country without applicable UK adequacy protection, we rely on appropriate safeguards where required, such as contractual transfer mechanisms recognised under UK data protection law.",
+				"Google's contractual framework includes the UK International Data Transfer Addendum to the EU Standard Contractual Clauses. Cloudflare, Stripe and Twilio publish their own UK GDPR / international transfer documentation; PCC relies on the contractual arrangements applicable to its accounts.",
 				"You may contact us for further information about the safeguards relevant to your information.",
 			],
 		},
@@ -937,15 +997,15 @@ export const privacyNotice = {
 			heading: "8. How long we keep information",
 			paragraphs: [
 				"We retain personal information for periods appropriate to its purpose and in accordance with applicable legal, professional and regulatory requirements.",
-				"Cancer and oncology clinical records: PCC generally retains oncology records for 30 years from diagnosis, or 8 years after death, in accordance with relevant healthcare records-management guidance. This includes consultation notes, second opinions, diagnoses, treatment plans, prescribing records, investigation results, referrals and clinically relevant correspondence forming part of the oncology record.",
-				"Other adult clinical records: We apply the retention period appropriate to the relevant record category. The general adult health-record retention benchmark is 8 years.",
+				"Cancer and oncology clinical records: PCC generally retains oncology records for 30 years from diagnosis, or 8 years after death, in accordance with relevant healthcare records management guidance. This includes consultation notes, second opinions, diagnoses, treatment plans, prescribing records, investigation results, referrals and clinically relevant correspondence forming part of the oncology record.",
+				"Other adult clinical records: We apply the retention period appropriate to the relevant record category. The general adult health record retention benchmark is 8 years.",
 				"Administrative and financial records: Enquiries, appointment information, administrative correspondence, invoices, SMS audit records and financial records are retained for periods appropriate to their purpose and applicable legal, tax and accounting obligations.",
 				"Records held by other healthcare organisations: Where another healthcare organisation, such as HCA Healthcare UK, maintains the primary clinical record, that organisation is responsible for retaining its own records under its applicable policies.",
 				"At the end of the applicable retention period, PCC reviews whether continued retention is necessary for clinical, legal or regulatory reasons before securely deleting or otherwise disposing of the information.",
 			],
 		},
 		{
-			heading: "9. Your data-protection rights",
+			heading: "9. Your data protection rights",
 			paragraphs: [
 				"Depending on the circumstances, you may have the right to:",
 			],
@@ -961,7 +1021,7 @@ export const privacyNotice = {
 			closing: [
 				"These rights are not absolute. For example, we may need to retain clinical records to meet professional or legal obligations.",
 				"To exercise your rights, contact us using the details above.",
-				"We will respond in accordance with applicable data-protection law.",
+				"We will respond in accordance with applicable data protection law.",
 			],
 		},
 		{

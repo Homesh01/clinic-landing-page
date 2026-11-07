@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("Contact & locations"),
 		description:
-			"Contact Personalised Cancer Care — London clinic locations, fees, insurance, and how to reach the clinical team.",
+			"Contact Personalised Cancer Care, London clinic locations, fees, insurance, and how to reach the clinical team.",
 		path: "/contact",
 	});
 };

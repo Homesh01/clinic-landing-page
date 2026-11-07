@@ -87,9 +87,7 @@ function DesktopDropdown({
 							role="menuitem"
 							className={({ isActive }) =>
 								`block whitespace-nowrap px-4 py-2.5 transition-colors ${
-									isActive
-										? "bg-accent-soft"
-										: "hover:bg-mist/70"
+									isActive ? "bg-accent-soft" : "hover:bg-mist/70"
 								}`
 							}
 							onClick={() => setOpen(false)}

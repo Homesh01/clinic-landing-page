@@ -3,7 +3,7 @@ import { contact, faqPage, locations, site } from "~/data/content";
 export const SITE_ORIGIN = "https://personalisedcancercare.com";
 export const CLINIC_BRAND = "Personalised Cancer Care";
 export const CLINIC_TAGLINE =
-	"Private consultant oncology in London, with translational AI and research software for personalised cancer analytics — building toward advanced diagnostics and personalised cancer vaccines.";
+	"Private consultant oncology in London, with translational AI and open research on personalised cancer analytics, working toward advanced diagnostics and personalised cancer vaccines.";
 export const DEFAULT_OG_IMAGE = "/main-logo-1.png";
 
 const PUBLIC_PATHS = [
@@ -27,7 +27,7 @@ export function getPublicPaths(): readonly PublicPath[] {
 /** Browser tab / OG title: clinic brand is primary. */
 export function clinicPageTitle(section?: string): string {
 	if (!section) {
-		return `${CLINIC_BRAND} | Oncology care & translational AI`;
+		return `${CLINIC_BRAND} | Consultant oncology care`;
 	}
 	return `${section} | ${CLINIC_BRAND}`;
 }

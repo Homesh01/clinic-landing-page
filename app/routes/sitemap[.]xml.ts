@@ -4,7 +4,7 @@ import { getSitePassword } from "~/utils/site-auth.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
 	// While the site password gate is on, still publish a sitemap so Search Console
-	// can be prepared — but robots.txt disallows crawling until the gate is removed.
+	// can be prepared, but robots.txt disallows crawling until the gate is removed.
 	void getSitePassword(context.cloudflare.env);
 
 	const lastmod = new Date().toISOString().slice(0, 10);

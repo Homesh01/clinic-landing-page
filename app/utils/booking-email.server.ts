@@ -169,7 +169,7 @@ function buildConsultationIcs(input: {
 	const method = input.method ?? "REQUEST";
 	const sequence = input.sequence ?? 0;
 	const uid = `booking-${input.bookingRef.toLowerCase()}@${SITE_HOST}`;
-	const summary = `Consultation — ${input.type}`;
+	const summary = `Consultation: ${input.type}`;
 	const description = [
 		`Booking reference: ${input.bookingRef}`,
 		`Patient: ${input.name}`,
@@ -532,7 +532,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund). A <strong>consultation.ics</strong> file is attached — open it to add this appointment to your calendar.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund). A <strong>consultation.ics</strong> file is attached, open it to add this appointment to your calendar.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -822,7 +822,7 @@ export async function sendPatientBookingConfirmation(
 	const isInsurance = input.paymentMethod === "insurance";
 	const paymentLabel = "Payment";
 	const paymentValue = isInsurance
-		? `Private medical insurance${input.insurer ? ` (${input.insurer})` : ""} — pending authorisation check`
+		? `Private medical insurance${input.insurer ? ` (${input.insurer})` : ""}, pending authorisation check`
 		: "Self-pay (received)";
 	const paymentLine = isInsurance
 		? `Payment: Private medical insurance${input.insurer ? ` (${input.insurer})` : ""}. Pending authorisation check.`
@@ -1103,7 +1103,7 @@ export async function sendBookingRescheduledEmail(
 	const calendarLines = updateIcs
 		? [
 				"",
-				"This email updates your calendar invitation to the new time (same booking). Accept the update so the old time is replaced — do not keep both.",
+				"This email updates your calendar invitation to the new time (same booking). Accept the update so the old time is replaced, do not keep both.",
 				"If an older duplicate remains from a previous calendar file, delete that older entry.",
 			]
 		: [];
@@ -1190,7 +1190,7 @@ export async function sendBookingRescheduledEmail(
 				: []),
 		].join(""),
 		noteHtml: updateIcs
-			? `Accept the calendar update in this email so Google Calendar <strong>replaces</strong> the previous time (same booking — do not keep both). If an older duplicate remains, delete that older entry. To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
+			? `Accept the calendar update in this email so Google Calendar <strong>replaces</strong> the previous time (same booking, do not keep both). If an older duplicate remains, delete that older entry. To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`
 			: `To change or cancel again, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
 	});
@@ -1347,7 +1347,7 @@ export async function sendInsuranceBookingConfirmedEmail(
 					]
 				: []),
 		].join(""),
-		noteHtml: `A calendar file is attached — open <strong>consultation.ics</strong> to add this appointment. To change or cancel, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
+		noteHtml: `A calendar file is attached, open <strong>consultation.ics</strong> to add this appointment. To change or cancel, use <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a>.`,
 		primaryCta: { href: MANAGE_BOOKING_URL, label: "Manage booking" },
 	});
 

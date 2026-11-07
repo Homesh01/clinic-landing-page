@@ -61,8 +61,8 @@ function paymentLabel(booking: {
 }): string {
 	if (booking.paymentMethod === "insurance") {
 		return booking.pendingAuth
-			? "Insurance — pending authorisation"
-			: "Insurance — confirmed";
+			? "Insurance, pending authorisation"
+			: "Insurance, confirmed";
 	}
 	if (booking.paymentMethod === "self-pay") return "Self-pay (Stripe)";
 	return "Payment method unknown";
@@ -994,7 +994,7 @@ export default function ClinicBookingsPage() {
 							</p>
 							{rescheduled.pendingAuth ? (
 								<p className="mt-3 text-ink-soft">
-									Still pending insurer authorisation — confirmation calendar
+									Still pending insurer authorisation, confirmation calendar
 									file is sent once authorisation is confirmed.
 								</p>
 							) : null}
@@ -1013,7 +1013,7 @@ export default function ClinicBookingsPage() {
 							<h2 className="mt-3 font-display text-3xl text-ink">
 								{cancelled.refundStatus === "refunded" ||
 								cancelled.refundStatus === "already_refunded"
-									? "Booking cancelled — refund processed"
+									? "Booking cancelled, refund processed"
 									: "Booking cancelled"}
 							</h2>
 							<p className="mt-3 text-ink-soft">
@@ -1501,13 +1501,13 @@ export default function ClinicBookingsPage() {
 														<span>
 															Issue Stripe refund
 															{!stripeConfigured
-																? " (Stripe not configured — cancel without refund only)"
-																: " (optional — leave unchecked to cancel without refunding)"}
+																? " (Stripe not configured, cancel without refund only)"
+																: " (optional, leave unchecked to cancel without refunding)"}
 														</span>
 													</label>
 												) : (
 													<p className="text-sm text-ink-soft">
-														Insurance booking — no Stripe refund.
+														Insurance booking, no Stripe refund.
 													</p>
 												)}
 												{error && actionData?.intent === "cancel" ? (

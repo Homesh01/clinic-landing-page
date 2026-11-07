@@ -67,7 +67,7 @@ export async function getSitePasswordGateState(
 			persistable: true,
 		};
 	} catch {
-		// Table missing before migration — use environment default.
+		// Table missing before migration, use environment default.
 		return {
 			enabled: fallbackEnabled,
 			updatedAt: null,

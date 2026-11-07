@@ -31,34 +31,36 @@ export default function Index() {
 			<JsonLd data={[clinicJsonLd(), websiteJsonLd()]} />
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
-					<div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-						<div className="max-w-xl">
-							<p
-								className="font-display text-display-xl text-ink animate-fade-up"
+					<div className="grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16">
+						<div className="max-w-2xl">
+							<h1
+								className="font-display text-[clamp(2.35rem,4.2vw,3.85rem)] leading-[1.05] tracking-[-0.02em] text-ink animate-fade-up md:whitespace-nowrap"
 								style={{ animationDelay: "40ms" }}
 							>
-								{site.name}
-							</p>
-							<h1
+								{site.brand}
+							</h1>
+							<p
 								className="mt-4 font-display text-display-md font-semibold text-ink animate-fade-up"
 								style={{ animationDelay: "100ms" }}
 							>
-								{site.title}
-							</h1>
+								Consultant oncology care
+							</p>
 							<p
-								className="mt-2 text-[0.98rem] tracking-wide text-accent animate-fade-up"
+								className="mt-3 text-[0.98rem] tracking-wide text-accent animate-fade-up"
 								style={{ animationDelay: "130ms" }}
 							>
+								{site.title}
+								{" · "}
 								{site.subtitle}
 							</p>
 							<p
 								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
 								style={{ animationDelay: "160ms" }}
 							>
-								Clinician-led care in thyroid cancer and blood cancers, shaped
-								by computational oncology — open analytics on published vaccine
-								trial data, and a path toward advanced diagnostics and
-								personalised cancer vaccines.
+								Consultant care in thyroid cancer and blood cancers, with a
+								specialist team in data analysis and new technology, open work
+								on neoantigen vaccine science, and a clear focus on where
+								personalised cancer care is heading.
 							</p>
 							<div
 								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
@@ -67,11 +69,8 @@ export default function Index() {
 								<Link to="/book" className="btn-primary">
 									Book a consultation
 								</Link>
-								<Link
-									to="/research/neovaxmi-reanalysis"
-									className="btn-secondary"
-								>
-									Explore the Analytics Lab
+								<Link to="/about" className="btn-secondary">
+									About the approach
 								</Link>
 							</div>
 						</div>
@@ -95,11 +94,11 @@ export default function Index() {
 					<div className="max-w-2xl">
 						<p className="eyebrow">Areas of expertise</p>
 						<h2 className="mt-3 font-display text-display-md text-ink">
-							Focused oncology for complex pathways
+							Conditions we treat
 						</h2>
 						<p className="mt-4 text-lg text-ink-soft">
-							Care centred on clear diagnosis, careful planning, and
-							multidisciplinary collaboration across London clinics.
+							Clear diagnosis, careful planning, and joined up care across
+							London clinics.
 						</p>
 					</div>
 
@@ -129,21 +128,20 @@ export default function Index() {
 			<section className="border-y border-line bg-white section-pad">
 				<div className="site-container">
 					<div className="max-w-xl">
-						<div className="mb-5 h-px w-14 bg-accent" aria-hidden="true" />
 						<p className="eyebrow">Research Analytics Lab</p>
 						<h2 className="mt-3 font-display text-display-md text-ink">
-							Modernity you can inspect
+							Published vaccine science, examined in the open
 						</h2>
 						<p className="mt-4 text-lg leading-relaxed text-ink-soft">
-							Interactive reanalyses of published neoantigen vaccine trials —
-							clone kinetics, persistence, and classifiers — built as open
-							computational work beside consultant care.
+							We reanalyse published neoantigen vaccine trials so patients and
+							colleagues can see the methods: how long vaccine trained T cells
+							last, how they persist, and what early signals may mean.
 						</p>
 						<Link
 							to="/research/pancreatic-reanalysis"
 							className="link-underline mt-8"
 						>
-							Explore the Analytics Lab
+							View the Analytics Lab
 							<span aria-hidden="true">→</span>
 						</Link>
 					</div>
@@ -188,9 +186,9 @@ export default function Index() {
 							Clear next steps from the first appointment
 						</h2>
 						<p className="mt-4 max-w-xl text-lg text-ink-soft">
-							Whether you are seeking a new treatment plan, a second opinion,
-							or ongoing monitoring, each consultation is structured to give
-							you a written, actionable pathway.
+							Whether you need a new plan, a second opinion or ongoing
+							monitoring, each consultation should leave you with a clear
+							written next step.
 						</p>
 						<Link to="/consultations" className="link-underline mt-8">
 							View consultations &amp; services
@@ -222,8 +220,8 @@ export default function Index() {
 							{faqPage.title}
 						</h2>
 						<p className="mt-4 text-lg text-ink-soft">
-							Common questions about referrals, appointments, treatments, and
-							clinic locations — with clear answers before you book.
+							Common questions about referrals, appointments, treatments and
+							clinic locations, answered before you book.
 						</p>
 						<Link to="/faq" className="link-underline mt-8">
 							View all FAQs
@@ -239,11 +237,7 @@ export default function Index() {
 				body="View available slots and request a consultation at a time that suits you. Clinics at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic."
 				actions={[
 					{ label: "Book a consultation", to: "/book", variant: "primary" },
-					{
-						label: "Analytics Lab",
-						to: "/research/pancreatic-reanalysis",
-						variant: "outline",
-					},
+					{ label: "About the approach", to: "/about", variant: "outline" },
 				]}
 			/>
 		</>

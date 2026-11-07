@@ -6,7 +6,7 @@ Source of truth for visual and verbal identity across the website, emails, and p
 
 ## 1. Brand summary
 
-**Personalised Cancer Care** is the patient-facing practice brand for **Dr Karen Sayal**, Consultant Clinical Oncologist. The work sits at the intersection of specialist oncology (thyroid cancer; radiotherapy for haematological cancers) and carefully applied clinical AI/research experience. The brand should feel calm, precise, and clinically credible — like a trusted London consultant, not a wellness spa or a tech startup.
+**Personalised Cancer Care** is the patient-facing practice brand. **Dr Karen Sayal** is the named lead oncologist. The work sits at the intersection of specialist oncology (thyroid cancer; radiotherapy for haematological cancers) and carefully applied clinical AI/research experience. The brand should feel calm, precise, and clinically credible, like a trusted London practice, not a wellness spa or a tech startup.
 
 ---
 
@@ -14,11 +14,12 @@ Source of truth for visual and verbal identity across the website, emails, and p
 
 | Layer | Name | Role |
 | --- | --- | --- |
-| Clinician | Dr Karen Sayal | Hero-level identity on the website; expertise and trust |
-| Practice / bookings | Personalised Cancer Care | Clinic operations, emails, booking references |
-| Strapline | Consultant oncology care | Small uppercase supporting line under the wordmark |
+| Practice | Personalised Cancer Care | Hero-level identity on the website, emails, and bookings |
+| Clinical lead | Dr Karen Sayal | Named lead oncologist; trust and expertise without a multi-profile team |
+| Strapline | Consultant oncology care | Supporting line under the practice wordmark |
 
-- On branded surfaces, the clinician or practice name must be a **hero-level** signal — not only nav text.
+- On branded surfaces, the **practice name** must be the hero-level signal, not only nav text.
+- Name the clinical lead clearly (e.g. “Lead oncologist, Dr Karen Sayal”); do not invent other profiles.
 - Prefer British English (`organisation`, `authorisation`, UK date phrasing).
 
 ---
@@ -175,7 +176,7 @@ Virtual consultations: no physical location line; state “Virtual consultation�
 ## 10. Do / Don’t
 
 **Do**
-- Keep brand/clinician name prominent on first viewport of branded pages
+- Keep the practice name prominent on the first viewport; name the clinical lead clearly beneath
 - Use Cormorant + Source Sans 3 and the teal/ink/cream palette
 - Write in British English with a calm consultant tone
 - Leave whitespace; favour clarity over decoration

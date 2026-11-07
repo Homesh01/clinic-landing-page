@@ -1,4 +1,4 @@
-/** Crockford-ish alphabet — avoids I/O/0/1 for easier phone/email reading. */
+/** Crockford-ish alphabet, avoids I/O/0/1 for easier phone/email reading. */
 const REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const REF_BODY_RE = new RegExp(`^[${REF_ALPHABET}]{8}$`);
 

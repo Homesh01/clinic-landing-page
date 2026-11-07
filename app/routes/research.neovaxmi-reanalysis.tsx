@@ -1,5 +1,4 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
 import {
 	Bar,
@@ -284,13 +283,6 @@ export default function NeoVaxmiReanalysisPage() {
 						>
 							PMC12351686 ↗
 						</a>
-						{" · "}
-						<Link
-							to="/research/pancreatic-reanalysis"
-							className="font-medium text-accent hover:underline"
-						>
-							PDAC vaccine lab
-						</Link>
 					</p>
 				</div>
 			</PageHero>
@@ -692,7 +684,7 @@ export default function NeoVaxmiReanalysisPage() {
 							{ALL_NEOVAXMI_CLONES.length.toLocaleString()} ={" "}
 							{Math.round(NEOVAXMI_POSITIVE_RATE * 1000) / 10}% post-vaccine), so
 							prefer AUC and F1 over raw accuracy; class weighting is used.
-							Train/test is a random clone-level 75/25 split — patients appear in
+							Train/test is a random clone-level 75/25 split, patients appear in
 							both sides, so this is exploratory ranking, not a patient-held-out
 							prospective test.
 						</p>

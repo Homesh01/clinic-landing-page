@@ -30,10 +30,10 @@ const SLOT_MINUTES = 60;
 const AVAILABILITY_FRIDAYS = 4;
 
 /** Google Calendar event colour IDs (shared palette). */
-const CALENDAR_COLOR_PENDING = "6"; // tangerine — pending insurer auth
-const CALENDAR_COLOR_CONFIRMED = "7"; // peacock — confirmed
+const CALENDAR_COLOR_PENDING = "6"; // tangerine, pending insurer auth
+const CALENDAR_COLOR_CONFIRMED = "7"; // peacock, confirmed
 
-/** Fixed Friday slots — kept short so the diary does not look over-available. */
+/** Fixed Friday slots, kept short so the diary does not look over-available. */
 const BOOKABLE_SLOTS = [
 	{ hour: 10, minute: 30, label: "10:30" },
 	{ hour: 11, minute: 30, label: "11:30" },
@@ -470,7 +470,7 @@ export async function patchBookingPaymentDetails(
 	}
 
 	const description = existing.description ?? "";
-	// Keep Stripe ids in private props only — not in patient-visible description.
+	// Keep Stripe ids in private props only, not in patient-visible description.
 	const cleanedDescription = description
 		.split(/\n+/)
 		.map((line) => line.trim())
@@ -589,7 +589,9 @@ function managedBookingFromEvent(
 	const phone = parseDescriptionField(event.description, "Phone");
 	const type =
 		parseDescriptionField(event.description, "Consultation type") ||
-		event.summary?.replace(/^PENDING AUTH —\s*/i, "").replace(/^Consultation —\s*/i, "") ||
+		event.summary
+			?.replace(/^PENDING AUTH\s*[:—-]\s*/i, "")
+			.replace(/^Consultation\s*[:—,-]\s*/i, "") ||
 		"Consultation";
 	const privateProps = event.extendedProperties?.private ?? {};
 	const pendingAuth =
@@ -692,7 +694,7 @@ function buildEventDescription(input: {
 		input.appointmentFormat === "virtual"
 			? "Virtual consultation (Google Meet)"
 			: input.appointmentFormat === "in-person"
-				? "HCA UK at University College Hospital — 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
+				? "HCA UK at University College Hospital, 5th Floor UCH Macmillan Cancer Centre, Huntley Street, London, WC1E 6AG"
 				: null;
 	return [
 		`Booking ref: ${sanitizeCalendarLine(input.bookingRef)}`,
@@ -858,7 +860,7 @@ export async function createBookingEvent(
 		createQuery.set("conferenceDataVersion", "1");
 	}
 
-	// Clinic diary only — patients are notified via branded email + ICS (no Google
+	// Clinic diary only, patients are notified via branded email + ICS (no Google
 	// guest invite, so Gmail does not show Propose a new time).
 	const response = await fetch(
 		`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(config.calendarId)}/events?${createQuery}`,
@@ -870,7 +872,7 @@ export async function createBookingEvent(
 			},
 			body: JSON.stringify({
 				...(input.eventId ? { id: input.eventId } : {}),
-				summary: `${input.summaryPrefix ?? ""}${input.summaryPrefix ? " " : ""}Consultation — ${input.type}`.trim(),
+				summary: `${input.summaryPrefix ?? ""}${input.summaryPrefix ? " " : ""}Consultation: ${input.type}`.trim(),
 				description: buildEventDescription({
 					name: input.name,
 					email,
@@ -1121,7 +1123,7 @@ export async function findBookingByEmailAndRef(
 			: listed;
 		if (!managed) continue;
 		if (managed.email !== patientEmail) continue;
-		// Re-check after full fetch — list payloads can be incomplete/stale.
+		// Re-check after full fetch, list payloads can be incomplete/stale.
 		if (normalizeBookingRef(managed.bookingRef) !== bookingRef) continue;
 		matches.push(managed);
 	}
@@ -1374,8 +1376,8 @@ export async function confirmInsuranceBookingEvent(
 	}
 
 	const summary = (
-		existing.summary || `Consultation — ${managed.type}`
-	).replace(/^PENDING AUTH —\s*/i, "");
+		existing.summary || `Consultation: ${managed.type}`
+	).replace(/^PENDING AUTH\s*[:—-]\s*/i, "");
 	const nextSequence = managed.icsSequence + 1;
 	const privateProps: Record<string, string> = {
 		...(existing.extendedProperties?.private ?? {}),
@@ -1395,11 +1397,11 @@ export async function confirmInsuranceBookingEvent(
 	let description = (existing.description ?? "")
 		.replace(
 			/^Notes:\s*STATUS:\s*PENDING[^\n]*/im,
-			"Notes: STATUS: CONFIRMED — insurer authorisation verified",
+			"Notes: STATUS: CONFIRMED: insurer authorisation verified",
 		)
 		.replace(
-			/STATUS:\s*PENDING\s*—\s*do not see patient until authorisation code is verified/i,
-			"STATUS: CONFIRMED — insurer authorisation verified",
+			/STATUS:\s*PENDING\s*[:—-]\s*do not see patient until authorisation code is verified/i,
+			"STATUS: CONFIRMED: insurer authorisation verified",
 		);
 
 	const needsMeet =

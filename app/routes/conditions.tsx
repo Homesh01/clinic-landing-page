@@ -83,7 +83,7 @@ export default function ConditionsPage() {
 							<div>
 								<div className="mb-7">
 									<h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-										How Dr Sayal can help
+										How we can help
 									</h3>
 									<ul className="list-plain mt-4">
 										{condition.howWeHelp.map((item) => (

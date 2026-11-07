@@ -668,6 +668,6 @@
   "limitations": [
     "Lifespan values are kinetic-model extrapolations from the paper (some capped), not observed clone survival.",
     "Clone-level splits are not patient-grouped; clones from the same patient can appear in train and test.",
-    "n is small; a single hold-out AUC is unstable — prefer leave-one-out AUC on the page."
+    "n is small; a single hold-out AUC is unstable, prefer leave-one-out AUC on the page."
   ]
 }

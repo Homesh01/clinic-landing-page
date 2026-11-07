@@ -1,5 +1,4 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Link } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
 import {
 	Bar,
@@ -26,6 +25,7 @@ import {
 	CHART_INK,
 	CHART_LINE,
 	CHART_MUTED,
+	CHART_SERIES,
 	tooltipStyle,
 } from "~/components/research/chart-theme";
 import { PageHero } from "~/components/PageHero";
@@ -50,7 +50,7 @@ export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("PDAC vaccine reanalysis"),
 		description:
-			"Interactive reanalysis of published pancreatic cancer mRNA neoantigen vaccine source data (Nature 2025): clone longevity kinetics and a priming-phase classifier for long-lived clones.",
+			"Open reanalysis of published pancreatic cancer mRNA neoantigen vaccine data (Nature 2025): how long vaccine trained T cells last, and what early responses may tell us about durability.",
 		path: "/research/pancreatic-reanalysis",
 	});
 };
@@ -196,7 +196,7 @@ export default function PancreaticReanalysisPage() {
 				tone="lab"
 				eyebrow="Research Analytics Lab"
 				title="PDAC vaccine reanalysis"
-				summary="RNA neoantigen vaccines and long-lived CD8+ T cells in pancreatic cancer: clone half-life after prime versus boost, persistence years later, and a priming-phase model of longevity."
+				summary="How long vaccine trained T cells last after an mRNA neoantigen vaccine in pancreatic cancer, and what early responses may tell us about durability."
 				accent={`${paper.authors}, ${paper.journal} ${paper.year}`}
 			>
 				<div className="mt-5 max-w-2xl space-y-2 text-sm leading-relaxed text-ink-soft">
@@ -215,13 +215,6 @@ export default function PancreaticReanalysisPage() {
 						>
 							doi:{paper.doi} ↗
 						</a>
-						{" · "}
-						<Link
-							to="/research/neovaxmi-reanalysis"
-							className="font-medium text-accent hover:underline"
-						>
-							NeoVaxMI melanoma lab
-						</Link>
 					</p>
 				</div>
 			</PageHero>
@@ -235,7 +228,7 @@ export default function PancreaticReanalysisPage() {
 							hint={`vs ${paper.nNonRespondersWithoutVaccineTcells} without vaccine-induced T cells`}
 						/>
 						<Stat
-							label="Median post-boost half-life"
+							label="Median half life after boost"
 							value={`${Math.round(kinetics.boostHalfLifeDays.summary.median ?? 0)} d`}
 							hint={`95% bootstrap CI ${kinetics.boostHalfLifeDays.bootstrapMedianCI.ci95?.[0].toFixed(0)}–${kinetics.boostHalfLifeDays.bootstrapMedianCI.ci95?.[1].toFixed(0)} days`}
 						/>
@@ -256,19 +249,17 @@ export default function PancreaticReanalysisPage() {
 					</div>
 
 					<p className="max-w-3xl text-sm leading-relaxed text-ink-soft">
-						{paper.methodsNote} Half-lives and “lifespan” estimates come from
-						the paper’s kinetic fits (some values are capped); they are
-						extrapolations, not observed multi-decade survival of clones. Clone-level
-						tests treat clones as independent even though several come from the
-						same patient. The machine learning block asks whether priming-phase
-						kinetics alone can flag clones with above-median post-boost lifespan —
-						complementary to the melanoma lab’s peptide-pool expansion classifier.
+						{paper.methodsNote} Lifespan numbers are model estimates from the
+						published kinetics, not proof that every clone lasts for decades in
+						a patient. Several clones can come from the same person, so treat
+						clone tallies as educational rather than as independent patient
+						counts.
 					</p>
 
 					<ChartCard
-						title="Prime vs boost clone half-life"
+						title="Prime vs boost clone half life"
 						datasetLabel={DATASET}
-						explanation="Median estimated half-life of vaccine-tracked clones after priming versus after boosting, with 95% bootstrap confidence intervals on the clone-level medians. A Wilcoxon signed-rank test on paired clones (clone-level, not patient-level) supports longer half-lives after boost."
+						explanation="After the booster, vaccine tracked T cell clones tend to last much longer than after the first dose. That is one reason booster schedules matter for personalised cancer vaccines: the second hit helps the useful clones stick around."
 						chartRef={halfLifeRef}
 						onExportPng={() =>
 							exportSvgAsPng(halfLifeRef.current, "pdac-half-life.png")
@@ -286,7 +277,7 @@ export default function PancreaticReanalysisPage() {
 										<YAxis
 											tick={{ fill: CHART_MUTED, fontSize: 11 }}
 											label={{
-												value: "Median half-life (days)",
+												value: "Median half life (days)",
 												angle: -90,
 												position: "insideLeft",
 												fill: CHART_MUTED,
@@ -294,11 +285,17 @@ export default function PancreaticReanalysisPage() {
 											}}
 										/>
 										<Tooltip contentStyle={tooltipStyle} />
-										<Bar
-											dataKey="medianDays"
-											name="Median half-life"
-											fill={CHART_ACCENT}
-										>
+										<Bar dataKey="medianDays" name="Median half life">
+											{halfLifeBars.map((row) => (
+												<Cell
+													key={row.phase}
+													fill={
+														row.phase === "Prime"
+															? CHART_SERIES[0]
+															: CHART_SERIES[1]
+													}
+												/>
+											))}
 											<ErrorBar dataKey="error" width={6} stroke={CHART_INK} />
 										</Bar>
 									</BarChart>
@@ -306,17 +303,12 @@ export default function PancreaticReanalysisPage() {
 							</div>
 							<div className="space-y-3 text-sm text-ink-soft lg:col-span-2">
 								<p>
-									<span className="font-semibold text-ink">
-										Wilcoxon signed-rank
-									</span>{" "}
-									(boost − prime half-life): n={wilcoxon.n}, W={wilcoxon.W}, p≈
-									{formatP(wilcoxon.pApprox)}.
-								</p>
-								<p>
-									Prime median{" "}
-									{kinetics.primeHalfLifeDays.summary.median?.toFixed(1)} days
-									vs boost median{" "}
-									{kinetics.boostHalfLifeDays.summary.median?.toFixed(1)} days.
+									Prime median about{" "}
+									{kinetics.primeHalfLifeDays.summary.median?.toFixed(0)} days;
+									boost median about{" "}
+									{kinetics.boostHalfLifeDays.summary.median?.toFixed(0)} days.
+									The paired comparison supports a longer half life after boost
+									(p≈{formatP(wilcoxon.pApprox)}).
 								</p>
 							</div>
 						</div>
@@ -325,7 +317,7 @@ export default function PancreaticReanalysisPage() {
 					<ChartCard
 						title="Peak frequency vs estimated lifespan"
 						datasetLabel={DATASET}
-						explanation="Each point is a clone from the published kinetics table (sample shown; extreme capped estimates excluded from the plot). Horizontal axis is peak frequency during priming; vertical axis is model-estimated lifespan in years (post-boost when available, otherwise prime). Spearman ρ uses the same preference rule."
+						explanation="Each point is one vaccine tracked T cell clone. Clones that expand more strongly early on often have longer estimated lifespans later. For vaccine design, a strong early response is not only about short term control; it may also mark clones that endure."
 						chartRef={scatterRef}
 						onExportPng={() =>
 							exportSvgAsPng(scatterRef.current, "pdac-peak-vs-lifespan.png")
@@ -334,7 +326,9 @@ export default function PancreaticReanalysisPage() {
 						<div className="grid gap-6 lg:grid-cols-5">
 							<div className="h-80 lg:col-span-3">
 								<ResponsiveContainer width="100%" height="100%">
-									<ScatterChart margin={{ left: 8, right: 8, top: 8 }}>
+									<ScatterChart
+										margin={{ left: 12, right: 12, top: 12, bottom: 28 }}
+									>
 										<CartesianGrid stroke={CHART_LINE} />
 										<XAxis
 											type="number"
@@ -343,10 +337,10 @@ export default function PancreaticReanalysisPage() {
 											tick={{ fill: CHART_MUTED, fontSize: 11 }}
 											label={{
 												value: "Peak prime frequency (% of blood T cells)",
-												position: "insideBottom",
-												offset: -2,
+												position: "bottom",
+												offset: 8,
 												fill: CHART_MUTED,
-												fontSize: 11,
+												fontSize: 12,
 											}}
 										/>
 										<YAxis
@@ -362,33 +356,25 @@ export default function PancreaticReanalysisPage() {
 												fontSize: 11,
 											}}
 										/>
-										<ZAxis range={[40, 40]} />
+										<ZAxis range={[48, 48]} />
 										<Tooltip
 											cursor={{ strokeDasharray: "3 3" }}
 											contentStyle={tooltipStyle}
 										/>
-										<Scatter data={scatterPoints} fill={CHART_ACCENT} />
+										<Scatter data={scatterPoints} fill={CHART_SERIES[2]} />
 									</ScatterChart>
 								</ResponsiveContainer>
 							</div>
 							<div className="space-y-3 text-sm text-ink-soft lg:col-span-2">
 								<p>
-									<span className="font-semibold text-ink">Spearman ρ</span> ={" "}
-									{spearman.rho?.toFixed(3)} (n={spearman.n}, p≈
-									{formatP(spearman.pApprox)}).
+									Association strength (Spearman ρ) ≈{" "}
+									{spearman.rho?.toFixed(2)} across {spearman.n} clones
+									(p≈{formatP(spearman.pApprox)}).
 								</p>
 								<p>
-									Post-boost lifespan median{" "}
+									After boost, median estimated lifespan is about{" "}
 									{kinetics.boostLifespanYears.summary.median?.toFixed(1)} years
-									(95% CI{" "}
-									{kinetics.boostLifespanYears.bootstrapMedianCI.ci95?.[0].toFixed(
-										1,
-									)}
-									–
-									{kinetics.boostLifespanYears.bootstrapMedianCI.ci95?.[1].toFixed(
-										1,
-									)}
-									).
+									in this published sample.
 								</p>
 							</div>
 						</div>
@@ -397,7 +383,7 @@ export default function PancreaticReanalysisPage() {
 					<ChartCard
 						title="Clone persistence at last follow-up"
 						datasetLabel={DATASET}
-						explanation="For each responder with complete counts, the bar is the fraction of priming-expanded clones still detected at the last immunological blood draw (typically ~2–4 years after surgery)."
+						explanation="Years after treatment, a large share of the vaccine expanded clones can still be found in blood for many responders. That persistence is a practical signal that personalised vaccines can leave a durable immune footprint, not only a brief spike."
 						chartRef={persistRef}
 						onExportPng={() =>
 							exportSvgAsPng(persistRef.current, "pdac-persistence.png")
@@ -423,20 +409,23 @@ export default function PancreaticReanalysisPage() {
 										}}
 									/>
 									<Tooltip contentStyle={tooltipStyle} />
-									<Bar
-										dataKey="persistencePct"
-										name="Persistence %"
-										fill={CHART_INK}
-									/>
+									<Bar dataKey="persistencePct" name="Persistence %">
+										{persistenceBars.map((row, index) => (
+											<Cell
+												key={row.patientId}
+												fill={CHART_SERIES[index % CHART_SERIES.length]}
+											/>
+										))}
+									</Bar>
 								</BarChart>
 							</ResponsiveContainer>
 						</div>
 					</ChartCard>
 
 					<ChartCard
-						title="CloneTrack tissue origin"
+						title="Where vaccine tracked clones come from"
 						datasetLabel={DATASET}
-						explanation="Published origin tally for vaccine-tracked clones. Most are classified as de novo (not detected in pre-vaccination tumour, adjacent tissue, nodes, or blood)."
+						explanation="Most tracked clones look new after vaccination rather than copies of cells already sitting in the tumour or blood beforehand. That supports the idea that the vaccine helps raise fresh, useful T cell responses."
 						chartRef={originRef}
 						onExportPng={() =>
 							exportSvgAsPng(originRef.current, "pdac-origin.png")
@@ -458,8 +447,14 @@ export default function PancreaticReanalysisPage() {
 										tick={{ fill: CHART_MUTED, fontSize: 11 }}
 									/>
 									<Tooltip contentStyle={tooltipStyle} />
-									<Legend />
-									<Bar dataKey="clones" name="Clones" fill={CHART_ACCENT} />
+									<Bar dataKey="clones" name="Clones">
+										{originBars.map((row, index) => (
+											<Cell
+												key={row.label}
+												fill={CHART_SERIES[index % CHART_SERIES.length]}
+											/>
+										))}
+									</Bar>
 								</BarChart>
 							</ResponsiveContainer>
 						</div>
@@ -467,24 +462,18 @@ export default function PancreaticReanalysisPage() {
 
 					<section className="border border-line bg-white px-5 py-6 sm:px-6">
 						<h3 className="font-display text-xl text-ink sm:text-2xl">
-							Machine learning: long-lived clone classifier
+							Can early vaccine signals flag long lived clones?
 						</h3>
 						<p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-soft">
-							Logistic regression on {ALL_PDAC_CLONES.length} clones with both
-							prime and boost lifespan estimates. The label is whether
-							post-boost estimated lifespan is at or above the cohort median (
-							{PDAC_LONGEVITY_THRESHOLD.toFixed(1)} years). Features are only{" "}
-							{PDAC_FEATURE_KEYS.length} non-redundant priming-phase measures
-							(log peak frequency and prime half-life) — raw peak and prime
-							lifespan were dropped as near-collinear. Positive rate{" "}
-							{Math.round(PDAC_POSITIVE_RATE * 1000) / 10}%. Primary metric is
-							leave-one-clone-out AUC; the hold-out ROC below is illustrative
-							only (test n≈{mlTest.length}, so a single split can look
-							perfect by chance). Splits are clone-level, not patient-grouped.
+							A simple model uses only early (prime) measurements to ask which
+							clones later look long lived after the booster. The aim is
+							educational: can early vaccine biology hint at durability? The
+							leave one out score ({mlLoocv.auc}) is the more trustworthy summary;
+							the chart below is one small split for illustration.
 						</p>
 						<div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 							<Stat
-								label="Leave-one-out AUC"
+								label="Leave one out AUC"
 								value={mlLoocv.auc}
 								hint={`LOOCV F1 ${mlLoocv.f1} · acc ${mlLoocv.accuracy}`}
 							/>
@@ -522,7 +511,7 @@ export default function PancreaticReanalysisPage() {
 						<ChartCard
 							title="ROC on held-out clones"
 							datasetLabel={DATASET}
-							explanation="Illustrative ROC on one random 25% hold-out (small n). Prefer the leave-one-out AUC above for a stabler estimate. The marked point is your chosen decision threshold."
+							explanation="This chart is one small example split only. Prefer the leave one out score above for a fairer summary. The marked point is the decision threshold you set."
 							chartRef={rocRef}
 							onExportPng={() =>
 								exportSvgAsPng(rocRef.current, "pdac-ml-roc.png")
@@ -590,7 +579,7 @@ export default function PancreaticReanalysisPage() {
 						<ChartCard
 							title="Which priming features the model uses"
 							datasetLabel={DATASET}
-							explanation="Standardised logistic weights on the train split. Positive bars favour the long-lived (above-median post-boost estimated lifespan) label. With only two features, treat magnitudes as descriptive, not causal."
+							explanation="Bars show which early (prime) measures push the model toward calling a clone long lived after the booster. With only two inputs, treat the sizes as a guide, not as proof of cause."
 							chartRef={weightRef}
 							onExportPng={() =>
 								exportSvgAsPng(weightRef.current, "pdac-ml-weights.png")

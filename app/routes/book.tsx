@@ -98,7 +98,7 @@ function calendarNotesForBooking(input: {
 	const lines: string[] = [];
 	if (input.paymentMethod === "insurance") {
 		lines.push(
-			"STATUS: PENDING — do not see patient until authorisation code is verified",
+			"STATUS: PENDING: do not see patient until authorisation code is verified",
 		);
 		lines.push(
 			"Payment: Private medical insurance (verify authorisation, then bill insurer / share code with hospital)",
@@ -329,7 +329,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			const created = await createBookingEvent(config, {
 				...booking,
 				status: "tentative",
-				summaryPrefix: "PENDING AUTH —",
+				summaryPrefix: "PENDING AUTH:",
 				paymentMethod: "insurance",
 				notes: calendarNotesForBooking(booking),
 			});
@@ -539,11 +539,11 @@ export default function BookPage() {
 											(UK time){" "}
 											is pending until we verify your insurer authorisation
 											code. The clinic team will confirm the appointment once
-											that check is complete — please do not attend until you
+											that check is complete, please do not attend until you
 											receive confirmation.
 											{confirmed.emailSent
 												? " A message has been sent to the address you provided."
-												: " We could not send the email automatically — please contact the clinic if you need written confirmation."}
+												: " We could not send the email automatically, please contact the clinic if you need written confirmation."}
 										</>
 									) : (
 										<>
@@ -558,7 +558,7 @@ export default function BookPage() {
 											(UK time). Payment was received.
 											{confirmed.emailSent
 												? " A confirmation email has been sent to the address you provided."
-												: " We could not send the confirmation email automatically — please contact the clinic if you need written confirmation."}{" "}
+												: " We could not send the confirmation email automatically, please contact the clinic if you need written confirmation."}{" "}
 											The clinic team may follow up if anything further is
 											needed.
 										</>
@@ -598,7 +598,7 @@ export default function BookPage() {
 										role="status"
 									>
 										Payment was cancelled. Your appointment has not been booked
-										— you can choose a time and try again.
+										:  you can choose a time and try again.
 									</p>
 								) : null}
 
@@ -744,7 +744,7 @@ export default function BookPage() {
 												<p className="mt-4 text-sm leading-relaxed text-ink-muted">
 													Self-pay cancellations or changes must be made at least
 													48 hours before the appointment. Within that window,
-													online cancel and change are not available — contact
+													online cancel and change are not available, contact
 													the clinic team. Cancellations at least 48 hours before
 													receive an automatic full refund.
 												</p>
@@ -1154,7 +1154,7 @@ export default function BookPage() {
 												<p className="mt-1.5 text-sm text-ink-muted">
 													For insurance bookings, notes are stored on the clinic
 													calendar only. For self-pay, free-text notes are not
-													sent to the payment provider — email any additional
+													sent to the payment provider, email any additional
 													context to the clinic after booking if needed. Please
 													avoid including diagnoses or detailed medical history
 													here.

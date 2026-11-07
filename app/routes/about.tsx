@@ -4,15 +4,49 @@ import {
 	about,
 	appointments,
 	credentials,
+	isProseLink,
 	site,
+	type ProseParagraph,
 } from "~/data/content";
 import { buildPageMeta, clinicPageTitle } from "~/utils/seo";
+
+const externalLinkClass =
+	"text-accent underline-offset-2 transition-colors hover:text-accent-deep hover:underline";
+
+function ProseParagraphView({
+	paragraph,
+}: {
+	paragraph: ProseParagraph;
+}) {
+	if (typeof paragraph === "string") {
+		return <p>{paragraph}</p>;
+	}
+	return (
+		<p>
+			{paragraph.map((chunk, index) =>
+				typeof chunk === "string" ? (
+					<span key={index}>{chunk}</span>
+				) : isProseLink(chunk) ? (
+					<a
+						key={index}
+						href={chunk.href}
+						target="_blank"
+						rel="noreferrer"
+						className={externalLinkClass}
+					>
+						{chunk.text}
+					</a>
+				) : null,
+			)}
+		</p>
+	);
+}
 
 export const meta: MetaFunction = () => {
 	return buildPageMeta({
 		title: clinicPageTitle("About the clinic"),
 		description:
-			"About Personalised Cancer Care — consultant oncology in London led by Dr Karen Sayal, with translational AI and research software for personalised cancer analytics, diagnostics, and vaccines.",
+			"About Personalised Cancer Care: consultant oncology in London led by Dr Karen Sayal, with translational AI, research analytics, diagnostics and vaccine science.",
 		path: "/about",
 	});
 };
@@ -22,49 +56,37 @@ export default function AboutPage() {
 		<>
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
-					<div className="grid items-start gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
-						<div>
-							<p className="eyebrow animate-fade-up" style={{ animationDelay: "40ms" }}>
-								About
-							</p>
-							<h1
-								className="mt-3 max-w-2xl font-display text-display-lg text-ink animate-fade-up"
-								style={{ animationDelay: "100ms" }}
-							>
-								{about.heroTitle}
-							</h1>
-							<p
-								className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft animate-fade-up"
-								style={{ animationDelay: "160ms" }}
-							>
-								{about.heroLede}
-							</p>
-							<div
-								className="mt-8 animate-fade-up"
-								style={{ animationDelay: "220ms" }}
-							>
-								<button
-									type="button"
-									className="btn-secondary"
-									onClick={() => {
-										document
-											.getElementById("background")
-											?.scrollIntoView({ behavior: "smooth", block: "start" });
-									}}
-								>
-									Read her full background ↓
-								</button>
-							</div>
-						</div>
-						<div
-							className="mx-auto w-full max-w-xs animate-fade-up lg:max-w-none"
-							style={{ animationDelay: "180ms" }}
+					<div className="max-w-2xl">
+						<p className="eyebrow animate-fade-up" style={{ animationDelay: "40ms" }}>
+							About the practice
+						</p>
+						<h1
+							className="mt-3 font-display text-display-lg text-ink animate-fade-up"
+							style={{ animationDelay: "100ms" }}
 						>
-							<img
-								src={site.headshot}
-								alt={`Portrait of ${site.name}`}
-								className="headshot"
-							/>
+							{about.heroTitle}
+						</h1>
+						<p
+							className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
+							style={{ animationDelay: "160ms" }}
+						>
+							{about.heroLede}
+						</p>
+						<div
+							className="mt-8 animate-fade-up"
+							style={{ animationDelay: "220ms" }}
+						>
+							<button
+								type="button"
+								className="btn-secondary"
+								onClick={() => {
+									document
+										.getElementById("background")
+										?.scrollIntoView({ behavior: "smooth", block: "start" });
+								}}
+							>
+								Read {site.name}&apos;s background ↓
+							</button>
 						</div>
 					</div>
 				</div>
@@ -73,14 +95,20 @@ export default function AboutPage() {
 			<section id="background" className="scroll-mt-28 section-pad">
 				<div className="site-container grid gap-14 lg:grid-cols-[1.55fr_0.8fr]">
 					<div className="max-w-prose">
+						<h2 className="mb-10 font-display text-display-md text-ink">
+							About {site.name}
+						</h2>
 						{about.sections.map((section) => (
 							<section key={section.heading} className="mb-10 last:mb-0">
 								<h2 className="font-display text-2xl font-semibold text-ink">
 									{section.heading}
 								</h2>
 								<div className="prose-clinic mt-4">
-									{section.paragraphs.map((paragraph) => (
-										<p key={paragraph.slice(0, 48)}>{paragraph}</p>
+									{section.paragraphs.map((paragraph, index) => (
+										<ProseParagraphView
+											key={`${section.heading}-${index}`}
+											paragraph={paragraph}
+										/>
 									))}
 								</div>
 							</section>
@@ -104,15 +132,14 @@ export default function AboutPage() {
 							</div>
 						</div>
 
-						<div className="mt-8 border border-line border-l-2 border-l-accent bg-white px-6 py-6 sm:px-7">
-							<div className="mb-4 h-px w-12 bg-accent" aria-hidden="true" />
+						<div className="mt-8 border border-line bg-white px-6 py-6 sm:px-7">
 							<p className="eyebrow">Research Analytics Lab</p>
 							<p className="mt-3 font-display text-2xl text-ink sm:text-[1.65rem]">
-								Computational oncology in the open
+								Vaccine science you can inspect
 							</p>
 							<p className="mt-2 max-w-prose text-[0.97rem] text-ink-soft">
-								Interactive reanalyses of published neoantigen vaccine trial
-								data — methods you can inspect beside consultant care.
+								Open reanalyses of published neoantigen vaccine trial data,
+								sitting beside day to day consultant care.
 							</p>
 							<Link
 								to="/research/pancreatic-reanalysis"
@@ -138,16 +165,23 @@ export default function AboutPage() {
 												<>
 													Registration No.{" "}
 													<a
-														href={site.gmcVerifyUrl}
+														href={item.href}
 														target="_blank"
 														rel="noreferrer"
-														className="text-accent transition-colors hover:text-accent-deep"
+														className={externalLinkClass}
 													>
 														{site.gmc}
 													</a>
 												</>
 											) : (
-												item.detail
+												<a
+													href={item.href}
+													target="_blank"
+													rel="noreferrer"
+													className={externalLinkClass}
+												>
+													{item.detail}
+												</a>
 											)}
 										</p>
 									</li>

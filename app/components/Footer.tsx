@@ -5,15 +5,20 @@ export function Footer() {
 	return (
 		<footer className="border-t border-line bg-cream">
 			<div className="site-container section-pad !py-16">
-				<div className="grid gap-12 md:grid-cols-[1.4fr_1fr]">
+				<div className="grid gap-12 md:grid-cols-[1.4fr_1fr] md:gap-16">
 					<div>
-						<p className="font-display text-3xl text-ink">{site.name}</p>
-						<p className="mt-2 text-sm uppercase tracking-[0.16em] text-ink-muted">
-							{site.title}
+						<p className="font-display text-3xl text-ink">{site.brand}</p>
+						<p className="mt-4 max-w-md text-[0.98rem] leading-relaxed text-ink-soft">
+							{site.brandLine}
 						</p>
-						<p className="mt-1 text-sm text-accent">{site.subtitle}</p>
 						<p className="mt-5 max-w-md text-[0.98rem] text-ink-soft">
-							{site.brandLine} Clinics in central London.
+							<Link
+								to="/contact"
+								className="font-semibold text-accent-deep underline-offset-2 transition-colors hover:text-accent hover:underline"
+							>
+								Get in touch
+							</Link>{" "}
+							with any questions, or to arrange a consultation.
 						</p>
 					</div>
 
@@ -31,28 +36,33 @@ export function Footer() {
 									{contact.email}
 								</a>
 							</li>
-							<li className="text-sm italic text-ink-muted">
-								{contact.enquiriesNote}
+							<li className="text-sm text-ink-muted">{contact.enquiriesNote}</li>
+							<li className="pt-2 text-sm leading-relaxed text-ink-muted">
+								{locations[0].name}
 							</li>
 						</ul>
-						<p className="mt-6 text-sm text-ink-muted">
-							{locations[0].name}
-						</p>
 					</div>
 				</div>
 
 				<div className="mt-14 flex flex-col gap-3 border-t border-line pt-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
 					<p>
-						© {new Date().getFullYear()} {site.name}. All rights reserved.
+						© {new Date().getFullYear()} {site.brand}. All rights reserved.
 					</p>
-					<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+					<div className="flex flex-wrap items-center gap-x-5 gap-y-2">
 						<Link
 							to={privacyNotice.path}
 							className="transition-colors hover:text-accent"
 						>
 							Patient Privacy Notice
 						</Link>
-						<p>GMC Registration No. {site.gmc}</p>
+						<a
+							href={site.gmcVerifyUrl}
+							target="_blank"
+							rel="noreferrer"
+							className="transition-colors hover:text-accent"
+						>
+							GMC {site.gmc}
+						</a>
 					</div>
 				</div>
 			</div>
