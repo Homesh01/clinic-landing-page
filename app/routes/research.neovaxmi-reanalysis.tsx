@@ -728,7 +728,7 @@ export default function NeoVaxmiReanalysisPage() {
 						<ChartCard
 							title="ROC curve on held out clones"
 							datasetLabel={DATASET}
-							explanation="This curve shows how well the model separates post vaccine clones from earlier clones as we change the decision threshold. The marked point is the threshold you set above, and a higher AUC means better ranking than chance."
+							explanation="In plain terms: can lab expansion features tell vaccine raised clones apart from earlier ones? A curve above the diagonal means yes, better than chance. The marked point is the threshold you set above; a higher AUC means stronger separation in this published dataset."
 							chartRef={rocRef}
 							onExportPng={() =>
 								exportSvgAsPng(rocRef.current, "neovaxmi-ml-roc.png")
@@ -835,7 +835,7 @@ export default function NeoVaxmiReanalysisPage() {
 					<ChartCard
 						title="Leave one patient out: can mutation burden predict vaccine TCR expansion?"
 						datasetLabel={DATASET}
-						explanation={`LOO means leave one patient out: for each patient we train on the others, then predict their post vaccine T cell expansion from coding mutations and neoantigen proxy counts (n=${patientMl.n}). Points near the diagonal are better predictions; with so few patients this is exploratory only (correlation ${patientMl.corr ?? "n/a"}, mean absolute error ${patientMl.mae ?? "n/a"}).`}
+						explanation={`Each point asks: if we hide one patient and train on the rest, how well do tumour mutation counts predict that patient's post vaccine T cell expansion (n=${patientMl.n})? Points nearer the diagonal are closer predictions. With so few patients this is exploratory only (correlation ${patientMl.corr ?? "n/a"}, mean absolute error ${patientMl.mae ?? "n/a"}).`}
 						chartRef={loocvRef}
 						onExportPng={() =>
 							exportSvgAsPng(loocvRef.current, "neovaxmi-ml-loocv.png")

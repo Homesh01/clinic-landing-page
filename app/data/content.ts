@@ -5,9 +5,6 @@ export const site = {
 	name: "Dr Karen Sayal",
 	title: "Consultant Clinical Oncologist",
 	subtitle: "Translational AI Innovation Lead, UCLH",
-	/** Short brand line used in footers and secondary placements. */
-	brandLine:
-		"Clinical oncology with a specialist team in data analysis and emerging technology, working toward more personalised cancer care.",
 	gmc: "7140353",
 	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
 	headshot: "/karen_sayal_image-nobg.png",
@@ -104,9 +101,9 @@ export const appointments = [
 /** Homepage section: clinical practice, analytics team, and direction of travel. */
 export const homePlatform = {
 	eyebrow: "How we work",
-	title: "Clinic care with serious analytical depth",
+	title: "Clinical care with serious analytical depth",
 	lede:
-		"Patients see a consultant oncologist, supported by specialists in data analysis and new technology. Alongside appointments we publish open work on neoantigen vaccine science, and we keep building the foundations for what comes next in personalised care.",
+		"Patients see a consultant oncologist, supported by specialists in data analysis and computational methods. Clinical judgement leads the plan; careful analysis helps keep decisions clear, timely and grounded in evidence.",
 	pillars: [
 		{
 			title: "Consultant care",
@@ -115,14 +112,14 @@ export const homePlatform = {
 			linkLabel: "View consultations",
 		},
 		{
-			title: "Analytics and technology",
-			text: "A specialist team works with the clinic on data analysis and computational methods, including our Research Analytics Lab on published pancreatic mRNA neoantigen vaccine data.",
+			title: "Analytics and methods",
+			text: "A specialist team works with the clinic on data analysis and computational methods, including our Research Analytics Lab on published neoantigen vaccine trials.",
 			to: "/research/pancreatic-reanalysis",
 			linkLabel: "View the lab",
 		},
 		{
 			title: "What we are building toward",
-			text: "We are preparing clinical and software pathways for advanced diagnostics and personalised cancer vaccines, so the practice is ready as those options mature.",
+			text: "We are preparing clinical and software pathways for advanced diagnostics and personalised cancer vaccines, so the practice is ready as these options mature.",
 			to: "/about",
 			linkLabel: "About the approach",
 		}
@@ -141,7 +138,7 @@ export function isProseLink(chunk: ProseChunk): chunk is ProseLink {
 export const about = {
 	heroTitle: "Personalised Cancer Care",
 	heroLede:
-		"A London consultant oncology practice for patients who want careful clinical care and a clear view of where personalised cancer treatment is heading. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and new technology. Tools help; clinical judgement still leads.",
+		"A London consultant oncology practice for patients who want careful clinical care and a clear view of where personalised cancer treatment is heading. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and computational methods.",
 	sections: [
 		{
 			heading: "Where she practises",
@@ -201,7 +198,7 @@ export const about = {
 		{
 			heading: "Bringing it together",
 			paragraphs: [
-				"She brings that background into clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer and haematological cancers needing radiotherapy, with each plan built around the patient in front of her.",
+				"She brings that background into clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer, haematological cancers needing radiotherapy, and selected neuroendocrine tumours, with each plan built around the patient in front of her.",
 				"She does not do the computational work alone. Personalised Cancer Care has a specialist team for data analysis, software and evaluating new techniques, so clinical decisions stay grounded in evidence.",
 				"In short: consultations and treatment planning now, vaccine science analytics published openly, and careful preparation for advanced diagnostics and personalised cancer vaccines as those options become ready.",
 			] satisfies readonly ProseParagraph[],
@@ -313,6 +310,35 @@ export const conditions = [
 			},
 		],
 		ctaLabel: "Ask about radiotherapy for blood cancers",
+	},
+	{
+		slug: "neuroendocrine-tumours",
+		title: "Neuroendocrine Tumours, Phaeochromocytoma & Paraganglioma",
+		summary:
+			"Assessment and lutetium DOTATATE therapy for neuroendocrine tumours, phaeochromocytoma and paraganglioma.",
+		body: "Dr Sayal assesses and treats selected neuroendocrine tumours, phaeochromocytomas and paragangliomas, including planning lutetium DOTATATE therapy when tumours carry somatostatin receptors, in close collaboration with endocrinology, surgery and nuclear medicine.",
+		plain:
+			"Neuroendocrine tumours (NETs) are uncommon tumours that start in hormone producing cells. They most often occur in the bowel, pancreas or lungs. Phaeochromocytomas and paragangliomas are related tumours that develop in the adrenal glands or nerve tissue, and they can produce excess adrenaline type hormones. Many of these tumours grow slowly. Some can be treated with targeted radioactive medicines that seek out the tumour cells wherever they are in the body.",
+		howWeHelp: [
+			"Lutetium (¹⁷⁷Lu) DOTATATE therapy: a targeted treatment for tumours that carry somatostatin receptors on their surface. It is given as a drip and delivers radiation directly to tumour cells.",
+			"Checking whether this treatment is right for you: a specialist scan shows whether your tumour will take up the treatment before anything is planned.",
+			"Joined up care with your wider team: your endocrinologist, surgeon, nuclear medicine physicians and specialist nurses, so that hormone symptoms, blood pressure and your other treatments are all managed together.",
+		],
+		whatToExpect: [
+			{
+				title: "An assessment appointment",
+				text: "we review your scans and blood tests to see if radioisotope therapy suits you.",
+			},
+			{
+				title: "Preparation",
+				text: "blood tests, a check of your medicines and, if you need it, blood pressure control before treatment.",
+			},
+			{
+				title: "Treatment and follow up",
+				text: "a course of treatments given as a drip, with regular blood tests and scans to check your response.",
+			},
+		],
+		ctaLabel: "Ask about neuroendocrine tumour care",
 	},
 ] as const;
 
@@ -427,7 +453,7 @@ export const faqPage = {
 				{
 					question: "What conditions does Dr Sayal treat?",
 					answer:
-						"Dr Sayal specialises in thyroid cancer and haematological malignancies, including lymphoma, leukaemia, and myeloma. Each patient is treated with the combination of diagnostics, radiotherapy, and systemic therapy best suited to them, as part of a multidisciplinary team.",
+						"Dr Sayal specialises in thyroid cancer, haematological malignancies including lymphoma, leukaemia and myeloma, and selected neuroendocrine tumours, phaeochromocytoma and paraganglioma. Each patient is treated with the combination of diagnostics, radiotherapy, systemic therapy and, where suitable, targeted radioisotope therapy best suited to them, as part of a multidisciplinary team.",
 				},
 				{
 					question: "Can I request a second opinion?",
@@ -885,44 +911,6 @@ export const blogPosts: readonly BlogPost[] = [
 			},
 			{
 				type: "heading",
-				text: "From tumour sample to follow up",
-			},
-			{
-				type: "paragraph",
-				text: "A typical research pathway is shown below. The exact tests, vaccine and schedule depend on the study.",
-			},
-			{
-				type: "steps",
-				items: [
-					{
-						title: "Collect tumour tissue",
-						body: "A biopsy or surgery provides tumour tissue. The team checks whether the sample is suitable for testing.",
-					},
-					{
-						title: "Profile tumour DNA and RNA",
-						body: "DNA tests look for changes in the tumour, often by comparing it with DNA from a blood sample. RNA tests can show which altered genetic instructions are being used.",
-					},
-					{
-						title: "Shortlist possible neoantigens",
-						body: "Computer programmes estimate which DNA changes could create pieces of protein that the person's immune system is likely to see. The predictions help researchers choose targets to study.",
-					},
-					{
-						title: "Design and make the vaccine",
-						body: "The team selects targets and makes an individual vaccine, for example using messenger RNA (mRNA) or short protein fragments. The batch undergoes quality checks.",
-					},
-					{
-						title: "Give the vaccine and look for immune activity",
-						body: "The vaccine aims to help immune cells show the selected fragments to T cells. Some T cells may then recognise cancer cells displaying the same fragments.",
-					},
-					{
-						title: "Monitor safety and cancer outcomes",
-						body: "The team checks for side effects and may use scans, blood tests and specialist assessments. Research tests may also look for a T cell response.",
-					},
-				],
-				caption: "Six steps in a personalised cancer vaccine study",
-			},
-			{
-				type: "heading",
 				text: "How researchers choose the targets",
 			},
 			{
@@ -1020,14 +1008,6 @@ export const blogPosts: readonly BlogPost[] = [
 			{
 				type: "paragraph",
 				text: "Side effects vary with the vaccine and any treatments given alongside it. Examples can include a sore injection site, fatigue or fever. Checkpoint inhibitors can also cause immune related side effects. The study team explains the expected risks, how side effects are monitored and who to contact if symptoms develop.",
-			},
-			{
-				type: "heading",
-				text: "How teams follow up",
-			},
-			{
-				type: "paragraph",
-				text: "Scans and clinical reviews help assess the cancer. In some studies, blood tests look for circulating tumour DNA (ctDNA), which consists of tiny pieces of DNA shed by cancer cells.",
 			},
 			{
 				type: "heading",

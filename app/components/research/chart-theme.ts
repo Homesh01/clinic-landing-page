@@ -10,6 +10,10 @@ export const CHART_SERIES = [
 	"#5B7F5A",
 	"#8B4D6B",
 	"#3D6B8A",
+	"#B85C38",
+	"#4A7C59",
+	"#6B5B95",
+	"#D4A017",
 ] as const;
 
 export const tooltipStyle = {

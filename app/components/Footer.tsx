@@ -8,9 +8,6 @@ export function Footer() {
 				<div className="grid gap-12 md:grid-cols-[1.4fr_1fr] md:gap-16">
 					<div>
 						<p className="font-display text-3xl text-ink">{site.brand}</p>
-						<p className="mt-4 max-w-md text-[0.98rem] leading-relaxed text-ink-soft">
-							{site.brandLine}
-						</p>
 						<p className="mt-5 max-w-md text-[0.98rem] text-ink-soft">
 							<Link
 								to="/contact"

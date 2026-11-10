@@ -6,7 +6,6 @@ import {
 	conditions,
 	faqPage,
 	homePlatform,
-	services,
 	site,
 } from "~/data/content";
 import {
@@ -57,10 +56,11 @@ export default function Index() {
 								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
 								style={{ animationDelay: "160ms" }}
 							>
-								Consultant care in thyroid cancer and blood cancers, with a
-								specialist team in data analysis and new technology, open work
-								on neoantigen vaccine science, and a clear focus on where
-								personalised cancer care is heading.
+								Consultant care in thyroid cancer, blood cancers and selected
+								neuroendocrine tumours, with a specialist team in data analysis
+								and computational methods. Open work on neoantigen vaccine
+								science, and a clear focus on where personalised cancer care is
+								heading.
 							</p>
 							<div
 								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
@@ -102,6 +102,24 @@ export default function Index() {
 						</p>
 					</div>
 
+					<article className="mt-14 border-t border-accent/40 pt-8">
+						<p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-accent">
+							Consultations
+						</p>
+						<h3 className="mt-3 font-display text-3xl text-ink">
+							Clear next steps from the first appointment
+						</h3>
+						<p className="mt-4 max-w-2xl text-ink-soft">
+							Whether you need a new plan, a second opinion or ongoing
+							monitoring, each consultation should leave you with a clear
+							written next step.
+						</p>
+						<Link to="/consultations" className="link-underline mt-6">
+							View consultations &amp; services
+							<span aria-hidden="true">→</span>
+						</Link>
+					</article>
+
 					<div className="mt-14 grid gap-12 md:grid-cols-2">
 						{conditions.map((condition) => (
 							<article
@@ -133,9 +151,8 @@ export default function Index() {
 							Published vaccine science, examined in the open
 						</h2>
 						<p className="mt-4 text-lg leading-relaxed text-ink-soft">
-							We reanalyse published neoantigen vaccine trials so patients and
-							colleagues can see the methods: how long vaccine trained T cells
-							last, how they persist, and what early signals may mean.
+							We reanalyse published neoantigen vaccine trials in the open, so
+							patients and colleagues can inspect the methods and findings.
 						</p>
 						<Link
 							to="/research/pancreatic-reanalysis"
@@ -175,40 +192,6 @@ export default function Index() {
 							</article>
 						))}
 					</div>
-				</div>
-			</section>
-
-			<section className="section-pad">
-				<div className="site-container grid items-end gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-					<div>
-						<p className="eyebrow">Consultations</p>
-						<h2 className="mt-3 font-display text-display-md text-ink">
-							Clear next steps from the first appointment
-						</h2>
-						<p className="mt-4 max-w-xl text-lg text-ink-soft">
-							Whether you need a new plan, a second opinion or ongoing
-							monitoring, each consultation should leave you with a clear
-							written next step.
-						</p>
-						<Link to="/consultations" className="link-underline mt-8">
-							View consultations &amp; services
-							<span aria-hidden="true">→</span>
-						</Link>
-					</div>
-
-					<ul className="space-y-4">
-						{services.slice(0, 4).map((service) => (
-							<li
-								key={service.title}
-								className="border-l-2 border-accent/30 pl-5"
-							>
-								<p className="font-semibold text-ink">{service.title}</p>
-								<p className="mt-1 text-[0.98rem] text-ink-muted">
-									{service.description}
-								</p>
-							</li>
-						))}
-					</ul>
 				</div>
 			</section>
 

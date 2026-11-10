@@ -141,8 +141,16 @@ export default function PancreaticReanalysisPage() {
 
 	const originBars = useMemo(() => {
 		const counts = persistence.tissueOrigin.cloneTrackOriginCounts;
+		const labelMap: Record<string, string> = {
+			Tumor: "Tumour",
+			Adjacent: "Adjacent tissue",
+			"Malignant DLN": "Malignant draining lymph node",
+			"Benign DLN": "Benign draining lymph node",
+			"Pre-treatment blood": "Blood before vaccine",
+			"De novo": "New after vaccine",
+		};
 		return Object.entries(counts).map(([label, value]) => ({
-			label,
+			label: labelMap[label] ?? label,
 			clones: value,
 		}));
 	}, []);
@@ -259,7 +267,7 @@ export default function PancreaticReanalysisPage() {
 					<ChartCard
 						title="Prime vs boost clone half life"
 						datasetLabel={DATASET}
-						explanation="After the booster, vaccine tracked T cell clones tend to last much longer than after the first dose. That is one reason booster schedules matter for personalised cancer vaccines: the second hit helps the useful clones stick around."
+						explanation="After the booster, vaccine tracked T cell clones tend to last much longer than after the first dose. That is one reason booster schedules matter for personalised cancer vaccines: the second and subsequent doses help maintain the durability of useful clones."
 						chartRef={halfLifeRef}
 						onExportPng={() =>
 							exportSvgAsPng(halfLifeRef.current, "pdac-half-life.png")
@@ -327,7 +335,7 @@ export default function PancreaticReanalysisPage() {
 							<div className="h-80 lg:col-span-3">
 								<ResponsiveContainer width="100%" height="100%">
 									<ScatterChart
-										margin={{ left: 12, right: 12, top: 12, bottom: 28 }}
+										margin={{ left: 16, right: 16, top: 12, bottom: 40 }}
 									>
 										<CartesianGrid stroke={CHART_LINE} />
 										<XAxis
@@ -337,8 +345,8 @@ export default function PancreaticReanalysisPage() {
 											tick={{ fill: CHART_MUTED, fontSize: 11 }}
 											label={{
 												value: "Peak prime frequency (% of blood T cells)",
-												position: "bottom",
-												offset: 8,
+												position: "insideBottom",
+												offset: -18,
 												fill: CHART_MUTED,
 												fontSize: 12,
 											}}
@@ -356,12 +364,19 @@ export default function PancreaticReanalysisPage() {
 												fontSize: 11,
 											}}
 										/>
-										<ZAxis range={[48, 48]} />
+										<ZAxis range={[56, 56]} />
 										<Tooltip
 											cursor={{ strokeDasharray: "3 3" }}
 											contentStyle={tooltipStyle}
 										/>
-										<Scatter data={scatterPoints} fill={CHART_SERIES[2]} />
+										<Scatter data={scatterPoints} fill={CHART_SERIES[2]}>
+											{scatterPoints.map((point, index) => (
+												<Cell
+													key={`${point.peakPct}-${point.lifespan}-${index}`}
+													fill={CHART_SERIES[index % CHART_SERIES.length]}
+												/>
+											))}
+										</Scatter>
 									</ScatterChart>
 								</ResponsiveContainer>
 							</div>
@@ -425,7 +440,7 @@ export default function PancreaticReanalysisPage() {
 					<ChartCard
 						title="Where vaccine tracked clones come from"
 						datasetLabel={DATASET}
-						explanation="Most tracked clones look new after vaccination rather than copies of cells already sitting in the tumour or blood beforehand. That supports the idea that the vaccine helps raise fresh, useful T cell responses."
+						explanation="Almost all tracked clones look new after vaccination, rather than copies of cells already in the tumour, nearby tissue, draining lymph nodes (DLN: lymph nodes that drain the tumour area) or blood beforehand. That supports the idea that the vaccine helps raise fresh, useful T cell responses."
 						chartRef={originRef}
 						onExportPng={() =>
 							exportSvgAsPng(originRef.current, "pdac-origin.png")
@@ -436,14 +451,14 @@ export default function PancreaticReanalysisPage() {
 								<BarChart
 									data={originBars}
 									layout="vertical"
-									margin={{ left: 24 }}
+									margin={{ left: 8, right: 12 }}
 								>
 									<CartesianGrid stroke={CHART_LINE} horizontal={false} />
 									<XAxis type="number" tick={{ fill: CHART_MUTED, fontSize: 11 }} />
 									<YAxis
 										type="category"
 										dataKey="label"
-										width={130}
+										width={210}
 										tick={{ fill: CHART_MUTED, fontSize: 11 }}
 									/>
 									<Tooltip contentStyle={tooltipStyle} />
@@ -465,11 +480,14 @@ export default function PancreaticReanalysisPage() {
 							Can early vaccine signals flag long lived clones?
 						</h3>
 						<p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-soft">
-							A simple model uses only early (prime) measurements to ask which
-							clones later look long lived after the booster. The aim is
-							educational: can early vaccine biology hint at durability? The
-							leave one out score ({mlLoocv.auc}) is the more trustworthy summary;
-							the chart below is one small split for illustration.
+							Here we ask a practical vaccine question: if we only look at how a
+							clone behaves after the first dose, can we spot which clones later
+							last longest after the booster? A simple model trained on those
+							early measurements reaches a leave one out score of {mlLoocv.auc}.
+							That is better than guessing from the majority class (
+							{mlLoocv.baselineAccuracy}), which means early kinetics carry some
+							real signal about durability. Treat this as educational analysis of
+							published data, not a clinical decision tool.
 						</p>
 						<div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 							<Stat
@@ -509,9 +527,9 @@ export default function PancreaticReanalysisPage() {
 
 					<div className="grid gap-6 lg:grid-cols-2">
 						<ChartCard
-							title="ROC on held-out clones"
+							title="How well early signals separate long lived clones"
 							datasetLabel={DATASET}
-							explanation="This chart is one small example split only. Prefer the leave one out score above for a fairer summary. The marked point is the decision threshold you set."
+							explanation={`This curve shows a trade off: as we call more clones long lived, we also risk including shorter lived ones. A curve above the diagonal means the early signals rank clones better than chance. The leave one out score above (${mlLoocv.auc}) is the fairer summary across all clones; this plot uses one small hold out split only, so the shape can look uneven. The marked point is the threshold you set.`}
 							chartRef={rocRef}
 							onExportPng={() =>
 								exportSvgAsPng(rocRef.current, "pdac-ml-roc.png")
@@ -519,7 +537,7 @@ export default function PancreaticReanalysisPage() {
 						>
 							<div className="h-80">
 								<ResponsiveContainer width="100%" height="100%">
-									<LineChart data={mlRoc} margin={{ left: 8, right: 16 }}>
+									<LineChart data={mlRoc} margin={{ left: 8, right: 16, bottom: 24 }}>
 										<CartesianGrid stroke={CHART_LINE} />
 										<XAxis
 											type="number"
@@ -527,7 +545,7 @@ export default function PancreaticReanalysisPage() {
 											domain={[0, 1]}
 											tick={{ fill: CHART_MUTED, fontSize: 11 }}
 											label={{
-												value: "False positive rate",
+												value: "Share of shorter lived clones wrongly flagged",
 												position: "insideBottom",
 												offset: -2,
 												fill: CHART_MUTED,
@@ -540,7 +558,7 @@ export default function PancreaticReanalysisPage() {
 											domain={[0, 1]}
 											tick={{ fill: CHART_MUTED, fontSize: 11 }}
 											label={{
-												value: "True positive rate",
+												value: "Share of long lived clones found",
 												angle: -90,
 												position: "insideLeft",
 												fill: CHART_MUTED,
@@ -557,19 +575,19 @@ export default function PancreaticReanalysisPage() {
 											strokeDasharray="4 4"
 										/>
 										<Line
-											type="monotone"
+											type="stepAfter"
 											dataKey="tpr"
-											dot={false}
-											stroke={CHART_ACCENT}
-											strokeWidth={2}
-											name="TPR"
+											dot={{ r: 3, fill: CHART_SERIES[1], strokeWidth: 0 }}
+											stroke={CHART_SERIES[0]}
+											strokeWidth={2.5}
+											name="Long lived clones found"
 										/>
 										<ReferenceDot
 											x={mlOperating.fpr}
 											y={mlOperating.tpr}
-											r={5}
-											fill={CHART_INK}
-											stroke={CHART_ACCENT}
+											r={6}
+											fill={CHART_SERIES[2]}
+											stroke={CHART_INK}
 										/>
 									</LineChart>
 								</ResponsiveContainer>
@@ -579,7 +597,7 @@ export default function PancreaticReanalysisPage() {
 						<ChartCard
 							title="Which priming features the model uses"
 							datasetLabel={DATASET}
-							explanation="Bars show which early (prime) measures push the model toward calling a clone long lived after the booster. With only two inputs, treat the sizes as a guide, not as proof of cause."
+							explanation="These bars show which early (prime) measurements the model leans on when it flags a clone as likely to last longer after the booster. Larger bars matter more in this simple two input model; treat them as a guide to what the published kinetics emphasise, not as proof of cause."
 							chartRef={weightRef}
 							onExportPng={() =>
 								exportSvgAsPng(weightRef.current, "pdac-ml-weights.png")
@@ -602,10 +620,10 @@ export default function PancreaticReanalysisPage() {
 										/>
 										<Tooltip contentStyle={tooltipStyle} />
 										<Bar dataKey="weight" name="Weight">
-											{mlWeights.map((row) => (
+											{mlWeights.map((row, index) => (
 												<Cell
 													key={row.key}
-													fill={row.weight >= 0 ? CHART_ACCENT : CHART_INK}
+													fill={CHART_SERIES[index % CHART_SERIES.length]}
 												/>
 											))}
 										</Bar>
