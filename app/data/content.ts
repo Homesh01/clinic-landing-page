@@ -173,8 +173,9 @@ export const about = {
 					},
 					".",
 				],
+				"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, methods that show how individual cells in a tumour behave and respond to treatment.",
 				[
-					"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, methods that show how individual cells in a tumour behave and respond to treatment, including a research collaboration with the ",
+					"Her DPhil (PhD) research included a collaboration with the ",
 					{
 						text: "Broad Institute of MIT and Harvard",
 						href: "https://www.broadinstitute.org/",
@@ -200,7 +201,7 @@ export const about = {
 			paragraphs: [
 				"She brings that background into clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer, haematological cancers needing radiotherapy, and selected neuroendocrine tumours, with each plan built around the patient in front of her.",
 				"She does not do the computational work alone. Personalised Cancer Care has a specialist team for data analysis, software and evaluating new techniques, so clinical decisions stay grounded in evidence.",
-				"In short: consultations and treatment planning now, vaccine science analytics published openly, and careful preparation for advanced diagnostics and personalised cancer vaccines as those options become ready.",
+				"Her work combines expert clinical consultations and personalised treatment planning with ongoing research into emerging cancer technologies. Through Personalised Cancer Care, she is advancing the use of computational analysis, novel diagnostics and personalised cancer vaccines, with a focus on translating scientific innovation into safe, evidence based patient care.",
 			] satisfies readonly ProseParagraph[],
 		},
 	],
@@ -547,6 +548,21 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			{
 				text:
 					"Will attend the ESMO AI and Digital Oncology Congress in Berlin, Germany, from 16 to 18 November 2026, focused on the clinical application of AI and digital tools across oncology.",
+			},
+		],
+	},
+	// TODO(Karen): replace placeholder details for Public Sector Leaders Dinner (10 Nov 2026).
+	{
+		year: 2026,
+		timing: "past",
+		date: "10 Nov 2026",
+		location: "Details to confirm",
+		tag: "Details to confirm",
+		title: "Public Sector Leaders Dinner",
+		description: [
+			{
+				text:
+					"Placeholder entry for the Public Sector Leaders Dinner on 10 November 2026. Add venue, role and description.",
 			},
 		],
 	},
