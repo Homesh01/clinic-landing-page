@@ -1,9 +1,18 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { getSitePassword } from "~/utils/site-auth.server";
+import { getSitePasswordGateState } from "~/utils/clinic-settings.server";
+import {
+	getSitePassword,
+	isLocalDevRequest,
+} from "~/utils/site-auth.server";
 import { SITE_ORIGIN } from "~/utils/seo";
 
-export async function loader({ context }: LoaderFunctionArgs) {
-	const passwordProtected = Boolean(getSitePassword(context.cloudflare.env));
+export async function loader({ request, context }: LoaderFunctionArgs) {
+	const env = context.cloudflare.env;
+	const passwordConfigured = Boolean(getSitePassword(env));
+	const gate = await getSitePasswordGateState(env, {
+		isLocal: isLocalDevRequest(request),
+	});
+	const passwordProtected = passwordConfigured && gate.enabled;
 	const body = passwordProtected
 		? `User-agent: *
 Disallow: /

@@ -15,14 +15,13 @@ function nowIso(): string {
 	return new Date().toISOString();
 }
 
-/** Local default: off. Production default: on. */
-export function defaultSitePasswordGateEnabled(isLocal: boolean): boolean {
-	return !isLocal;
+/** Default when no clinic_settings row exists: gate off (public site open). */
+export function defaultSitePasswordGateEnabled(_isLocal: boolean): boolean {
+	return false;
 }
 
 /**
- * Stored value is "0" | "1". When no row exists, local defaults off and
- * remote defaults on.
+ * Stored value is "0" | "1". When no row exists, the gate defaults to off.
  */
 export async function getSitePasswordGateState(
 	env: Env | undefined,

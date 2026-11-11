@@ -90,7 +90,7 @@ export async function requireSiteAccess(
 	if (url.pathname === "/login") return;
 	if (url.pathname === "/api/stripe-webhook") return;
 
-	// Staff toggle in /admin/settings. Defaults: local off, production on.
+	// Staff toggle in /admin/settings. Default when unset: off (public site open).
 	const gate = await getSitePasswordGateState(env, {
 		isLocal: isLocalDevRequest(request),
 	});

@@ -127,8 +127,7 @@ function formatWhen(iso: string | null): string {
 }
 
 export default function ClinicAdminPage() {
-	const { staff, gate, passwordConfigured, isLocal } =
-		useLoaderData<typeof loader>();
+	const { staff, gate, passwordConfigured } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const submitting = navigation.state === "submitting";
@@ -158,11 +157,8 @@ export default function ClinicAdminPage() {
 							When the gate is on, visitors must enter the site password before
 							using the public website. Staff tools at{" "}
 							<code className="text-sm">/admin</code> still require your magic
-							link sign-in either way. Default before anyone changes it:{" "}
-							{isLocal
-								? "off on local development"
-								: "on in production"}
-							.
+							link sign-in either way. Default before anyone changes it: off
+							(public site open).
 						</p>
 
 						{!passwordConfigured ? (
