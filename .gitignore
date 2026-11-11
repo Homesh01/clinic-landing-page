@@ -205,3 +205,6 @@ dist
 /data-analysis/
 /data-analysis-raw/
 # processed aggregates are committed under data-analysis-processed/
+.venv-analysis/
+.venv-neovaxmi/
+.venv/
