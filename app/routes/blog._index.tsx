@@ -5,7 +5,7 @@ import {
 	articlePath,
 	blog,
 	blogPostPath,
-	blogPosts,
+	getPublishedBlogPosts,
 	isBlogArticle,
 	type BlogArticle,
 	type BlogPost,
@@ -126,7 +126,9 @@ function BlogEntryItem({ post }: { post: BlogPost }) {
 }
 
 export default function BlogPage() {
-	const posts = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date));
+	const posts = [...getPublishedBlogPosts()].sort((a, b) =>
+		b.date.localeCompare(a.date),
+	);
 
 	return (
 		<>

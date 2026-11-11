@@ -838,6 +838,8 @@ export type BlogArticleBlock =
 type BlogPostBase = {
 	/** ISO date (YYYY-MM-DD), newest entries at the top of the list */
 	readonly date: string;
+	/** When true, omit from blog index, detail routes and sitemap. */
+	readonly hidden?: boolean;
 };
 
 export type BlogShortPost = BlogPostBase & {
@@ -884,6 +886,7 @@ export const blogPosts: readonly BlogPost[] = [
 	{
 		date: "2026-11-07",
 		kind: "article",
+		hidden: true,
 		slug: "what-are-personalised-cancer-vaccines",
 		title: "What are personalised cancer vaccines?",
 		lede: "How researchers use information from a person's tumour to design a vaccine for them.",
@@ -1128,27 +1131,31 @@ export const blogPosts: readonly BlogPost[] = [
 	},
 ];
 
+export function getPublishedBlogPosts(): readonly BlogPost[] {
+	return blogPosts.filter((post) => !post.hidden);
+}
+
 export function getBlogArticleBySlug(slug: string): BlogArticle | undefined {
-	return blogPosts.find(
+	return getPublishedBlogPosts().find(
 		(post): post is BlogArticle => isBlogArticle(post) && post.slug === slug,
 	);
 }
 
 export function getBlogArticles(): readonly BlogArticle[] {
-	return blogPosts.filter(isBlogArticle);
+	return getPublishedBlogPosts().filter(isBlogArticle);
 }
 
 export function getBlogShortPostBySlug(
 	slug: string,
 ): BlogShortPost | undefined {
-	return blogPosts.find(
+	return getPublishedBlogPosts().find(
 		(post): post is BlogShortPost =>
 			!isBlogArticle(post) && post.slug === slug,
 	);
 }
 
 export function getBlogShortPosts(): readonly BlogShortPost[] {
-	return blogPosts.filter(
+	return getPublishedBlogPosts().filter(
 		(post): post is BlogShortPost => !isBlogArticle(post),
 	);
 }
