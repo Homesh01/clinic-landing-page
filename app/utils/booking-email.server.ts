@@ -398,7 +398,7 @@ function buildPlainText(input: {
 				...(input.pending
 					? []
 					: [
-							"Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund).",
+							"Self-pay cancellations or changes must be made at least 48 hours before the appointment. If you cancel in that window, your refund is automatic but the card processing fee (1.5% + £0.20) is deducted and not returned.",
 						]),
 				"",
 			]
@@ -532,7 +532,7 @@ function buildHtml(input: {
 	const note = pending
 		? "We will email you again once the authorisation code has been checked and your appointment is confirmed. Please do not attend until you receive that confirmation."
 		: bookingRef
-			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations or changes must be made at least 48 hours before the appointment (cancellations in that window receive an automatic full refund). A <strong>consultation.ics</strong> file is attached, open it to add this appointment to your calendar.`
+			? `To change or cancel your appointment, visit <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> and enter your email with booking reference <strong>${bookingRef}</strong>. Self-pay cancellations or changes must be made at least 48 hours before the appointment. If you cancel in that window, your refund is automatic but the card processing fee (1.5% + £0.20) is deducted and not returned. A <strong>consultation.ics</strong> file is attached, open it to add this appointment to your calendar.`
 			: "To change or cancel your appointment, simply reply to this email.";
 	const pendingManage = bookingRef
 		? ` You can also cancel or change the requested time via <a href="${MANAGE_BOOKING_URL}" style="color:${COLORS.accentDeep};font-weight:600;">Manage booking</a> using reference <strong>${bookingRef}</strong>.`
@@ -940,7 +940,7 @@ export async function sendBookingCancelledEmail(
 	const refundMinHours = input.refundMinHours ?? 48;
 	const refundLine =
 		input.refundStatus === "refunded"
-			? `A full refund${input.refundAmountLabel ? ` of ${input.refundAmountLabel}` : ""} has been started and should appear on your statement in a few days.`
+			? `A refund${input.refundAmountLabel ? ` of ${input.refundAmountLabel}` : ""} has been started (card processing fee retained) and should appear on your statement in a few days.`
 			: input.refundStatus === "already_refunded"
 				? "This payment had already been refunded."
 				: input.refundStatus === "not_eligible"

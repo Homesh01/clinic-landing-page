@@ -1,4 +1,4 @@
-/** Self-pay patients may cancel/change online (with full refund on cancel) only if at least this many hours before the appointment. */
+/** Self-pay patients may cancel/change online (refund less Stripe UK card fee on cancel) only if at least this many hours before the appointment. */
 export const SELF_PAY_REFUND_MIN_HOURS = 48;
 
 /** Build RFC3339 instant for a wall-clock time in the given IANA timezone. */

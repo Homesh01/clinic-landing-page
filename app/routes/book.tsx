@@ -741,13 +741,24 @@ export default function BookPage() {
 												</p>
 											) : null}
 											{isSelfPay ? (
-												<p className="mt-4 text-sm leading-relaxed text-ink-muted">
-													Self-pay cancellations or changes must be made at least
-													48 hours before the appointment. Within that window,
-													online cancel and change are not available, contact
-													the clinic team. Cancellations at least 48 hours before
-													receive an automatic full refund.
-												</p>
+												<div className="mt-4 border border-line bg-cream/50 px-4 py-4 text-sm leading-relaxed text-ink-soft">
+													<p className="font-semibold text-ink">
+														Cancellation and refunds
+													</p>
+													<p className="mt-2">
+														If you cancel at least 48 hours before the
+														appointment, your payment is refunded automatically,
+														minus the card processing fee of 1.5% + £0.20. That
+														fee is kept by the payment provider and is not
+														returned. For example, a £350 booking is refunded as
+														£344.55.
+													</p>
+													<p className="mt-2">
+														Within 48 hours of the appointment, online cancel and
+														change are not available. Please contact the clinic
+														team.
+													</p>
+												</div>
 											) : null}
 										</div>
 

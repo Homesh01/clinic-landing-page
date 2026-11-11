@@ -531,12 +531,12 @@ export default function ManageBookingPage() {
 							</p>
 							{cancelled.refundStatus === "refunded" ? (
 								<p className="mt-3 font-semibold text-ink">
-									A full Stripe refund
+									A Stripe refund
 									{cancelled.refundAmountLabel
 										? ` of ${cancelled.refundAmountLabel}`
 										: ""}{" "}
-									has been started. It should appear on the Stripe dashboard
-									shortly and on the patient’s statement in a few days.
+									has been started (card processing fee retained). It should
+									appear on your statement in a few days.
 								</p>
 							) : cancelled.refundStatus === "already_refunded" ? (
 								<p className="mt-3 font-semibold text-ink">
@@ -669,8 +669,9 @@ export default function ManageBookingPage() {
 											<>
 												{" "}
 												Because you are cancelling at least {refundMinHours}{" "}
-												hours before the appointment, a full Stripe refund will
-												be started automatically.
+												hours before the appointment, a refund will be started
+												automatically. The card processing fee (1.5% + £0.20) is
+												deducted from the refund and is not returned.
 											</>
 										) : null}
 									</p>

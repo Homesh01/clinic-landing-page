@@ -56,9 +56,26 @@ export function formatGbpFromPence(amountPence: number): string {
 	return new Intl.NumberFormat("en-GB", {
 		style: "currency",
 		currency: "GBP",
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0,
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
 	}).format(amountPence / 100);
+}
+
+/** UK standard online card fee Stripe keeps on refunds: 1.5% + £0.20. */
+export const STRIPE_UK_CARD_FEE_PERCENT = 0.015;
+export const STRIPE_UK_CARD_FEE_FIXED_PENCE = 20;
+
+export function stripeUkCardFeePence(grossPence: number): number {
+	if (grossPence <= 0) return 0;
+	return (
+		Math.round(grossPence * STRIPE_UK_CARD_FEE_PERCENT) +
+		STRIPE_UK_CARD_FEE_FIXED_PENCE
+	);
+}
+
+/** Amount to send back to the patient after deducting the UK card fee. */
+export function refundAmountAfterStripeFeePence(grossPence: number): number {
+	return Math.max(0, grossPence - stripeUkCardFeePence(grossPence));
 }
 
 type CheckoutSession = {
@@ -217,6 +234,21 @@ export async function refundPaymentIntent(
 	stripe: StripeConfig,
 	paymentIntentId: string,
 ): Promise<{ refundId: string; amountPence: number; alreadyRefunded: boolean }> {
+	const pi = await stripeRequest<{
+		id: string;
+		amount?: number;
+		amount_received?: number;
+	}>(
+		stripe.secretKey,
+		`/payment_intents/${encodeURIComponent(paymentIntentId)}`,
+	);
+	const grossPence = pi.amount_received ?? pi.amount ?? 0;
+	const amountPence = refundAmountAfterStripeFeePence(grossPence);
+
+	if (amountPence <= 0) {
+		throw new Error("Refund amount after Stripe fee is zero.");
+	}
+
 	try {
 		const refund = await stripeRequest<{
 			id: string;
@@ -226,6 +258,7 @@ export async function refundPaymentIntent(
 			method: "POST",
 			form: {
 				payment_intent: paymentIntentId,
+				amount: String(amountPence),
 				reason: "requested_by_customer",
 			},
 		});
@@ -241,17 +274,9 @@ export async function refundPaymentIntent(
 				message,
 			)
 		) {
-			const pi = await stripeRequest<{
-				id: string;
-				amount?: number;
-				amount_received?: number;
-			}>(
-				stripe.secretKey,
-				`/payment_intents/${encodeURIComponent(paymentIntentId)}`,
-			);
 			return {
 				refundId: paymentIntentId,
-				amountPence: pi.amount_received ?? pi.amount ?? 0,
+				amountPence,
 				alreadyRefunded: true,
 			};
 		}
