@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	Bar,
 	BarChart,
@@ -19,7 +19,7 @@ import {
 	YAxis,
 	ZAxis,
 } from "recharts";
-import { ChartCard, exportSvgAsPng } from "~/components/research/ChartCard";
+import { ChartCard } from "~/components/research/ChartCard";
 import {
 	CHART_ACCENT,
 	CHART_INK,
@@ -85,12 +85,6 @@ function formatP(p: number | null | undefined): string {
 
 export default function PancreaticReanalysisPage() {
 	const [mlThreshold, setMlThreshold] = useState(0.5);
-	const halfLifeRef = useRef<HTMLDivElement>(null);
-	const scatterRef = useRef<HTMLDivElement>(null);
-	const persistRef = useRef<HTMLDivElement>(null);
-	const originRef = useRef<HTMLDivElement>(null);
-	const rocRef = useRef<HTMLDivElement>(null);
-	const weightRef = useRef<HTMLDivElement>(null);
 
 	const halfLifeBars = useMemo(() => {
 		const prime = kinetics.primeHalfLifeDays.bootstrapMedianCI;
@@ -268,10 +262,6 @@ export default function PancreaticReanalysisPage() {
 						title="Prime vs boost clone half life"
 						datasetLabel={DATASET}
 						explanation="After the booster, vaccine tracked T cell clones tend to last much longer than after the first dose. That is one reason booster schedules matter for personalised cancer vaccines: the second and subsequent doses help maintain the durability of useful clones."
-						chartRef={halfLifeRef}
-						onExportPng={() =>
-							exportSvgAsPng(halfLifeRef.current, "pdac-half-life.png")
-						}
 					>
 						<div className="grid gap-6 lg:grid-cols-5">
 							<div className="h-80 lg:col-span-3">
@@ -326,10 +316,6 @@ export default function PancreaticReanalysisPage() {
 						title="Peak frequency vs estimated lifespan"
 						datasetLabel={DATASET}
 						explanation="Each point is one vaccine tracked T cell clone. Clones that expand more strongly early on often have longer estimated lifespans later. For vaccine design, a strong early response is not only about short term control; it may also mark clones that endure."
-						chartRef={scatterRef}
-						onExportPng={() =>
-							exportSvgAsPng(scatterRef.current, "pdac-peak-vs-lifespan.png")
-						}
 					>
 						<div className="grid gap-6 lg:grid-cols-5">
 							<div className="h-80 lg:col-span-3">
@@ -399,10 +385,6 @@ export default function PancreaticReanalysisPage() {
 						title="Clone persistence at last follow-up"
 						datasetLabel={DATASET}
 						explanation="Years after treatment, a large share of the vaccine expanded clones can still be found in blood for many responders. That persistence is a practical signal that personalised vaccines can leave a durable immune footprint, not only a brief spike."
-						chartRef={persistRef}
-						onExportPng={() =>
-							exportSvgAsPng(persistRef.current, "pdac-persistence.png")
-						}
 					>
 						<div className="h-80">
 							<ResponsiveContainer width="100%" height="100%">
@@ -441,10 +423,6 @@ export default function PancreaticReanalysisPage() {
 						title="Where vaccine tracked clones come from"
 						datasetLabel={DATASET}
 						explanation="Almost all tracked clones look new after vaccination, rather than copies of cells already in the tumour, nearby tissue, draining lymph nodes (DLN: lymph nodes that drain the tumour area) or blood beforehand. That supports the idea that the vaccine helps raise fresh, useful T cell responses."
-						chartRef={originRef}
-						onExportPng={() =>
-							exportSvgAsPng(originRef.current, "pdac-origin.png")
-						}
 					>
 						<div className="h-72">
 							<ResponsiveContainer width="100%" height="100%">
@@ -530,10 +508,6 @@ export default function PancreaticReanalysisPage() {
 							title="How well early signals separate long lived clones"
 							datasetLabel={DATASET}
 							explanation={`This curve shows a trade off: as we call more clones long lived, we also risk including shorter lived ones. A curve above the diagonal means the early signals rank clones better than chance. The leave one out score above (${mlLoocv.auc}) is the fairer summary across all clones; this plot uses one small hold out split only, so the shape can look uneven. The marked point is the threshold you set.`}
-							chartRef={rocRef}
-							onExportPng={() =>
-								exportSvgAsPng(rocRef.current, "pdac-ml-roc.png")
-							}
 						>
 							<div className="h-80">
 								<ResponsiveContainer width="100%" height="100%">
@@ -598,10 +572,6 @@ export default function PancreaticReanalysisPage() {
 							title="Which priming features the model uses"
 							datasetLabel={DATASET}
 							explanation="These bars show which early (prime) measurements the model leans on when it flags a clone as likely to last longer after the booster. Larger bars matter more in this simple two input model; treat them as a guide to what the published kinetics emphasise, not as proof of cause."
-							chartRef={weightRef}
-							onExportPng={() =>
-								exportSvgAsPng(weightRef.current, "pdac-ml-weights.png")
-							}
 						>
 							<div className="h-80">
 								<ResponsiveContainer width="100%" height="100%">

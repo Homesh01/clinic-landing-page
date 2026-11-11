@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	Bar,
 	BarChart,
@@ -17,7 +17,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { ChartCard, exportSvgAsPng } from "~/components/research/ChartCard";
+import { ChartCard } from "~/components/research/ChartCard";
 import {
 	CHART_ACCENT,
 	CHART_INK,
@@ -91,14 +91,6 @@ export default function NeoVaxmiReanalysisPage() {
 	const [selectedPatient, setSelectedPatient] = useState<string>("all");
 	// Class-weighted training shifts scores; 0.5 under-calls the majority class.
 	const [mlThreshold, setMlThreshold] = useState(0.3);
-	const mutRef = useRef<HTMLDivElement>(null);
-	const siteRef = useRef<HTMLDivElement>(null);
-	const tcrRef = useRef<HTMLDivElement>(null);
-	const tumorRef = useRef<HTMLDivElement>(null);
-	const crossRef = useRef<HTMLDivElement>(null);
-	const rocRef = useRef<HTMLDivElement>(null);
-	const weightRef = useRef<HTMLDivElement>(null);
-	const loocvRef = useRef<HTMLDivElement>(null);
 
 	const mutationBars = useMemo(
 		() =>
@@ -326,10 +318,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Mutation landscape (Data S1)"
 						datasetLabel={DATASET}
 						explanation="Each bar is one patient and shows how many coding mutations were found in their tumour sequencing. The second bar is a simple neoantigen proxy count of mutation types that often create vaccine targets, without using HLA binding scores."
-						chartRef={mutRef}
-						onExportPng={() =>
-							exportSvgAsPng(mutRef.current, "neovaxmi-mutations.png")
-						}
 					>
 						<div className="grid gap-6 lg:grid-cols-5">
 							<div className="h-80 lg:col-span-3">
@@ -423,10 +411,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Vaccine site myeloid versus T and NK fractions"
 						datasetLabel={DATASET}
 						explanation="This compares the share of myeloid cells and T or NK cells in skin biopsies from the vaccine injection site. It shows how that local immune mix shifted from before to after the third vaccine dose."
-						chartRef={siteRef}
-						onExportPng={() =>
-							exportSvgAsPng(siteRef.current, "neovaxmi-vaccine-site.png")
-						}
 					>
 						<div className="h-96">
 							<ResponsiveContainer width="100%" height="100%">
@@ -491,10 +475,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Circulating TCR expansion after nivolumab versus vaccine (Data S3)"
 						datasetLabel={DATASET}
 						explanation="This counts T cell receptor clones in blood that grew after PD1 therapy alone and after the personalised vaccine. For most patients, more new clones expand after vaccination than after nivolumab alone."
-						chartRef={tcrRef}
-						onExportPng={() =>
-							exportSvgAsPng(tcrRef.current, "neovaxmi-tcr-expansion.png")
-						}
 					>
 						<div className="grid gap-6 lg:grid-cols-5">
 							<div className="h-80 lg:col-span-3">
@@ -560,10 +540,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Tumour composition and reactive TCRs (Data S4 and S5)"
 						datasetLabel={DATASET}
 						explanation="The left panel shows what kinds of cells make up each tumour sample, such as melanoma cells versus T or NK cells. The right panel counts T cell receptors that reacted to vaccine peptides, and most of those reactive clones are typed as post vaccine."
-						chartRef={tumorRef}
-						onExportPng={() =>
-							exportSvgAsPng(tumorRef.current, "neovaxmi-tumor.png")
-						}
 					>
 						<div className="grid gap-6 lg:grid-cols-2">
 							<div className="h-80">
@@ -616,10 +592,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Patient overview across mutation, blood and tumour data"
 						datasetLabel={DATASET}
 						explanation="Each point is one patient. The horizontal axis is coding mutation burden; the vertical axis is how many blood T cell clones expanded after vaccine. Tumour-reactive TCR counts are in the previous section, not encoded in point size here."
-						chartRef={crossRef}
-						onExportPng={() =>
-							exportSvgAsPng(crossRef.current, "neovaxmi-cross-layer.png")
-						}
 					>
 						<div className="h-96">
 							<ResponsiveContainer width="100%" height="100%">
@@ -729,10 +701,6 @@ export default function NeoVaxmiReanalysisPage() {
 							title="ROC curve on held out clones"
 							datasetLabel={DATASET}
 							explanation="In plain terms: can lab expansion features tell vaccine raised clones apart from earlier ones? A curve above the diagonal means yes, better than chance. The marked point is the threshold you set above; a higher AUC means stronger separation in this published dataset."
-							chartRef={rocRef}
-							onExportPng={() =>
-								exportSvgAsPng(rocRef.current, "neovaxmi-ml-roc.png")
-							}
 						>
 							<div className="h-80">
 								<ResponsiveContainer width="100%" height="100%">
@@ -797,10 +765,6 @@ export default function NeoVaxmiReanalysisPage() {
 							title="Which lab features the model uses most"
 							datasetLabel={DATASET}
 							explanation="Each bar is how strongly one lab expansion feature pushes the model toward a post vaccine label after scaling. Positive bars favour post vaccine; negative bars favour earlier clone categories, and correlated features should be read with care."
-							chartRef={weightRef}
-							onExportPng={() =>
-								exportSvgAsPng(weightRef.current, "neovaxmi-ml-weights.png")
-							}
 						>
 							<div className="h-80">
 								<ResponsiveContainer width="100%" height="100%">
@@ -836,10 +800,6 @@ export default function NeoVaxmiReanalysisPage() {
 						title="Leave one patient out: can mutation burden predict vaccine TCR expansion?"
 						datasetLabel={DATASET}
 						explanation={`Each point asks: if we hide one patient and train on the rest, how well do tumour mutation counts predict that patient's post vaccine T cell expansion (n=${patientMl.n})? Points nearer the diagonal are closer predictions. With so few patients this is exploratory only (correlation ${patientMl.corr ?? "n/a"}, mean absolute error ${patientMl.mae ?? "n/a"}).`}
-						chartRef={loocvRef}
-						onExportPng={() =>
-							exportSvgAsPng(loocvRef.current, "neovaxmi-ml-loocv.png")
-						}
 					>
 						<div className="h-80">
 							<ResponsiveContainer width="100%" height="100%">
