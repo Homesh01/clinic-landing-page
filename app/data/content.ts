@@ -138,7 +138,7 @@ export function isProseLink(chunk: ProseChunk): chunk is ProseLink {
 export const about = {
 	heroTitle: "Personalised Cancer Care",
 	heroLede:
-		"A London consultant oncology practice for patients who want careful clinical care and a clear view of where personalised cancer treatment is heading. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and computational methods.",
+		"A London based oncology practice bringing together specialist clinical care, scientific expertise and advances in personalised cancer treatment. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and computational methods.",
 	sections: [
 		{
 			heading: "Where she practises",
@@ -199,7 +199,7 @@ export const about = {
 		{
 			heading: "Bringing it together",
 			paragraphs: [
-				"She brings that background into clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer, haematological cancers needing radiotherapy, and selected neuroendocrine tumours, with each plan built around the patient in front of her.",
+				"She brings that background into the clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer, haematological cancers needing radiotherapy, and selected neuroendocrine tumours, with each plan built around the patient in front of her.",
 				"She does not do the computational work alone. Personalised Cancer Care has a specialist team for data analysis, software and evaluating new techniques, so clinical decisions stay grounded in evidence.",
 				"Her work combines expert clinical consultations and personalised treatment planning with ongoing research into emerging cancer technologies. Through Personalised Cancer Care, she is advancing the use of computational analysis, novel diagnostics and personalised cancer vaccines, with a focus on translating scientific innovation into safe, evidence based patient care.",
 			] satisfies readonly ProseParagraph[],
@@ -216,38 +216,38 @@ export const conditionsPage = {
 	lede:
 		"Clear, straightforward information about the conditions Dr Sayal treats: what they mean, how they are treated, and what you can expect at each step, from your first appointment onwards.",
 	quote:
-		"A cancer diagnosis brings a great deal of uncertainty. My aim is always to make sure you understand what is happening, what your options are, and why we are recommending a particular path, so that you feel informed and involved at every stage of your care.",
+		"Good cancer care begins with understanding. My approach is to provide clear, evidence based advice, explain the reasoning behind each treatment recommendation, and work with patients to make decisions that reflect their individual circumstances and priorities.",
 	quoteAttr: "Dr Karen Sayal, Consultant Clinical Oncologist",
 	reassure: {
-		strong: "Not sure where your diagnosis fits?",
-		text: "You don't need to work it out alone. Get in touch and we will help you understand your options.",
+		strong: "Unsure whether we can help with your diagnosis?",
+		text: "Get in touch with our team to discuss your circumstances and find out how we may be able to support your care.",
 	},
 	trust: {
 		title: "Care that is coordinated around you, not around a department",
 		lede:
-			"Cancer care rarely involves just one specialist. Dr Sayal works as part of a multidisciplinary team (MDT) alongside surgeons, haematologists and specialist nurses, so your case is reviewed from every angle and everyone involved in your care works from the same plan.",
+			"Cancer care rarely involves just one specialist. Dr Sayal works closely with a multidisciplinary team (MDT) of specialists, including surgeons, haematologists, endocrinologists, pathologists and specialist nurses. This collaborative approach brings together expertise from across disciplines to ensure that each patient's diagnosis and treatment options are carefully considered, with a coordinated plan tailored to their individual needs.",
 		points: [
 			{
-				title: "One plan, not several opinions to reconcile",
+				title: "Collaborative, coordinated care",
 				description:
-					"Your specialists discuss your case together, so you're not left piecing together advice from different teams.",
+					"Your treatment benefits from the combined expertise of different specialists, working together to develop a clear and coordinated care plan.",
 			},
 			{
-				title: "You are kept in the loop",
+				title: "Informed and shared decisions",
 				description:
-					"Decisions are explained to you in plain language, with time for your questions, not simply handed down.",
+					"We explain your diagnosis, treatment options and clinical recommendations clearly, ensuring you have the information and opportunity to participate in decisions about your care.",
 			},
 			{
-				title: "Continuity throughout treatment",
+				title: "Continuity of care",
 				description:
-					"The same team follows your case from diagnosis through to follow up care.",
+					"We aim to provide consistent clinical support throughout your treatment journey, from initial consultation and treatment planning through to follow up care.",
 			},
 		],
 	},
 	callout: {
-		title: "Recently diagnosed and not sure what happens next?",
+		title: "Seeking specialist advice following a cancer diagnosis?",
 		body:
-			"You do not need a referral in hand to ask a question. Get in touch and we'll help you understand your options, at your own pace.",
+			"Our team can help you explore whether a consultation would be appropriate and guide you through the next steps. You can make an initial enquiry without a referral.",
 	},
 };
 
@@ -344,10 +344,11 @@ export const conditions = [
 ] as const;
 
 export const consultationsPage = {
-	title: "Care built around you",
+	title: "Personalised care, centred on you",
 	lede:
-		"Every patient arrives at a different stage. Whether you need a first plan, a second opinion or ongoing monitoring, the appointment should leave you with clear options and a written plan you can return to, shaped by specialist oncology and by our work in analytics, diagnostics and vaccine science.",
-	reassure: "You will always understand what is being recommended, and why.",
+		"Every patient's circumstances are different. Whether you are seeking an initial treatment plan, a second opinion or ongoing care, our approach combines specialist oncology expertise with advances in cancer research, diagnostics and precision medicine. Each consultation is designed to provide a clear understanding of your options and a personalised plan for the next steps.",
+	reassure:
+		"Clear recommendations, informed decisions and care tailored to your individual needs.",
 	callout: {
 		title: "Ready for the next step?",
 		body:
@@ -359,7 +360,7 @@ export const services = [
 	{
 		title: "New Patient Consultation",
 		description:
-			"A thorough review of your scans and pathology, an unhurried discussion of the options available to you, and a written treatment plan you can take away and reflect on.",
+			"A thorough review of your scans and pathology, a discussion of the options available to you, and a written treatment plan you can take away and reflect on.",
 	},
 	{
 		title: "Second Opinion",
@@ -429,7 +430,7 @@ export const faqPage = {
 				{
 					question: "What happens at a first consultation?",
 					answer:
-						"Your first appointment typically includes a review of your scans and pathology, an unhurried discussion of your diagnosis and options, and a clear written treatment plan so you know the recommended next steps.",
+						"Your first appointment typically includes a review of your scans and pathology, a discussion of your diagnosis and options, and a clear written treatment plan so you know the recommended next steps.",
 				},
 				{
 					question: "Can I bring a family member or friend with me?",
@@ -535,6 +536,20 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			{
 				text:
 					"Will attend the PSI Winter School for Proton Therapy at the Paul Scherrer Institute in Zurich, Switzerland, from 17 to 22 January 2027, covering the clinical, physics and technological aspects of proton therapy.",
+			},
+		],
+	},
+	{
+		year: 2027,
+		timing: "upcoming",
+		date: "26 Jan 2027",
+		location: "United Kingdom",
+		tag: "Invitation only",
+		title: "PharmaAI Leaders Exchange",
+		description: [
+			{
+				text:
+					"An invitation only event organised by Frontline Genomics in preparation for the Festival of Genomics.",
 			},
 		],
 	},
@@ -1169,7 +1184,7 @@ export const fees = {
 	intro:
 		"Dr Sayal accepts patients with private medical insurance and those who fund their own care. Self pay consultation fees below apply to UK patients and are payable when you book online.",
 	insurers:
-		"If you are using private medical insurance, you will need an authorisation code from your insurer before the appointment can be confirmed. The clinic checks the code, then bills your insurer.",
+		"If you are using private medical insurance, please obtain an authorisation code from your insurer before your appointment. Our team will verify the authorisation and arrange for the consultation fees to be billed directly to your insurer, subject to the terms of your policy.",
 	international:
 		"should contact the clinic team directly at",
 	internationalAfter:

@@ -138,8 +138,9 @@ export default function AboutPage() {
 								Vaccine science you can inspect
 							</p>
 							<p className="mt-2 max-w-prose text-[0.97rem] text-ink-soft">
-								Open reanalyses of published neoantigen vaccine trial data,
-								sitting beside day to day consultant care.
+								Advancing understanding of personalised cancer vaccines through
+								independent analysis of published clinical data, alongside
+								consultant led oncology care.
 							</p>
 							<Link
 								to="/research/pancreatic-reanalysis"

@@ -148,11 +148,12 @@ export default function Index() {
 					<div className="max-w-xl">
 						<p className="eyebrow">Research Analytics Lab</p>
 						<h2 className="mt-3 font-display text-display-md text-ink">
-							Published vaccine science, examined in the open
+							Advancing understanding of personalised cancer vaccines
 						</h2>
 						<p className="mt-4 text-lg leading-relaxed text-ink-soft">
-							We reanalyse published neoantigen vaccine trials in the open, so
-							patients and colleagues can inspect the methods and findings.
+							We independently analyse published clinical trial data on
+							personalised cancer vaccines, making our methods and findings
+							openly accessible to patients, clinicians and researchers.
 						</p>
 						<Link
 							to="/research/pancreatic-reanalysis"
