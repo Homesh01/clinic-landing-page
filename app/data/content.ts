@@ -141,27 +141,31 @@ export const about = {
 		"A London based oncology practice bringing together specialist clinical care, scientific expertise and advances in personalised cancer treatment. Led by Dr Karen Sayal, Consultant Clinical Oncologist in thyroid cancer and radiotherapy for haematological cancers, with a specialist team in data analysis and computational methods.",
 	sections: [
 		{
-			heading: "Where she practises",
+			heading: "Clinical practice and appointments",
 			paragraphs: [
-				"Dr Sayal sees patients at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare. She holds an NHS Consultant post at University College London Hospitals NHS Foundation Trust (UCLH), where she is also Translational AI Innovation Lead, developing AI tools for personalised therapy and improving how care is delivered.",
+				"Dr Karen Sayal is a Consultant Clinical Oncologist practising privately at HCA at University College Hospital, Leaders in Oncology Care (LOC), and The Harley Street Clinic, all part of HCA Healthcare UK.",
+				"She also holds an NHS Consultant appointment at University College London Hospitals NHS Foundation Trust (UCLH), where she serves as Translational AI Innovation Lead, leading initiatives to develop and evaluate artificial intelligence technologies that support personalised treatment and improve the delivery of cancer care.",
 			] satisfies readonly ProseParagraph[],
 		},
 		{
-			heading: "Clinical training and research",
+			heading: "Clinical training and academic research",
 			paragraphs: [
 				[
-					"Dr Sayal read medicine at ",
+					"Dr Sayal studied medicine at ",
 					{ text: "Gonville and Caius College", href: "https://www.cai.cam.ac.uk/" },
 					", ",
 					{ text: "University of Cambridge", href: "https://www.cam.ac.uk/" },
-					" (MB BChir Cantab) and trained as a clinician (MRCP) before specialising in Clinical Oncology, gaining her Fellowship of the ",
+					", graduating with an MB BChir (Cantab). Following postgraduate training in general medicine and attainment of Membership of the Royal College of Physicians (MRCP), she specialised in Clinical Oncology and gained Fellowship of the ",
 					{
 						text: "Royal College of Radiologists",
 						href: "https://www.rcr.ac.uk/",
 					},
-					" (FRCR). She was the first NIHR funded Academic Clinical Trainee in Clinical Oncology at the ",
+					" (FRCR).",
+				],
+				[
+					"She became the first NIHR funded Academic Clinical Trainee in Clinical Oncology at the ",
 					{ text: "University of Oxford", href: "https://www.ox.ac.uk/" },
-					", and went on to complete a DPhil (Oxon) as a ",
+					", where she subsequently completed her DPhil (PhD) as a ",
 					{
 						text: "Cancer Research UK",
 						href: "https://www.cancerresearchuk.org/",
@@ -173,9 +177,8 @@ export const about = {
 					},
 					".",
 				],
-				"Her doctoral research examined the tumour microenvironment in triple negative breast cancer using spatial transcriptomics and single cell sequencing, methods that show how individual cells in a tumour behave and respond to treatment.",
 				[
-					"Her DPhil (PhD) research included a collaboration with the ",
+					"Her doctoral research investigated the tumour microenvironment in triple negative breast cancer, using advanced techniques in spatial transcriptomics and single cell sequencing to understand how individual cells interact within tumours and influence cancer biology and treatment response. This work included a research collaboration with the ",
 					{
 						text: "Broad Institute of MIT and Harvard",
 						href: "https://www.broadinstitute.org/",
@@ -185,23 +188,26 @@ export const about = {
 			] satisfies readonly ProseParagraph[],
 		},
 		{
-			heading: "From research to industry AI",
+			heading: "From cancer research to AI innovation",
 			paragraphs: [
+				"Alongside her doctoral research, Dr Sayal independently studied the mathematical foundations of machine learning, including linear algebra and statistical inference, to develop a rigorous understanding of the principles underlying modern AI. This self directed training complemented her expertise in cancer biology and established the foundations for her subsequent work at the intersection of clinical medicine and computational science.",
 				[
-					"During her doctorate she taught herself the mathematics behind machine learning. After her DPhil she completed a postdoctoral fellowship in the AI division of ",
-					{ text: "GSK Pharmaceuticals", href: "https://www.gsk.ai/" },
-					", then became Senior Director in AI Industrialised Clinical Development at ",
+					"Following her DPhil, she undertook a postdoctoral fellowship in artificial intelligence at ",
+					{ text: "GSK", href: "https://www.gsk.ai/" },
+					", before joining ",
 					{ text: "Recursion Pharmaceuticals", href: "https://www.recursion.com/" },
-					", where she led work using artificial intelligence to speed up clinical development and reduce its risk.",
+					", where she became the company's first Senior Director in AI driven Industrialised Clinical Development.",
 				],
+				"At Recursion, she led initiatives applying artificial intelligence to accelerate clinical development, improve decision making and reduce uncertainty in drug development, bringing together expertise in clinical medicine, data science and pharmaceutical research.",
 			] satisfies readonly ProseParagraph[],
 		},
 		{
-			heading: "Bringing it together",
+			heading: "Bringing scientific innovation into clinical care",
 			paragraphs: [
-				"She brings that background into the clinic. At UCLH she helps develop and test new AI tools, so when she reviews scans, pathology and options she can judge what is genuinely ready to help, not only what is already routine. She continues to treat thyroid cancer, haematological cancers needing radiotherapy, and selected neuroendocrine tumours, with each plan built around the patient in front of her.",
-				"She does not do the computational work alone. Personalised Cancer Care has a specialist team for data analysis, software and evaluating new techniques, so clinical decisions stay grounded in evidence.",
-				"Her work combines expert clinical consultations and personalised treatment planning with ongoing research into emerging cancer technologies. Through Personalised Cancer Care, she is advancing the use of computational analysis, novel diagnostics and personalised cancer vaccines, with a focus on translating scientific innovation into safe, evidence based patient care.",
+				"Dr Sayal's approach to oncology combines specialist clinical practice with expertise in translational research, computational medicine and artificial intelligence. As Translational AI Innovation Lead at UCLH, she leads work exploring how emerging technologies can improve the interpretation of clinical data, inform treatment decisions and support more personalised approaches to cancer care.",
+				"Her clinical practice focuses on thyroid cancer, radiotherapy for haematological malignancies, and selected neuroendocrine tumours. She provides evidence based, individualised treatment recommendations, informed by advances in cancer research and tailored to each patient's clinical circumstances and priorities.",
+				"Through Personalised Cancer Care, she collaborates with specialists in computational analysis, software development and emerging medical technologies. This multidisciplinary approach supports the scientific evaluation of new developments and their potential applications in patient care.",
+				"Her broader vision is to bring advances in cancer science closer to clinical practice, integrating specialist oncology expertise with advanced diagnostics, computational medicine and research into personalised cancer vaccines. Her focus is on translating promising scientific discoveries into safe, evidence based approaches that can improve care and expand future treatment possibilities for patients.",
 			] satisfies readonly ProseParagraph[],
 		},
 	],
@@ -265,7 +271,7 @@ export const conditions = [
 			"Radioactive iodine therapy, a treatment specific to thyroid cancer, planned around your individual case.",
 			"External beam radiotherapy, where this is the right option for your situation.",
 			"Systemic (medication based) treatment, when appropriate.",
-			"Joined up care with your endocrine surgeon and specialist nurses, so nothing falls between the gaps.",
+			"Joined up care with your surgeon and specialist nurses, so nothing falls between the gaps.",
 		],
 		whatToExpect: [
 			{
@@ -321,7 +327,7 @@ export const conditions = [
 		plain:
 			"Neuroendocrine tumours (NETs) are uncommon tumours that start in hormone producing cells. They most often occur in the bowel, pancreas or lungs. Phaeochromocytomas and paragangliomas are related tumours that develop in the adrenal glands or nerve tissue, and they can produce excess adrenaline type hormones. Many of these tumours grow slowly. Some can be treated with targeted radioactive medicines that seek out the tumour cells wherever they are in the body.",
 		howWeHelp: [
-			"Lutetium (¹⁷⁷Lu) DOTATATE therapy: a targeted treatment for tumours that carry somatostatin receptors on their surface. It is given as a drip and delivers radiation directly to tumour cells.",
+			"Lutetium DOTATATE therapy: a targeted treatment for tumours that carry somatostatin receptors on their surface. It is given as a drip and delivers radiation directly to tumour cells.",
 			"Checking whether this treatment is right for you: a specialist scan shows whether your tumour will take up the treatment before anything is planned.",
 			"Joined up care with your wider team: your endocrinologist, surgeon, nuclear medicine physicians and specialist nurses, so that hormone symptoms, blood pressure and your other treatments are all managed together.",
 		],
