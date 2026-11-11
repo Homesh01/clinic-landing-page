@@ -743,15 +743,14 @@ export default function BookPage() {
 											{isSelfPay ? (
 												<div className="mt-4 border border-line bg-cream/50 px-4 py-4 text-sm leading-relaxed text-ink-soft">
 													<p className="font-semibold text-ink">
-														Cancellation and refunds
+														Cancellation and refunds policy
 													</p>
 													<p className="mt-2">
 														If you cancel at least 48 hours before the
 														appointment, your payment is refunded automatically,
 														minus the card processing fee of 1.5% + £0.20. That
 														fee is kept by the payment provider and is not
-														returned. For example, a £350 booking is refunded as
-														£344.55.
+														returned.
 													</p>
 													<p className="mt-2">
 														Within 48 hours of the appointment, online cancel and
