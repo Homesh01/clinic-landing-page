@@ -10,8 +10,11 @@ import {
 export const SITE_ORIGIN = "https://personalisedcancercare.com";
 export const CLINIC_BRAND = "Personalised Cancer Care";
 export const CLINIC_TAGLINE =
-	"Private consultant oncology in London, with translational AI and open research on personalised cancer analytics, working toward advanced diagnostics and personalised cancer vaccines.";
-export const DEFAULT_OG_IMAGE = "/main-logo-1.png";
+	"Private consultant oncology in London. Specialist clinical care with a clear focus on personalised cancer treatment.";
+/** Dedicated social share card (1200×630) so previews show the full logo. */
+export const DEFAULT_OG_IMAGE = "/og-card.png";
+export const DEFAULT_OG_IMAGE_WIDTH = 1200;
+export const DEFAULT_OG_IMAGE_HEIGHT = 630;
 
 const PUBLIC_PATHS = [
 	"/",
@@ -93,6 +96,15 @@ export function buildPageMeta(input: PageMetaInput) {
 		{ property: "og:url", content: canonical },
 		{ property: "og:image", content: image },
 		{ property: "og:image:alt", content: imageAlt },
+		{
+			property: "og:image:width",
+			content: String(DEFAULT_OG_IMAGE_WIDTH),
+		},
+		{
+			property: "og:image:height",
+			content: String(DEFAULT_OG_IMAGE_HEIGHT),
+		},
+		{ property: "og:image:type", content: "image/png" },
 		{ name: "twitter:card", content: "summary_large_image" },
 		{ name: "twitter:title", content: title },
 		{ name: "twitter:description", content: description },
