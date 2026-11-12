@@ -549,7 +549,7 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 		year: 2027,
 		timing: "upcoming",
 		date: "26 Jan 2027",
-		location: "United Kingdom",
+		location: "London",
 		tag: "Invitation only",
 		title: "PharmaAI Leaders Exchange",
 		description: [
@@ -572,18 +572,17 @@ export const conferenceEntries: readonly ConferenceEntry[] = [
 			},
 		],
 	},
-	// TODO(Karen): replace placeholder details for Public Sector Leaders Dinner (10 Nov 2026).
 	{
 		year: 2026,
 		timing: "past",
 		date: "10 Nov 2026",
-		location: "Details to confirm",
-		tag: "Details to confirm",
+		location: "Whitehall, London",
+		tag: "Invitation only",
 		title: "Public Sector Leaders Dinner",
 		description: [
 			{
 				text:
-					"Placeholder entry for the Public Sector Leaders Dinner on 10 November 2026. Add venue, role and description.",
+					"Attended the Public Sector Leaders Dinner on 10 November 2026, focused on practical methods for safe AI adoption and effective data governance across the public sector.",
 			},
 		],
 	},
