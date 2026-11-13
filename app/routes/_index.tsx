@@ -63,13 +63,13 @@ export default function Index() {
 								heading.
 							</p>
 							<div
-								className="mt-8 flex flex-wrap gap-3 animate-fade-up"
+								className="mt-8 flex w-full flex-col gap-3 animate-fade-up sm:w-auto sm:flex-row sm:flex-wrap"
 								style={{ animationDelay: "220ms" }}
 							>
-								<Link to="/book" className="btn-primary">
+								<Link to="/book" className="btn-primary w-full sm:w-auto">
 									Book a consultation
 								</Link>
-								<Link to="/about" className="btn-secondary">
+								<Link to="/about" className="btn-secondary w-full sm:w-auto">
 									About the approach
 								</Link>
 							</div>
