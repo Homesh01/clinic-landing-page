@@ -124,7 +124,7 @@
 	}
 
 	.callout-banner {
-		@apply flex flex-wrap items-center justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:px-12 sm:py-11;
+		@apply flex flex-col items-stretch justify-between gap-8 rounded-xl bg-accent-deep px-8 py-10 sm:flex-row sm:items-center sm:px-12 sm:py-11;
 	}
 
 	.btn-callout-primary {

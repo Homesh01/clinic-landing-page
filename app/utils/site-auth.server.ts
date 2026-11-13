@@ -83,6 +83,9 @@ export async function requireSiteAccess(
 	request: Request,
 	env: Env | undefined,
 ): Promise<void> {
+	// Local hosts are never password gated, even if SITE_PASSWORD is set.
+	if (isLocalDevRequest(request)) return;
+
 	const password = getSitePassword(env);
 	if (!password) return;
 
@@ -92,7 +95,7 @@ export async function requireSiteAccess(
 
 	// Staff toggle in /admin/settings. Default when unset: off (public site open).
 	const gate = await getSitePasswordGateState(env, {
-		isLocal: isLocalDevRequest(request),
+		isLocal: false,
 	});
 	if (!gate.enabled) return;
 

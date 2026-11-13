@@ -212,23 +212,25 @@ export function Header() {
 						onClick={() => setOpen((value) => !value)}
 					>
 						<span className="sr-only">Menu</span>
-						<div className="flex w-5 flex-col gap-1.5">
-							<span
-								className={`h-px w-full bg-current transition ${
-									open ? "translate-y-[3.5px] rotate-45" : ""
-								}`}
-							/>
-							<span
-								className={`h-px w-full bg-current transition ${
-									open ? "opacity-0" : ""
-								}`}
-							/>
-							<span
-								className={`h-px w-full bg-current transition ${
-									open ? "-translate-y-[3.5px] -rotate-45" : ""
-								}`}
-							/>
-						</div>
+						{open ? (
+							<svg
+								aria-hidden="true"
+								viewBox="0 0 20 20"
+								className="h-5 w-5"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="1.5"
+								strokeLinecap="round"
+							>
+								<path d="M5 5l10 10M15 5L5 15" />
+							</svg>
+						) : (
+							<div className="flex w-5 flex-col gap-1.5" aria-hidden="true">
+								<span className="h-px w-full bg-current" />
+								<span className="h-px w-full bg-current" />
+								<span className="h-px w-full bg-current" />
+							</div>
+						)}
 					</button>
 				</div>
 			</div>

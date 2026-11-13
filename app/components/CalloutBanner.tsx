@@ -39,12 +39,12 @@ export function CalloutBanner({
 						</h2>
 						<p className="mt-3 text-[0.97rem] text-white/75">{body}</p>
 					</div>
-					<div className="flex shrink-0 flex-wrap gap-3">
+					<div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
 						{actions.map((action) => {
 							const className =
 								action.variant === "primary"
-									? "btn-callout-primary"
-									: "btn-callout-outline";
+									? "btn-callout-primary w-full sm:w-auto"
+									: "btn-callout-outline w-full sm:w-auto";
 
 							if (action.href) {
 								return (
