@@ -56,37 +56,53 @@ export default function AboutPage() {
 		<>
 			<section className="border-b border-line bg-gradient-to-b from-mist to-white section-pad !pb-12">
 				<div className="site-container">
-					<div className="max-w-2xl">
-						<p className="eyebrow animate-fade-up" style={{ animationDelay: "40ms" }}>
-							About the practice
-						</p>
-						<h1
-							className="mt-3 font-display text-display-lg text-ink animate-fade-up"
-							style={{ animationDelay: "100ms" }}
-						>
-							{about.heroTitle}
-						</h1>
-						<p
-							className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
-							style={{ animationDelay: "160ms" }}
-						>
-							{about.heroLede}
-						</p>
-						<div
-							className="mt-8 animate-fade-up"
-							style={{ animationDelay: "220ms" }}
-						>
-							<button
-								type="button"
-								className="btn-secondary"
-								onClick={() => {
-									document
-										.getElementById("background")
-										?.scrollIntoView({ behavior: "smooth", block: "start" });
-								}}
+					<div className="grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+						<div className="max-w-2xl">
+							<p
+								className="eyebrow animate-fade-up"
+								style={{ animationDelay: "40ms" }}
 							>
-								Read {site.name}&apos;s background ↓
-							</button>
+								About the practice
+							</p>
+							<h1
+								className="mt-3 font-display text-display-lg text-ink animate-fade-up"
+								style={{ animationDelay: "100ms" }}
+							>
+								{about.heroTitle}
+							</h1>
+							<p
+								className="mt-5 text-lg leading-relaxed text-ink-soft animate-fade-up"
+								style={{ animationDelay: "160ms" }}
+							>
+								{about.heroLede}
+							</p>
+							<div
+								className="mt-8 animate-fade-up"
+								style={{ animationDelay: "220ms" }}
+							>
+								<button
+									type="button"
+									className="btn-secondary"
+									onClick={() => {
+										document
+											.getElementById("background")
+											?.scrollIntoView({ behavior: "smooth", block: "start" });
+									}}
+								>
+									Read {site.name}&apos;s background ↓
+								</button>
+							</div>
+						</div>
+
+						<div
+							className="mx-auto w-full max-w-[14rem] animate-fade-up sm:max-w-[16rem] lg:mx-0 lg:justify-self-end"
+							style={{ animationDelay: "180ms" }}
+						>
+							<img
+								src={site.portrait}
+								alt={`Portrait of ${site.name}`}
+								className="headshot"
+							/>
 						</div>
 					</div>
 				</div>

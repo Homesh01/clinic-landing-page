@@ -7,7 +7,10 @@ export const site = {
 	subtitle: "Translational AI Innovation Lead, UCLH",
 	gmc: "7140353",
 	gmcVerifyUrl: "https://www.gmc-uk.org/registrants/7140353",
+	/** Home hero / speaking photo */
 	headshot: "/KarenSayalMain.jpg",
+	/** Formal portrait used on About */
+	portrait: "/karen_sayal_image-nobg.png",
 };
 
 export type NavLinkItem = {
