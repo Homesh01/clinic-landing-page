@@ -81,7 +81,7 @@ export default function Index() {
 						>
 							<img
 								src={site.headshot}
-								alt={`Portrait of ${site.name}`}
+								alt={`${site.name} speaking at a conference`}
 								className="headshot"
 							/>
 						</div>
