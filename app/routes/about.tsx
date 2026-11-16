@@ -95,7 +95,7 @@ export default function AboutPage() {
 						</div>
 
 						<div
-							className="mx-auto w-full max-w-[14rem] animate-fade-up sm:max-w-[16rem] lg:mx-0 lg:justify-self-end"
+							className="mx-auto w-full max-w-[16rem] animate-fade-up sm:max-w-[18rem] lg:mx-0 lg:justify-self-end"
 							style={{ animationDelay: "180ms" }}
 						>
 							<img
