@@ -909,7 +909,7 @@ export function blogPostPath(slug: string): string {
  */
 export const blogPosts: readonly BlogPost[] = [
 	{
-		date: "2026-11-20",
+		date: "2026-12-20",
 		kind: "article",
 		unlisted: true,
 		slug: "what-are-personalised-cancer-vaccines",
