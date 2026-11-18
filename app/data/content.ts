@@ -861,8 +861,10 @@ export type BlogArticleBlock =
 type BlogPostBase = {
 	/** ISO date (YYYY-MM-DD), newest entries at the top of the list */
 	readonly date: string;
-	/** When true, omit from blog index, detail routes and sitemap. */
+	/** When true, the post is not served at all. */
 	readonly hidden?: boolean;
+	/** When true, omit from the blog index and sitemap. The URL still works. */
+	readonly unlisted?: boolean;
 };
 
 export type BlogShortPost = BlogPostBase & {
@@ -907,9 +909,9 @@ export function blogPostPath(slug: string): string {
  */
 export const blogPosts: readonly BlogPost[] = [
 	{
-		date: "2026-11-07",
+		date: "2026-11-20",
 		kind: "article",
-		hidden: true,
+		unlisted: true,
 		slug: "what-are-personalised-cancer-vaccines",
 		title: "What are personalised cancer vaccines?",
 		lede: "How researchers use information from a person's tumour to design a vaccine for them.",
@@ -1154,12 +1156,36 @@ export const blogPosts: readonly BlogPost[] = [
 	},
 ];
 
+/** Today's date in UK time as YYYY-MM-DD, so scheduled posts go live from midnight UK time. */
+export function todayInUk(now: Date = new Date()): string {
+	const parts = new Intl.DateTimeFormat("en-GB", {
+		timeZone: "Europe/London",
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).formatToParts(now);
+	const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+	return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+/** Posts listed on the blog index and in the sitemap. */
 export function getPublishedBlogPosts(): readonly BlogPost[] {
-	return blogPosts.filter((post) => !post.hidden);
+	const today = todayInUk();
+	return blogPosts.filter(
+		(post) => !post.hidden && !post.unlisted && post.date <= today,
+	);
+}
+
+/** Posts whose URL works: everything listed, plus unlisted posts. */
+function getReachableBlogPosts(): readonly BlogPost[] {
+	const today = todayInUk();
+	return blogPosts.filter(
+		(post) => !post.hidden && (post.unlisted || post.date <= today),
+	);
 }
 
 export function getBlogArticleBySlug(slug: string): BlogArticle | undefined {
-	return getPublishedBlogPosts().find(
+	return getReachableBlogPosts().find(
 		(post): post is BlogArticle => isBlogArticle(post) && post.slug === slug,
 	);
 }
@@ -1171,7 +1197,7 @@ export function getBlogArticles(): readonly BlogArticle[] {
 export function getBlogShortPostBySlug(
 	slug: string,
 ): BlogShortPost | undefined {
-	return getPublishedBlogPosts().find(
+	return getReachableBlogPosts().find(
 		(post): post is BlogShortPost =>
 			!isBlogArticle(post) && post.slug === slug,
 	);
