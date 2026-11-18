@@ -1078,15 +1078,11 @@ export const blogPosts: readonly BlogPost[] = [
 			},
 			{
 				type: "heading",
-				text: "About this guide",
+				text: "About this article",
 			},
 			{
 				type: "paragraph",
-				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team.",
-			},
-			{
-				type: "paragraph",
-				text: "Management decisions are directed by your managing oncologist and clinical team, who will consider your individual circumstances.",
+				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team. Management decisions are directed by your managing oncologist and clinical team, who will consider your individual circumstances.",
 			},
 			{
 				type: "sources",
