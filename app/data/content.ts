@@ -909,7 +909,7 @@ export function blogPostPath(slug: string): string {
  */
 export const blogPosts: readonly BlogPost[] = [
 	{
-		date: "2026-12-20",
+		date: "2026-11-23",
 		kind: "article",
 		unlisted: true,
 		slug: "what-are-personalised-cancer-vaccines",
@@ -1082,7 +1082,7 @@ export const blogPosts: readonly BlogPost[] = [
 			},
 			{
 				type: "paragraph",
-				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team. Management decisions are directed by your managing oncologist and clinical team, who will consider your individual circumstances.",
+				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team. Management decisions are directed by your supervising oncologist and clinical team, who will consider your individual circumstances.",
 			},
 			{
 				type: "sources",
