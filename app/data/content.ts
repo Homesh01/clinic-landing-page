@@ -1008,6 +1008,10 @@ export const blogPosts: readonly BlogPost[] = [
 				caption: "Preventive vaccination and personalised cancer vaccination",
 			},
 			{
+				type: "paragraph",
+				text: "Personalised cancer vaccines are still experimental therapy. They are not available in routine clinical care and are being actively investigated across a range of clinical trials.",
+			},
+			{
 				type: "heading",
 				text: "Which cancers are being studied?",
 			},
@@ -1074,28 +1078,15 @@ export const blogPosts: readonly BlogPost[] = [
 			},
 			{
 				type: "heading",
-				text: "Questions for your oncology team",
-			},
-			{
-				type: "questions",
-				items: [
-					"Is there a trial relevant to my cancer type and stage?",
-					"Could stored tissue be used, or would the study require a new biopsy?",
-					"How would study visits and vaccine preparation fit with my current care?",
-					"What are the possible side effects and how would they be monitored?",
-				],
-			},
-			{
-				type: "paragraph",
-				text: "As studies mature, researchers are working out who is most likely to benefit, which targets to choose, and how best to combine vaccines with existing treatments.",
-			},
-			{
-				type: "heading",
 				text: "About this guide",
 			},
 			{
 				type: "paragraph",
 				text: "This article provides general information. Discuss trial participation and any changes to your treatment plan with your treating oncology team.",
+			},
+			{
+				type: "paragraph",
+				text: "Management decisions are directed by your managing oncologist and clinical team, who will consider your individual circumstances.",
 			},
 			{
 				type: "sources",
